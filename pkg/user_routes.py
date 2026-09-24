@@ -386,6 +386,8 @@ def google_auth(role):
     redirect_uri = url_for('google_callback', _external=True)
     if 'localhost:5057' in redirect_uri:
         redirect_uri = redirect_uri.replace('localhost:5057', '127.0.0.1:5057')
+    elif redirect_uri.startswith('http://') and not ('127.0.0.1' in redirect_uri or 'localhost' in redirect_uri):
+        redirect_uri = redirect_uri.replace('http://', 'https://', 1)
 
     state = json.dumps({'role': role})
     params = {
@@ -427,6 +429,8 @@ def google_callback():
     redirect_uri = url_for('google_callback', _external=True)
     if 'localhost:5057' in redirect_uri:
         redirect_uri = redirect_uri.replace('localhost:5057', '127.0.0.1:5057')
+    elif redirect_uri.startswith('http://') and not ('127.0.0.1' in redirect_uri or 'localhost' in redirect_uri):
+        redirect_uri = redirect_uri.replace('http://', 'https://', 1)
 
     token_url = 'https://oauth2.googleapis.com/token'
     token_data = {
