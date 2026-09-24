@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Dashboard - Kiraar</title>
+    <link class="rtl" rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="inner-page">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light py-3 border-bottom">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold brand-text" href="/">Jobs</a>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="/professional/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill">
+                    <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
+                </a>
+                <a href="/professional/inbox/" class="btn btn-outline-secondary btn-sm rounded-pill">
+                    <i class="fa-solid fa-inbox me-1"></i> Inbox
+                </a>
+                {% if session.get('has_dual_account') %}
+                <a href="/switch-role/" class="btn btn-outline-primary btn-sm rounded-pill">
+                    <i class="fa-solid fa-right-left me-1"></i> Client Mode
+                </a>
+                {% endif %}
+                <a href="/logout/" class="btn btn-outline-danger btn-sm rounded-pill">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show kiraar-flash" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="container my-5">
+
+        {% if not professional.phone_number or not professional.bio or not professional.professional_services or not professional.account_number %}
+        <div class="alert alert-warning border-0 shadow-sm d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-4 rounded-3" style="background-color: #fff9e6; border-left: 5px solid #ffc107 !important;">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <i class="fa-solid fa-triangle-exclamation text-warning fs-3 me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-1 text-dark">Your professional profile is incomplete</h6>
+                    <small class="text-muted">Add your services, phone number, and bank details so clients can find and book you.</small>
+                </div>
+            </div>
+            <a href="/professional/edit/" class="btn btn-sm btn-dark text-nowrap rounded-pill px-3 py-2 fw-semibold">
+                <i class="fa-solid fa-user-pen me-1"></i> Complete Profile
+            </a>
+        </div>
+        {% elif professional.account_status == 'pending' %}
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center p-3 mb-4 rounded-3" style="background-color: #f0f7ff; border-left: 5px solid #0d6efd !important;">
+            <i class="fa-solid fa-clock text-primary fs-4 me-3"></i>
+            <div>
+                <h6 class="fw-bold mb-0 text-dark">Profile submitted for review</h6>
+                <small class="text-muted">Our admin team is verifying your details. You will receive an email once approved.</small>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="row text-center mb-4">
+            <div class="col-6 col-md-3 mb-2">
+                <div class="kiraar-card p-3">
+                    <small class="text-muted">Today's Earnings</small>
+                    <h4 class="font-weight-bold brand-text mb-0">₦{{ "{:,.2f}".format(todays_earnings) }}</h4>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-2">
+                <div class="kiraar-card p-3">
+                    <small class="text-muted">Rating</small>
+                    <h4 class="font-weight-bold text-warning mb-0"><i class="fa-solid fa-star"></i> {{ average_rating }}</h4>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-2">
+                <div class="kiraar-card p-3">
+                    <small class="text-muted">Completed Jobs</small>
+                    <h4 class="font-weight-bold text-success mb-0">{{ completed_jobs }}</h4>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-2">
+                <div class="kiraar-card p-3">
+                    <small class="text-muted">Wallet Balance</small>
+                    <h4 class="font-weight-bold text-dark mb-0">₦{{ "{:,.2f}".format(wallet_balance) }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left: Profile Card -->
+            <div class="col-md-4 mb-4">
+                <div class="kiraar-card text-center p-4">
+                    <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}" alt="Artisan Profile Pic" class="artisan-img border mb-3" style="width: 100px; height: 100px; border-radius: 50%;">
+                    <h3 class="font-weight-bold mb-1">
+                        {% set name_parts = [] %}
+                        {% if professional.show_first_name is none or professional.show_first_name %}{% set name_parts = name_parts + [professional.first_name] %}{% endif %}
+                        {% if professional.show_last_name is none or professional.show_last_name %}{% set name_parts = name_parts + [professional.last_name] %}{% endif %}
+                        {{ name_parts | join(' ') or 'Professional' }}
+                        {% if (professional.show_business_name is none or professional.show_business_name) and professional.business_name %}
+                            <small class="text-muted fs-6">({{ professional.business_name }})</small>
+                        {% endif %}
+                        {% if professional.account_status == 'verified' %}
+                        <i class="fa-solid fa-circle-check text-primary small" title="Verified Professional"></i>
+                        {% endif %}
+                    </h3>
+                    <hr>
+                    <div class="text-start">
+                        <p class="mb-2"><strong>Status:</strong> <span class="text-success">{{ professional.status or 'Active & Online' }}</span></p>
+                        <p class="mb-2"><strong>Location:</strong> {{ professional.location or 'Not provided' }}</p>
+                        <p class="mb-2"><strong>Business Type:</strong> {{ professional.business_type or 'Independent' }}</p>
+                        <p class="mb-2"><strong>On Kiraar:</strong> {{ years_on_kiraar }} year(s)</p>
+                        <p class="mb-2"><strong>Verification:</strong> 
+                            {% if professional.account_status == 'verified' %}
+                            <span class="text-info font-weight-bold">KYC Cleared</span>
+                            {% elif professional.account_status == 'suspended' %}
+                            <span class="text-danger font-weight-bold">Suspended</span>
+                            {% else %}
+                            <span class="text-warning font-weight-bold">Pending Review</span>
+                            {% endif %}
+                        </p>
+                        <div class="mt-2">
+                            <strong>Services:</strong>
+                            {% if prof_service_names %}
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    {% for name in prof_service_names %}
+                                        <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary" style="font-size: 0.75rem;">{{ name }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted small">No services added yet.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="/professional/edit/" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                            <i class="fa-solid fa-user-pen me-1"></i> Edit Profile Details
+                        </a>
+                        {% if session.get('has_dual_account') %}
+                        <a href="/switch-role/" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            <i class="fa-solid fa-right-left me-1"></i> Switch to Client Account
+                        </a>
+                        {% endif %}
+                        <a href="/logout/" class="btn btn-outline-danger btn-sm w-100">Log Out</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Bookings grouped by status with full chat inside -->
+            <div class="col-md-8">
+                
+                <div class="kiraar-card mb-4">
+                    <h4 class="brand-text font-weight-bold mb-2"><i class="fa-solid fa-calendar-check me-2"></i> My Bookings</h4>
+                    <p class="text-muted mb-0">Manage all your bookings - pending, in progress, and completed.</p>
+                </div>
+
+                <!-- Status filter tabs -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="status-tab active" data-filter="all" onclick="filterBookings('all', this)">All ({{ bookings|length }})</span>
+                    <span class="status-tab" data-filter="pending" onclick="filterBookings('pending', this)">
+                        <i class="fa-solid fa-clock text-warning me-1"></i>Pending
+                    </span>
+                    <span class="status-tab" data-filter="in-progress" onclick="filterBookings('in-progress', this)">
+                        <i class="fa-solid fa-play text-primary me-1"></i>In Progress
+                    </span>
+                    <span class="status-tab" data-filter="completed" onclick="filterBookings('completed', this)">
+                        <i class="fa-solid fa-check text-success me-1"></i>Completed
+                    </span>
+                </div>
+
+                <div id="bookingsContainer">
+                    {% if bookings %}
+                        {% for booking in bookings %}
+                        <div class="booking-card-item booking-card-wrapper" data-status="{{ booking.job_status }}">
+                            <!-- Booking info row -->
+                            <div class="booking-card-header {{ booking.job_status }}">
+                                <div>
+                                    <strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong>
+                                    <span class="badge 
+                                        {% if booking.job_status == 'pending' %}bg-warning text-dark
+                                        {% elif booking.job_status == 'in-progress' %}bg-primary
+                                        {% elif booking.job_status == 'completed' %}bg-success
+                                        {% else %}bg-secondary{% endif %} ms-2">
+                                        {{ booking.job_status|capitalize }}
+                                    </span>
+                                    <div class="text-muted small mt-1">
+                                        <i class="fa-regular fa-calendar me-1"></i>
+                                        {{ booking.scheduled_date.strftime('%b %d, %Y') if booking.scheduled_date else 'TBD' }}
+                                        &middot; ₦{{ "%.2f"|format(booking.booking_price) }}
+                                        {% if booking.address %}
+                                        &middot; <i class="fa-solid fa-location-dot"></i> {{ booking.address }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <!-- Status update buttons -->
+                                    <form action="/professional/booking/{{ booking.booking_id }}/update-status/" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        {% if booking.job_status == 'pending' %}
+                                            <button type="submit" name="status" value="in-progress" class="btn btn-success btn-sm" onclick="return confirm('Accept this booking?')"><i class="fa-solid fa-check me-1"></i>Accept</button>
+                                        {% elif booking.job_status == 'in-progress' %}
+                                            <button type="submit" name="status" value="completed" class="btn btn-success btn-sm" onclick="return confirm('Mark as completed?')"><i class="fa-solid fa-check-circle me-1"></i>Complete</button>
+                                        {% elif booking.job_status == 'completed' %}
+                                            <button type="submit" name="status" value="pending" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-rotate-left me-1"></i>Reopen</button>
+                                        {% endif %}
+                                    </form>
+                                    <!-- Chat button -->
+                                    <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm">
+                                        <i class="fa-solid fa-comment me-1"></i> Chat
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Booking details (shown when expanded) -->
+                            <div class="booking-body" id="bookingBody_{{ booking.booking_id }}">
+                                <div class="p-3 bg-light">
+                                    <div class="row small">
+                                        <div class="col-md-4"><strong>Service:</strong> 
+                                            {% if booking.professional_service and booking.professional_service.service_category %}
+                                                {{ booking.professional_service.service_category.service_category_name }}
+                                            {% else %}General{% endif %}
+                                        </div>
+                                        <div class="col-md-4"><strong>Price:</strong> ₦{{ "%.2f"|format(booking.booking_price) }}</div>
+                                        <div class="col-md-4"><strong>Address:</strong> {{ booking.address or 'Not provided' }}</div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm">
+                                            <i class="fa-solid fa-comment me-1"></i> Open Full Chat
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="kiraar-card mb-3 p-5 text-center">
+                            <i class="fa-solid fa-calendar-day fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No bookings yet</h5>
+                            <p class="text-muted small">When clients book your services, they'll appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="inner-footer">
+        <div class="container">
+            <p class="mb-0">Copyright &copy; kiraar 2026</p>
+        </div>
+    </footer>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
+
+    <script>
+        // ── CometChat Notification Listener for Professionals ──────────────
+        var cometchatAppId = "{{ cometchat_app_id }}";
+        var cometchatRegion = "{{ cometchat_region }}";
+
+        CometChat.init(cometchatAppId, new CometChat.AppSettingsBuilder()
+            .subscribePresenceForAllUsers().setRegion(cometchatRegion).autoEstablishSocketConnection(true).build()
+        ).then(function() {
+            $.ajax({
+                url: '/cometchat/pro-auth-token/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function(data) {
+                    CometChat.login(data.authToken).then(function() {
+                        console.log('Pro notifications active ✅');
+                        CometChat.addMessageListener('pro_notif_' + Date.now(), new CometChat.MessageListener({
+                            onTextMessageReceived: function(msg) {
+                                if (msg.getSender().getUid().startsWith('user-')) {
+                                    showProNotification(msg);
+                                }
+                            },
+                            onMediaMessageReceived: function(msg) {
+                                if (msg.getSender().getUid().startsWith('user-')) {
+                                    showProNotification(msg);
+                                }
+                            }
+                        }));
+                    }).catch(console.warn);
+                }
+            });
+        });
+
+        function showProNotification(msg) {
+            var bell = document.getElementById('proNotificationBell');
+            var badge = document.getElementById('proUnreadBadge');
+            if (bell) bell.style.display = '';
+            if (badge) {
+                var count = parseInt(badge.textContent || '0');
+                badge.textContent = count + 1;
+                badge.style.display = '';
+            }
+            if ('Notification' in window && Notification.permission === 'granted') {
+                var sender = msg.getSender().getName() || 'Client';
+                new Notification(sender, { body: msg.getText ? msg.getText() : 'Sent you a message', icon: '/static/images/logo4.png' });
+            }
+        }
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // ── Toggle booking body (expand/collapse) ─────────────────────────
+        function toggleBookingBody(bookingId) {
+            var body = document.getElementById('bookingBody_' + bookingId);
+            if (body.style.display === 'block') {
+                body.style.display = 'none';
+                return;
+            }
+            document.querySelectorAll('.booking-body').forEach(function(el) { el.style.display = 'none'; });
+            body.style.display = 'block';
+        }
+
+        // ── Filter bookings by status ─────────────────────────────────────
+        function filterBookings(status, btn) {
+            document.querySelectorAll('.status-tab').forEach(function(t) { t.classList.remove('active'); });
+            btn.classList.add('active');
+            document.querySelectorAll('.booking-card-wrapper').forEach(function(card) {
+                if (status === 'all' || card.getAttribute('data-status') === status) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-dismiss flash alerts
+        setTimeout(function() {
+            document.querySelectorAll('.kiraar-flash').forEach(function(el) {
+                el.classList.remove('show');
+                el.classList.add('fade');
+                setTimeout(function() { el.remove(); }, 500);
+            });
+        }, 4000);
+    </script>
+</body>
+</html>

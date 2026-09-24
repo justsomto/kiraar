@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Kiraar</title>
+    <!-- Simple Bootstrap 5 & FontAwesome -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="admin-body">
+
+    <!-- ========================================== -->
+    <!-- SIDEBAR NAVIGATION                         -->
+    <!-- ========================================== -->
+    <div class="sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="/static/images/logo4.png" alt="Kiraar">
+            <div class="mt-2 fw-bold small">Admin Panel</div>
+        </div>
+        <div class="sidebar-nav">
+            <!-- 1. Overview -->
+            <a href="#dashboard" class="active" onclick="scrollToSection('dashboard')">
+                <i class="fa-solid fa-chart-pie"></i> Overview
+            </a>
+
+            <!-- Financials right below Overview -->
+            <a href="/admin/financials/">
+                <i class="fa-solid fa-money-bill-wave"></i> Financials
+            </a>
+
+            <!-- 2. Analytics Graph & Search -->
+            <a href="#analytics-section" onclick="scrollToSection('analytics-section')">
+                <i class="fa-solid fa-chart-line"></i> Bookings Graph
+            </a>
+            <a href="#search-section" onclick="scrollToSection('search-section')">
+                <i class="fa-solid fa-search"></i> Search Database
+            </a>
+
+            <!-- 3. Action Items -->
+            <a href="#verifications" onclick="scrollToSection('verifications')">
+                <i class="fa-solid fa-user-check"></i> Verifications
+                {% if pending_verifications > 0 %}
+                <span class="badge bg-warning text-dark rounded-pill ms-1">{{ pending_verifications }}</span>
+                {% endif %}
+            </a>
+            <a href="#complaints-section" onclick="scrollToSection('complaints-section')">
+                <i class="fa-solid fa-flag"></i> Complaints
+                {% if open_complaints_count > 0 %}
+                <span class="badge bg-danger rounded-pill ms-1">{{ open_complaints_count }}</span>
+                {% endif %}
+            </a>
+
+            <!-- 4. People Management -->
+            <a href="#all-professionals-section" onclick="scrollToSection('all-professionals-section')">
+                <i class="fa-solid fa-briefcase"></i> Professionals
+            </a>
+            <a href="#users-section" onclick="scrollToSection('users-section')">
+                <i class="fa-solid fa-users"></i> Clients
+            </a>
+
+            <!-- 5. Operations & Portfolio -->
+            <a href="#recent-bookings" onclick="scrollToSection('recent-bookings')">
+                <i class="fa-solid fa-calendar-check"></i> Recent Bookings
+            </a>
+            <a href="#products-section" onclick="scrollToSection('products-section')">
+                <i class="fa-solid fa-box"></i> Products & Jobs
+            </a>
+
+            <!-- 6. Categories (At bottom of nav) -->
+            <a href="#categories" onclick="scrollToSection('categories')">
+                <i class="fa-solid fa-tags"></i> Service Categories
+            </a>
+
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 8px 24px;">
+            <a href="/" target="_blank">
+                <i class="fa-solid fa-globe"></i> View Live Site
+            </a>
+            <a href="/admin/logout/">
+                <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN DASHBOARD CONTENT                     -->
+    <!-- ========================================== -->
+    <div class="main-content">
+
+        <!-- Top Header Bar -->
+        <div class="top-bar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2 class="mb-0"><i class="fa-solid fa-gauge-high me-2 kiraar-brand-text"></i>Admin Dashboard</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small"><i class="fa-regular fa-user me-1"></i> {{ session.get('admin_email', 'Admin') }}</span>
+                <a href="/admin/logout/" class="btn btn-outline-danger btn-sm rounded-pill">
+                    <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash Messages (Success / Error alerts) -->
+        <div id="flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-{{ 'circle-exclamation' if category == 'error' else 'circle-check' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 1. OVERVIEW & ANALYTICS NUMBERS            -->
+        <!-- ========================================== -->
+        <div class="row g-3 mb-4" id="dashboard">
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon kiraar-stat-purple">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number">{{ total_users }}</div>
+                        <div class="stat-label">Total Clients</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon kiraar-stat-pink">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number">{{ total_professionals }}</div>
+                        <div class="stat-label">Professionals</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon kiraar-stat-blue">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number">{{ total_bookings }}</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon kiraar-stat-green">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number">{{ total_service_categories }}</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-secondary text-white">
+                        <i class="fa-solid fa-images"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number">{{ total_products }}</div>
+                        <div class="stat-label">Showcase Items</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Financials & Status Summary -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <p class="text-muted small mb-1">
+                    <i class="fa-solid fa-chart-pie me-1"></i><strong>Platform Financials & Status Summary</strong>
+                </p>
+            </div>
+            <div class="col-6 col-md">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-warning">{{ pending_bookings }}</div>
+                    <div class="stat-label">Waiting to Start</div>
+                    <div class="text-muted" style="font-size:0.7rem;">(Client booked)</div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-primary">{{ in_progress_bookings }}</div>
+                    <div class="stat-label">Currently Ongoing</div>
+                    <div class="text-muted" style="font-size:0.7rem;">(Pro working)</div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-success">{{ completed_bookings }}</div>
+                    <div class="stat-label">Finished Jobs</div>
+                    <div class="text-muted" style="font-size:0.7rem;">(Completed)</div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="stat-card text-center">
+                    <div class="stat-number kiraar-brand-text">₦{{ "{:,.0f}".format(total_revenue) }}</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="text-muted" style="font-size:0.7rem;">(From paid jobs)</div>
+                </div>
+            </div>
+            <div class="col-6 col-md">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-danger">₦{{ "{:,.0f}".format(total_refunded_amount) }}</div>
+                    <div class="stat-label">Total Refunded</div>
+                    <div class="text-muted" style="font-size:0.7rem;">({{ total_refunded_count }} refunded)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. GRAPH (Directly below Analytics)        -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="analytics-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-chart-line me-2 kiraar-brand-text"></i> Bookings Status Graph</span>
+                <span class="badge bg-light text-dark">{{ total_bookings }} total bookings</span>
+            </div>
+            <div class="card-body">
+                <canvas id="bookingsChart" height="75"></canvas>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 3. SEARCH DATABASE (Directly below Graph)  -->
+        <!-- ========================================== -->
+        <div class="search-wrapper mb-4" id="search-section">
+            <h5 class="fw-bold mb-3 kiraar-text-admin-dark">
+                <i class="fa-solid fa-search me-2 kiraar-brand-text"></i>Search Kiraar Database
+            </h5>
+            <div class="search-input-group">
+                <input type="text" id="searchInput" placeholder="Search by name, email, phone, business..." onkeydown="if(event.key==='Enter') performSearch()">
+                <select id="searchType">
+                    <option value="all">All Types</option>
+                    <option value="users">Clients</option>
+                    <option value="professionals">Professionals</option>
+                    <option value="bookings">Bookings</option>
+                </select>
+                <button onclick="performSearch()"><i class="fa-solid fa-search me-1"></i> Search</button>
+            </div>
+            <div class="search-results mt-3" id="searchResults">
+                <div class="search-empty text-center py-3 text-muted">
+                    <i class="fa-solid fa-magnifying-glass fa-2x mb-2"></i>
+                    <p class="mb-0">Enter a keyword above to find clients, professionals, or bookings.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 4. VERIFICATIONS (Pending Approvals)       -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="verifications">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-user-check me-2 text-warning"></i> Professional Verifications</span>
+                <span class="badge {% if pending_verifications > 0 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                    {{ pending_verifications }} pending approval
+                </span>
+            </div>
+            <div class="card-body p-0">
+                {% if unverified_professionals %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Business</th>
+                                    <th>Email</th>
+                                    <th>Date Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prof in unverified_professionals %}
+                                <tr>
+                                    <td class="fw-bold">#{{ prof.professional_id }}</td>
+                                    <td>{{ prof.first_name }} {{ prof.last_name }}</td>
+                                    <td>{{ prof.business_name or 'N/A' }}</td>
+                                    <td class="small">{{ prof.email }}</td>
+                                    <td class="small">{{ prof.date_joined.strftime('%b %d, %Y') if prof.date_joined else 'N/A' }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success rounded-pill" onclick="verifyProfessional({{ prof.professional_id }})">
+                                            <i class="fa-solid fa-check me-1"></i> Verify Professional
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted small">
+                        <i class="fa-solid fa-check-circle fa-2x mb-2 text-success"></i>
+                        <p class="mb-0">All professionals are verified! No pending requests.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 5. COMPLAINTS                              -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="complaints-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-flag me-2 text-danger"></i> Customer Complaints</span>
+                <span class="badge {% if open_complaints_count > 0 %}bg-danger{% else %}bg-secondary{% endif %}">
+                    {{ open_complaints_count }} open
+                </span>
+            </div>
+            <div class="card-body p-0">
+                {% if all_complaints %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Client</th>
+                                <th>Professional</th>
+                                <th>Booking</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for complaint in all_complaints %}
+                            <tr id="complaint-row-{{ complaint.complaint_id }}">
+                                <td class="fw-bold">#{{ complaint.complaint_id }}</td>
+                                <td>{{ complaint.user.first_name }} {{ complaint.user.last_name }}</td>
+                                <td>{{ complaint.professional.first_name }} {{ complaint.professional.last_name }}</td>
+                                <td>#{{ complaint.booking_id }}</td>
+                                <td>{{ complaint.subject }}</td>
+                                <td style="max-width: 240px; white-space: normal;">{{ complaint.message }}</td>
+                                <td>
+                                    <span class="badge rounded-pill {% if complaint.status == 'open' %}bg-warning text-dark{% elif complaint.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}" id="complaint-status-{{ complaint.complaint_id }}">
+                                        {{ complaint.status }}
+                                    </span>
+                                </td>
+                                <td class="small">{{ complaint.created_at.strftime('%b %d, %Y') if complaint.created_at else 'N/A' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="viewComplaintDetails({{ complaint.complaint_id }})">
+                                        <i class="fa-solid fa-magnifying-glass me-1"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-muted text-center small">
+                    <i class="fa-solid fa-circle-check fa-2x text-success mb-2"></i>
+                    <p class="mb-0">No complaints have been filed yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 6. MANAGE PROFESSIONALS                    -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="all-professionals-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-briefcase me-2"></i> Manage Professionals</span>
+                <span class="badge bg-light text-dark">{{ all_professionals|length }} total</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Business Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in all_professionals %}
+                            <tr>
+                                <td class="fw-bold">#{{ p.professional_id }}</td>
+                                <td>{{ p.first_name }} {{ p.last_name }}</td>
+                                <td>{{ p.business_name or 'N/A' }}</td>
+                                <td>{{ p.email }}</td>
+                                <td>
+                                    {% if p.account_status == 'verified' %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Verified</span>
+                                    {% elif p.account_status == 'suspended' %}
+                                        <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Suspended</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark"><i class="fa-solid fa-clock me-1"></i>{{ p.account_status or 'Pending' }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <!-- Edit Profile Modal Button -->
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="editProfessional({{ p.professional_id }}, '{{ p.first_name|replace("'", "\\'") }}', '{{ p.last_name|replace("'", "\\'") }}', '{{ p.business_name|replace("'", "\\'") if p.business_name else '' }}', '{{ p.email }}', '{{ p.phone_number or '' }}', '{{ p.account_status }}')">
+                                        <i class="fa-solid fa-edit me-1"></i> Edit
+                                    </button>
+
+                                    <!-- Clear Suspend / Unsuspend Button: Red when active, Green when suspended -->
+                                    {% if p.account_status == 'suspended' %}
+                                    <button class="btn btn-sm btn-outline-success rounded-pill" id="suspendBtn-{{ p.professional_id }}" data-status="{{ p.account_status }}" onclick="toggleProfessionalStatus({{ p.professional_id }}, this.dataset.status, this)">
+                                        <i class="fa-solid fa-user-check me-1"></i> Unsuspend
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill" id="suspendBtn-{{ p.professional_id }}" data-status="{{ p.account_status }}" onclick="toggleProfessionalStatus({{ p.professional_id }}, this.dataset.status, this)">
+                                        <i class="fa-solid fa-user-slash me-1"></i> Suspend
+                                    </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 7. MANAGE CLIENTS (USERS)                  -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="users-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-users me-2"></i> Manage Clients (Users)</span>
+                <span class="badge bg-light text-dark">{{ all_users|length }} total</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in all_users %}
+                            <tr>
+                                <td class="fw-bold">#{{ u.user_id }}</td>
+                                <td>{{ u.first_name }} {{ u.last_name }}</td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.phone_number or 'N/A' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="editUser({{ u.user_id }}, '{{ u.first_name|replace("'", "\\'") }}', '{{ u.last_name|replace("'", "\\'") }}', '{{ u.email }}', '{{ u.phone_number or '' }}')">
+                                        <i class="fa-solid fa-edit me-1"></i> Edit
+                                    </button>
+                                    <!-- Delete Client form with CSRF token included -->
+                                    <form action="/admin/delete-user/{{ u.user_id }}/" method="POST" style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Are you sure you want to delete this client permanently?');">
+                                            <i class="fa-solid fa-trash me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 8. RECENT BOOKINGS                         -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="recent-bookings">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-calendar-check me-2"></i> Recent Bookings (Last 10)</span>
+                <span class="badge bg-light text-dark">{{ total_bookings }} total bookings</span>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>#ID</th>
+                                    <th>Client</th>
+                                    <th>Professional</th>
+                                    <th>Price</th>
+                                    <th>Job Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Scheduled Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in recent_bookings %}
+                                <tr>
+                                    <td class="fw-bold">#{{ booking.booking_id }}</td>
+                                    <td class="small">{{ booking.user.first_name }} {{ booking.user.last_name }}</td>
+                                    <td class="small">{{ booking.professional.first_name }} {{ booking.professional.last_name }}</td>
+                                    <td class="fw-semibold">₦{{ "%.2f"|format(booking.booking_price) }}</td>
+                                    <td><span class="badge-status badge-{{ booking.job_status }}">{{ booking.job_status }}</span></td>
+                                    <td><span class="badge-status badge-{{ booking.payment_status }}">{{ booking.payment_status }}</span></td>
+                                    <td class="small">{{ booking.scheduled_date.strftime('%b %d, %Y') if booking.scheduled_date else 'TBD' }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteBooking({{ booking.booking_id }})">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted small">
+                        <i class="fa-solid fa-calendar-xmark fa-2x mb-2"></i>
+                        <p class="mb-0">No bookings made yet on Kiraar.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 9. PRODUCTS & SHOWCASE JOBS                -->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="products-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-box me-2"></i> Products &amp; Showcase Jobs ({{ total_products }})</span>
+                <span class="text-muted small">Items professionals uploaded to showcase work</span>
+            </div>
+            <div class="card-body p-0">
+                {% if all_products %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Item Name</th>
+                                    <th>Description</th>
+                                    <th>Uploaded By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in all_products %}
+                                <tr>
+                                    <td class="fw-bold">#{{ product.product_id }}</td>
+                                    <td>
+                                        {% if product.product_image %}
+                                            <img src="/static/uploads/{{ product.product_image }}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;" alt="Product">
+                                        {% else %}
+                                            <span class="text-muted small">No image</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-semibold">{{ product.product_name }}</td>
+                                    <td class="small text-muted">{{ (product.description or '')[:60] }}{% if product.description and product.description|length > 60 %}...{% endif %}</td>
+                                    <td class="small">
+                                        {% if product.professional %}
+                                            {{ product.professional.first_name }} {{ product.professional.last_name }}
+                                            <br><span class="text-muted">{{ product.professional.business_name or '' }}</span>
+                                        {% else %}
+                                            <span class="text-muted">Unknown</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form action="/admin/delete_product/{{ product.product_id }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this item permanently?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                                                <i class="fa-solid fa-trash me-1"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted small">
+                        <i class="fa-solid fa-box-open fa-2x mb-2"></i>
+                        <p class="mb-0">No showcase products uploaded yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 10. SERVICE CATEGORIES (At the very bottom)-->
+        <!-- ========================================== -->
+        <div class="card-section mb-4" id="categories">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-tags me-2"></i> Service Categories ({{ service_categories|length }})</span>
+                <button class="btn btn-sm btn-light rounded-pill" onclick="showAddCategoryModal()">
+                    <i class="fa-solid fa-plus me-1"></i> Add Category
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    {% for cat in service_categories %}
+                    <div class="col-6 col-md-4 col-lg-3" id="cat-{{ cat.service_category_id }}">
+                        <div class="d-flex align-items-center justify-content-between border rounded-pill px-3 py-2 kiraar-bg-soft">
+                            <span class="small fw-semibold">{{ cat.service_category_name }}</span>
+                            <button class="btn btn-sm text-danger p-0 ms-2 js-delete-category" data-category-id="{{ cat.service_category_id }}" data-category-name="{{ cat.service_category_name }}">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODALS SECTION                             -->
+    <!-- ========================================== -->
+
+    <!-- Complaint Details Modal -->
+    <div class="modal fade" id="complaintDetailsModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold brand-text"><i class="fa-solid fa-flag me-2"></i>Complaint Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="complaintDetailsLoading" class="text-center py-4">
+                <i class="fa-solid fa-spinner fa-spin fa-2x kiraar-brand-text"></i>
+            </div>
+            <div id="complaintDetailsContent" class="d-none">
+                <input type="hidden" id="cdComplaintId">
+                <input type="hidden" id="cdProfessionalId">
+                <input type="hidden" id="cdProfessionalStatus">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <div class="border rounded-3 p-3 h-100">
+                            <div class="text-muted small mb-1">Complaint</div>
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <strong id="cdSubject"></strong>
+                                <span class="badge rounded-pill" id="cdStatusBadge"></span>
+                            </div>
+                            <p class="mb-1 small" id="cdMessage"></p>
+                            <div class="text-muted small">Filed: <span id="cdCreatedAt"></span></div>
+                            <div class="text-muted small">Client: <span id="cdClientName"></span> (<span id="cdClientEmail"></span>)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded-3 p-3 h-100">
+                            <div class="text-muted small mb-1">Related Booking #<span id="cdBookingId"></span></div>
+                            <div class="small mb-1"><i class="fa-solid fa-calendar me-1 text-muted"></i> <span id="cdScheduledDate"></span></div>
+                            <div class="small mb-1"><i class="fa-solid fa-location-dot me-1 text-muted"></i> <span id="cdAddress"></span></div>
+                            <div class="small mb-1">₦<span id="cdPrice"></span></div>
+                            <div class="small mb-1">Job status: <span class="badge bg-light text-dark" id="cdJobStatus"></span></div>
+                            <div class="small">Payment: <span class="badge bg-light text-dark" id="cdPaymentStatus"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <div class="text-muted small">Professional</div>
+                            <strong id="cdProfessionalName"></strong> <span class="text-muted" id="cdBusinessName"></span>
+                        </div>
+                        <div class="text-end small text-muted">
+                            <div>Joined: <span id="cdDateJoined"></span></div>
+                            <div>Rating: <span id="cdRating"></span> <i class="fa-solid fa-star text-warning"></i></div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3 small">
+                        <span>Total complaints: <strong id="cdTotalComplaints"></strong></span>
+                        <span class="text-warning">Open: <strong id="cdOpenCount"></strong></span>
+                        <span class="text-success">Resolved: <strong id="cdResolvedCount"></strong></span>
+                    </div>
+                </div>
+
+                <div id="cdOtherComplaintsWrapper">
+                    <div class="text-muted small mb-2 fw-semibold">Other complaints against this professional</div>
+                    <div id="cdOtherComplaintsList"></div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0 d-none" id="complaintDetailsFooter">
+            <button type="button" class="btn btn-outline-warning rounded-pill" id="cdReopenBtn" onclick="updateComplaintStatusFromModal('open')">Reopen</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill" id="cdDismissBtn" onclick="updateComplaintStatusFromModal('dismissed')">Dismiss</button>
+            <button type="button" class="btn btn-outline-success rounded-pill" id="cdResolveBtn" onclick="updateComplaintStatusFromModal('resolved')">
+                <i class="fa-solid fa-check me-1"></i>Resolve
+            </button>
+            <button type="button" class="btn btn-outline-danger rounded-pill" id="cdSuspendBtn" onclick="toggleProfessionalStatusFromModal(this)">
+                <i class="fa-solid fa-user-slash me-1"></i><span id="cdSuspendBtnLabel">Suspend Professional</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Edit Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editUserForm" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-body">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">First Name</label>
+                            <input type="text" name="first_name" id="eu_first" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Last Name</label>
+                            <input type="text" name="last_name" id="eu_last" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" name="email" id="eu_email" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Phone</label>
+                            <input type="text" name="phone_number" id="eu_phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn kiraar-brand-btn rounded-pill">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Professional Modal -->
+    <div class="modal fade" id="editProfessionalModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Edit Professional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editProfessionalForm" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label class="form-label small fw-semibold">First Name</label>
+                                <input type="text" name="first_name" id="ep_first" class="form-control" required>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label class="form-label small fw-semibold">Last Name</label>
+                                <input type="text" name="last_name" id="ep_last" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Business Name</label>
+                            <input type="text" name="business_name" id="ep_business" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" name="email" id="ep_email" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label class="form-label small fw-semibold">Phone</label>
+                                <input type="text" name="phone_number" id="ep_phone" class="form-control">
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label class="form-label small fw-semibold">Account Status</label>
+                                <select name="account_status" id="ep_status" class="form-select">
+                                    <option value="pending">Pending</option>
+                                    <option value="verified">Verified</option>
+                                    <option value="suspended">Suspended</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn kiraar-brand-btn rounded-pill">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Add Service Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label small fw-semibold">Category Name</label>
+                    <input type="text" id="newCategoryName" class="form-control" placeholder="e.g. Plumbing" onkeydown="if(event.key==='Enter') submitNewCategory()">
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn rounded-pill kiraar-brand-btn" onclick="submitNewCategory()">
+                        <i class="fa-solid fa-plus me-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCRIPTS (jQuery, Bootstrap, SweetAlert, Chart.js) -->
+    <!-- ========================================== -->
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Modal helpers for user and professional edits
+        function editUser(id, first, last, email, phone) {
+            document.getElementById('editUserForm').action = '/admin/edit-user/' + id + '/';
+            document.getElementById('eu_first').value = first;
+            document.getElementById('eu_last').value = last;
+            document.getElementById('eu_email').value = email;
+            document.getElementById('eu_phone').value = phone === 'None' ? '' : phone;
+            new bootstrap.Modal(document.getElementById('editUserModal')).show();
+        }
+
+        function editProfessional(id, first, last, business, email, phone, status) {
+            document.getElementById('editProfessionalForm').action = '/admin/edit-professional/' + id + '/';
+            document.getElementById('ep_first').value = first;
+            document.getElementById('ep_last').value = last;
+            document.getElementById('ep_business').value = business === 'None' ? '' : business;
+            document.getElementById('ep_email').value = email;
+            document.getElementById('ep_phone').value = phone === 'None' ? '' : phone;
+            document.getElementById('ep_status').value = status;
+            new bootstrap.Modal(document.getElementById('editProfessionalModal')).show();
+        }
+
+        // ChartJS for Bookings Overview Graph
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('bookingsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pending', 'In Progress', 'Completed'],
+                    datasets: [{
+                        label: 'Number of Bookings',
+                        data: [{{ pending_bookings }}, {{ in_progress_bookings }}, {{ completed_bookings }}],
+                        backgroundColor: [
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(13, 110, 253, 0.7)',
+                            'rgba(25, 135, 84, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(13, 110, 253, 1)',
+                            'rgba(25, 135, 84, 1)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Smooth scroll to sections from sidebar
+        function scrollToSection(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            var sidebar = document.getElementById('adminSidebar');
+            if (sidebar) sidebar.classList.remove('show');
+        }
+
+        // HTML escaping helper for search results
+        function escapeHtml(value) {
+            var div = document.createElement('div');
+            div.textContent = (value === null || value === undefined) ? '' : String(value);
+            return div.innerHTML;
+        }
+
+        // Search Database Function
+        function performSearch() {
+            var query = document.getElementById('searchInput').value.trim();
+            var type = document.getElementById('searchType').value;
+            var resultsContainer = document.getElementById('searchResults');
+
+            if (!query) {
+                resultsContainer.innerHTML = '<div class="search-empty text-center py-3 text-muted"><i class="fa-solid fa-magnifying-glass fa-2x mb-2"></i><p class="mb-0">Enter a keyword above.</p></div>';
+                return;
+            }
+
+            resultsContainer.innerHTML = '<div class="text-center py-3"><i class="fa-solid fa-spinner fa-spin fa-2x kiraar-brand-text"></i><p class="small text-muted mt-2">Searching...</p></div>';
+
+            $.ajax({
+                url: '/admin/search/',
+                data: { q: query, type: type },
+                success: function(data) {
+                    var html = '';
+                    var total = 0;
+
+                    // Clients
+                    if (data.users && data.users.length > 0) {
+                        total += data.users.length;
+                        html += '<div class="px-3 py-2 bg-light fw-bold small kiraar-brand-text">CLIENTS (' + data.users.length + ')</div>';
+                        data.users.forEach(function(u) {
+                            var initial = escapeHtml((u.name || '').charAt(0).toUpperCase());
+                            html += '<div class="search-result-item p-2 border-bottom d-flex justify-content-between align-items-center" onclick="showUserDetail(' + JSON.stringify(u).replace(/"/g, '&quot;') + ')" style="cursor:pointer;">' +
+                                '<div class="d-flex align-items-center gap-3">' +
+                                '<div class="search-result-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">' + initial + '</div>' +
+                                '<div>' +
+                                '<div class="fw-semibold small">' + escapeHtml(u.name) + '</div>' +
+                                '<div class="text-muted" style="font-size:0.75rem;">' + escapeHtml(u.email) + ' | ' + escapeHtml(u.phone) + ' | ' + escapeHtml(u.bookings_count) + ' booking(s)</div>' +
+                                '</div></div>' +
+                                '<span class="badge bg-secondary">#U' + escapeHtml(u.id) + '</span>' +
+                                '</div>';
+                        });
+                    }
+
+                    // Professionals
+                    if (data.professionals && data.professionals.length > 0) {
+                        total += data.professionals.length;
+                        html += '<div class="px-3 py-2 bg-light fw-bold small kiraar-brand-text">PROFESSIONALS (' + data.professionals.length + ')</div>';
+                        data.professionals.forEach(function(p) {
+                            var statusBadge = p.status === 'verified' ? 'bg-success' :
+                                (p.status === 'suspended' ? 'bg-danger' : 'bg-warning text-dark');
+                            var initial = escapeHtml((p.name || '').charAt(0).toUpperCase());
+                            html += '<div class="search-result-item p-2 border-bottom d-flex justify-content-between align-items-center" onclick="showProfessionalDetail(' + JSON.stringify(p).replace(/"/g, '&quot;') + ')" style="cursor:pointer;">' +
+                                '<div class="d-flex align-items-center gap-3">' +
+                                '<div class="search-result-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">' + initial + '</div>' +
+                                '<div>' +
+                                '<div class="fw-semibold small">' + escapeHtml(p.name) + ' <span class="text-muted">(' + escapeHtml(p.business_name) + ')</span></div>' +
+                                '<div class="text-muted" style="font-size:0.75rem;">' + escapeHtml(p.email) + ' | ' + escapeHtml(p.location) + ' | ⭐' + escapeHtml(p.rating.toFixed(1)) + '</div>' +
+                                '</div></div>' +
+                                '<span class="badge ' + statusBadge + '">' + escapeHtml(p.status) + '</span>' +
+                                '</div>';
+                        });
+                    }
+
+                    // Bookings
+                    if (data.bookings && data.bookings.length > 0) {
+                        total += data.bookings.length;
+                        html += '<div class="px-3 py-2 bg-light fw-bold small kiraar-brand-text">BOOKINGS (' + data.bookings.length + ')</div>';
+                        data.bookings.forEach(function(b) {
+                            html += '<div class="search-result-item p-2 border-bottom d-flex justify-content-between align-items-center">' +
+                                '<div class="d-flex align-items-center gap-3">' +
+                                '<div style="width:36px;height:36px;border-radius:50%;background:#f0e6ec;display:flex;align-items:center;justify-content:center;color:#611f47;font-weight:bold;flex-shrink:0;">#</div>' +
+                                '<div>' +
+                                '<div class="fw-semibold small">' + escapeHtml(b.id) + ' — ' + escapeHtml(b.client_name) + ' × ' + escapeHtml(b.professional_name) + '</div>' +
+                                '<div class="text-muted" style="font-size:0.75rem;">₦' + escapeHtml(b.price.toLocaleString()) + ' | ' + escapeHtml(b.scheduled_date) + '</div>' +
+                                '</div></div>' +
+                                '<div class="d-flex gap-1">' +
+                                '<span class="badge-status badge-' + escapeHtml(b.job_status) + '">' + escapeHtml(b.job_status) + '</span>' +
+                                '<span class="badge-status badge-' + escapeHtml(b.payment_status) + '">' + escapeHtml(b.payment_status) + '</span>' +
+                                '</div>' +
+                                '</div>';
+                        });
+                    }
+
+                    if (total === 0) {
+                        html = '<div class="search-empty text-center py-3 text-muted"><i class="fa-solid fa-circle-exclamation fa-2x mb-2 text-warning"></i><p class="mb-0">No results found for <strong>"' + escapeHtml(query) + '"</strong></p></div>';
+                    }
+
+                    resultsContainer.innerHTML = html;
+                },
+                error: function() {
+                    resultsContainer.innerHTML = '<div class="search-empty text-center py-3 text-danger"><i class="fa-solid fa-triangle-exclamation fa-2x mb-2"></i><p class="mb-0">Search failed. Please try again.</p></div>';
+                }
+            });
+        }
+
+        // Show User Detail Popup
+        function showUserDetail(u) {
+            Swal.fire({
+                title: '<strong>' + escapeHtml(u.name) + '</strong>',
+                icon: 'info',
+                html:
+                    '<div class="text-start small">' +
+                    '<p><i class="fa-solid fa-envelope me-2 text-muted"></i><strong>Email:</strong> ' + escapeHtml(u.email) + '</p>' +
+                    '<p><i class="fa-solid fa-phone me-2 text-muted"></i><strong>Phone:</strong> ' + escapeHtml(u.phone) + '</p>' +
+                    '<p><i class="fa-solid fa-calendar-check me-2 text-muted"></i><strong>Total Bookings Made:</strong> ' + escapeHtml(u.bookings_count) + '</p>' +
+                    '<p><i class="fa-solid fa-id-badge me-2 text-muted"></i><strong>Client ID:</strong> #U' + escapeHtml(u.id) + '</p>' +
+                    '</div>',
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#611f47'
+            });
+        }
+
+        // Show Professional Detail Popup
+        function showProfessionalDetail(p) {
+            var statusColor = p.status === 'verified' ? '#198754' : (p.status === 'suspended' ? '#dc3545' : '#ffc107');
+            Swal.fire({
+                title: '<strong>' + escapeHtml(p.name) + '</strong>',
+                icon: 'info',
+                html:
+                    '<div class="text-start small">' +
+                    '<p><i class="fa-solid fa-briefcase me-2 text-muted"></i><strong>Business:</strong> ' + escapeHtml(p.business_name) + '</p>' +
+                    '<p><i class="fa-solid fa-envelope me-2 text-muted"></i><strong>Email:</strong> ' + escapeHtml(p.email) + '</p>' +
+                    '<p><i class="fa-solid fa-phone me-2 text-muted"></i><strong>Phone:</strong> ' + escapeHtml(p.phone) + '</p>' +
+                    '<p><i class="fa-solid fa-location-dot me-2 text-muted"></i><strong>Location:</strong> ' + escapeHtml(p.location) + '</p>' +
+                    '<p><i class="fa-solid fa-star me-2 text-muted"></i><strong>Rating:</strong> ⭐ ' + escapeHtml(p.rating.toFixed(1)) + ' / 5.0</p>' +
+                    '<p><i class="fa-solid fa-circle-check me-2" style="color:' + statusColor + ';"></i><strong>Status:</strong> <span style="color:' + statusColor + ';font-weight:bold;">' + escapeHtml(p.status.toUpperCase()) + '</span></p>' +
+                    '<p><i class="fa-solid fa-id-badge me-2 text-muted"></i><strong>Professional ID:</strong> #P' + escapeHtml(p.id) + '</p>' +
+                    '</div>',
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#611f47'
+            });
+        }
+
+        // Verify Professional
+        function verifyProfessional(professionalId) {
+            Swal.fire({
+                title: 'Verify Professional?',
+                text: 'This will mark them as a verified expert on the platform.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Verify',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/verify-professional/' + professionalId + '/',
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                        success: function(data) {
+                            if (data.status === 'success') {
+                                Swal.fire('Verified!', data.message, 'success').then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Suspend / Unsuspend Professional
+        function toggleProfessionalStatus(professionalId, currentStatus, btn) {
+            if (btn && btn.disabled) {
+                return;
+            }
+
+            var action = currentStatus === 'suspended' ? 'unsuspend' : 'suspend';
+
+            if (btn) {
+                btn.disabled = true;
+            }
+
+            Swal.fire({
+                title: action === 'suspend' ? 'Suspend Professional Account?' : 'Unsuspend Professional Account?',
+                text: action === 'suspend'
+                    ? 'This blocks them from logging into their professional account or taking jobs. If they have a client account, they can still browse as a client.'
+                    : 'This restores their full professional access and verifies their account.',
+                icon: action === 'suspend' ? 'warning' : 'question',
+                showCancelButton: true,
+                confirmButtonColor: action === 'suspend' ? '#dc3545' : '#198754',
+                confirmButtonText: action === 'suspend' ? '<i class="fa-solid fa-user-slash me-1"></i> Suspend' : '<i class="fa-solid fa-user-check me-1"></i> Unsuspend',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (!result.isConfirmed) {
+                    if (btn) { btn.disabled = false; }
+                    return;
+                }
+
+                $.ajax({
+                    url: '/admin/suspend-professional/' + professionalId + '/',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                    data: { action: action },
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            if (btn) {
+                                btn.dataset.status = data.account_status;
+                            }
+                            Swal.fire('Done', data.message, 'success').then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', data.error || data.message, 'error');
+                            if (btn) { btn.disabled = false; }
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Network error updating professional status.', 'error');
+                        if (btn) { btn.disabled = false; }
+                    }
+                });
+            });
+        }
+
+        // View Complaint Details Modal
+        function viewComplaintDetails(complaintId) {
+            document.getElementById('complaintDetailsContent').classList.add('d-none');
+            document.getElementById('complaintDetailsFooter').classList.add('d-none');
+            document.getElementById('complaintDetailsLoading').classList.remove('d-none');
+
+            var myModal = new bootstrap.Modal(document.getElementById('complaintDetailsModal'));
+            myModal.show();
+
+            $.ajax({
+                url: '/admin/complaint/' + complaintId + '/details/',
+                type: 'GET',
+                success: function(data) {
+                    if (data.status !== 'success') {
+                        Swal.fire('Error', data.message || 'Failed to load complaint.', 'error');
+                        return;
+                    }
+                    populateComplaintModal(data);
+                },
+                error: function() {
+                    Swal.fire('Error', 'Network error loading complaint details.', 'error');
+                }
+            });
+        }
+
+        function populateComplaintModal(data) {
+            document.getElementById('cdComplaintId').value = data.complaint.complaint_id;
+            document.getElementById('cdProfessionalId').value = data.professional.professional_id;
+            document.getElementById('cdProfessionalStatus').value = data.professional.account_status;
+
+            document.getElementById('cdSubject').textContent = data.complaint.subject;
+            document.getElementById('cdMessage').textContent = data.complaint.message;
+            document.getElementById('cdCreatedAt').textContent = data.complaint.created_at || 'N/A';
+            document.getElementById('cdClientName').textContent = data.client.name;
+            document.getElementById('cdClientEmail').textContent = data.client.email;
+
+            var statusBadge = document.getElementById('cdStatusBadge');
+            statusBadge.textContent = data.complaint.status;
+            statusBadge.className = 'badge rounded-pill ' + (
+                data.complaint.status === 'open' ? 'bg-warning text-dark' :
+                data.complaint.status === 'resolved' ? 'bg-success' : 'bg-secondary'
+            );
+
+            document.getElementById('cdBookingId').textContent = data.booking.booking_id;
+            document.getElementById('cdScheduledDate').textContent = data.booking.scheduled_date;
+            document.getElementById('cdAddress').textContent = data.booking.address;
+            document.getElementById('cdPrice').textContent = data.booking.booking_price.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('cdJobStatus').textContent = data.booking.job_status;
+            document.getElementById('cdPaymentStatus').textContent = data.booking.payment_status;
+
+            document.getElementById('cdProfessionalName').textContent = data.professional.name;
+            document.getElementById('cdBusinessName').textContent = data.professional.business_name ? '(' + data.professional.business_name + ')' : '';
+            document.getElementById('cdDateJoined').textContent = data.professional.date_joined;
+            document.getElementById('cdRating').textContent = data.professional.average_rating.toFixed(1);
+
+            document.getElementById('cdTotalComplaints').textContent = data.track_record.total_complaints;
+            document.getElementById('cdOpenCount').textContent = data.track_record.open_count;
+            document.getElementById('cdResolvedCount').textContent = data.track_record.resolved_count;
+
+            var otherListEl = document.getElementById('cdOtherComplaintsList');
+            var wrapperEl = document.getElementById('cdOtherComplaintsWrapper');
+            if (data.other_complaints.length === 0) {
+                wrapperEl.classList.add('d-none');
+            } else {
+                wrapperEl.classList.remove('d-none');
+                otherListEl.innerHTML = data.other_complaints.map(function(c) {
+                    var badgeClass = c.status === 'open' ? 'bg-warning text-dark' : (c.status === 'resolved' ? 'bg-success' : 'bg-secondary');
+                    return '<div class="border-start border-3 ps-2 mb-2">' +
+                        '<div class="d-flex justify-content-between"><strong class="small">' + escapeHtml(c.subject) + '</strong>' +
+                        '<span class="badge rounded-pill ' + badgeClass + '">' + escapeHtml(c.status) + '</span></div>' +
+                        '<div class="small text-muted">' + escapeHtml(c.created_at || '') + '</div>' +
+                        '<div class="small">' + escapeHtml(c.message) + '</div>' +
+                        '</div>';
+                }).join('');
+            }
+
+            var isOpen = data.complaint.status === 'open';
+            document.getElementById('cdResolveBtn').classList.toggle('d-none', !isOpen);
+            document.getElementById('cdDismissBtn').classList.toggle('d-none', !isOpen);
+            document.getElementById('cdReopenBtn').classList.toggle('d-none', isOpen);
+
+            var isSuspended = data.professional.account_status === 'suspended';
+            var suspendBtn = document.getElementById('cdSuspendBtn');
+            if (isSuspended) {
+                suspendBtn.className = 'btn btn-outline-success rounded-pill';
+                suspendBtn.innerHTML = '<i class="fa-solid fa-user-check me-1"></i><span id="cdSuspendBtnLabel">Unsuspend Professional</span>';
+            } else {
+                suspendBtn.className = 'btn btn-outline-danger rounded-pill';
+                suspendBtn.innerHTML = '<i class="fa-solid fa-user-slash me-1"></i><span id="cdSuspendBtnLabel">Suspend Professional</span>';
+            }
+
+            document.getElementById('complaintDetailsLoading').classList.add('d-none');
+            document.getElementById('complaintDetailsContent').classList.remove('d-none');
+            document.getElementById('complaintDetailsFooter').classList.remove('d-none');
+        }
+
+        function updateComplaintStatusFromModal(newStatus) {
+            var complaintId = document.getElementById('cdComplaintId').value;
+            var label = newStatus === 'open' ? 'reopen' : newStatus;
+            Swal.fire({
+                title: 'Mark complaint as ' + label + '?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, ' + label + ' it',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (!result.isConfirmed) return;
+                $.ajax({
+                    url: '/admin/complaint/' + complaintId + '/update-status/',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                    data: { status: newStatus },
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            Swal.fire('Done', data.message, 'success').then(function() { location.reload(); });
+                        } else {
+                            Swal.fire('Error', data.message || 'Failed to update complaint.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Network error updating complaint.', 'error');
+                    }
+                });
+            });
+        }
+
+        function toggleProfessionalStatusFromModal(btn) {
+            var professionalId = document.getElementById('cdProfessionalId').value;
+            var currentStatus = document.getElementById('cdProfessionalStatus').value;
+            toggleProfessionalStatus(professionalId, currentStatus, btn);
+        }
+
+        // Delete Booking
+        function deleteBooking(bookingId) {
+            Swal.fire({
+                title: 'Delete Booking #' + bookingId + '?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: '<i class="fa-solid fa-trash me-1"></i> Delete',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/delete-booking/' + bookingId + '/',
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                        success: function(data) {
+                            if (data.status === 'success') {
+                                Swal.fire('Deleted!', data.message, 'success').then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Add Category
+        function showAddCategoryModal() {
+            var modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            modal.show();
+            document.getElementById('newCategoryName').focus();
+        }
+
+        function submitNewCategory() {
+            var name = document.getElementById('newCategoryName').value.trim();
+            if (!name) {
+                Swal.fire('Error', 'Please enter a category name.', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '/admin/add-category/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                data: { name: name },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
+                        Swal.fire('Added!', data.message, 'success').then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.error, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var err = xhr.responseJSON ? xhr.responseJSON.error : 'Failed to add category.';
+                    Swal.fire('Error', err, 'error');
+                }
+            });
+        }
+
+        // Delete Category
+        function deleteCategory(categoryId, categoryName) {
+            Swal.fire({
+                title: 'Delete "' + categoryName + '"?',
+                text: 'This will remove the category and all associated services.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: '<i class="fa-solid fa-trash me-1"></i> Delete',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/delete-category/' + categoryId + '/',
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                        success: function(data) {
+                            if (data.status === 'success') {
+                                Swal.fire('Deleted!', data.message, 'success').then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', data.error, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.js-delete-category');
+            if (btn) {
+                deleteCategory(btn.getAttribute('data-category-id'), btn.getAttribute('data-category-name'));
+            }
+        });
+
+        // Auto-fade flash messages after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow', function() { $(this).remove(); });
+        }, 5000);
+    </script>
+</body>
+</html>

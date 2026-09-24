@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+    .wrap { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .hdr { background: linear-gradient(135deg, #611f47 0%, #8a2c62 100%); padding: 32px 24px; text-align: center; }
+    .hdr h1 { color: #ffffff; margin: 0; font-size: 22px; }
+    .hdr p { color: #f0d6e8; margin: 6px 0 0; font-size: 14px; }
+    .body { padding: 36px 30px; color: #333333; line-height: 1.7; }
+    .body h2 { color: #611f47; margin-top: 0; font-size: 20px; }
+    .info-card { background-color: #fdf8fb; border: 1px solid #f2e2ed; border-radius: 8px; padding: 18px; margin: 20px 0; }
+    .info-row { padding: 8px 0; border-bottom: 1px solid #f0e0ec; display: flex; justify-content: space-between; font-size: 14px; }
+    .info-row:last-child { border-bottom: none; }
+    .label { font-weight: 700; color: #611f47; }
+    .value { color: #444444; text-align: right; }
+    .price-value { font-weight: bold; color: #28a745; font-size: 16px; }
+    .note { background-color: #fdf4f9; border-left: 4px solid #611f47; padding: 14px 18px; border-radius: 4px; margin: 22px 0; font-size: 13.5px; color: #444; }
+    .btn-wrap { text-align: center; margin: 28px 0; }
+    .btn { background-color: #611f47; color: #ffffff !important; padding: 13px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px; }
+    .foot { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eee; }
+    .foot a { color: #611f47; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <h1>✅ Booking Request Placed</h1>
+      <p>Booking #{{ booking_id }}</p>
+    </div>
+    <div class="body">
+      <h2>Hello {{ client_name }},</h2>
+      <p>Your booking request has been sent successfully. Here is a summary of your order:</p>
+
+      <div class="info-card">
+        <div class="info-row"><span class="label">Professional:</span><span class="value">{{ pro_name }} ({{ business_name }})</span></div>
+        <div class="info-row"><span class="label">Service:</span><span class="value">{{ service_name }}</span></div>
+        <div class="info-row"><span class="label">Scheduled Date:</span><span class="value">{{ scheduled_date }}</span></div>
+        <div class="info-row"><span class="label">Address / Notes:</span><span class="value">{{ address or 'To be confirmed' }}</span></div>
+        <div class="info-row"><span class="label">Estimated Price:</span><span class="value price-value">₦{{ "{:,.2f}".format(booking_price) }}</span></div>
+      </div>
+
+      <div class="note">
+        🛡️ <strong>Kiraar Escrow Protection:</strong> When you pay, your money is securely held by Kiraar Escrow and is only released after you confirm the job is satisfactorily completed.
+      </div>
+
+      <div class="btn-wrap">
+        <a href="http://127.0.0.1:5057/client/bookings/" class="btn">Track My Booking</a>
+      </div>
+
+      <p style="color: #666; font-size: 13px;">If you have any questions or need to reschedule, you can chat with {{ pro_name }} directly from your bookings dashboard.</p>
+    </div>
+    <div class="foot">
+      &copy; 2026 Kiraar Platform. All rights reserved.<br>
+      <a href="http://127.0.0.1:5057/terms/">Terms of Service</a> &bull; <a href="http://127.0.0.1:5057/escrow-policy/">Escrow & Refund Policy</a>
+    </div>
+  </div>
+</body>
+</html>

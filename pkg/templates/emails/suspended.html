@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%); padding: 30px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 28px; letter-spacing: 1px; }
+        .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+        .content h2 { color: #dc3545; margin-top: 0; }
+        .btn-box { text-align: center; margin: 30px 0; }
+        .btn { background-color: #611f47; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; }
+        .badge { background-color: #f8d7da; color: #842029; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Account Suspended ⚠️</h1>
+        </div>
+        <div class="content">
+            <h2>Hi {{ first_name }},</h2>
+            <p>Your professional account on Kiraar has been <span class="badge">Suspended</span> by our administration team.</p>
+            <p>While your account is suspended, you will not be able to log in, accept new bookings, or receive payments.</p>
+            <p>This is often related to a complaint or an issue with a recent booking. If you believe this was done in error, or you'd like more information, please reply to this email and our team will get back to you.</p>
+            <div class="btn-box">
+                <a href="http://127.0.0.1:5057/contact/" class="btn">Contact Support</a>
+            </div>
+            <p>Best regards,<br><strong>The Kiraar Team</strong></p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Kiraar Platform. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿# ==========================================================================
+#  .gitignore for Kiraar - Flask Application
+#  Prevents sensitive files and unnecessary clutter from being uploaded
+#  to GitHub, which is public.
+# ==========================================================================
+
+# --- SECRET ENVIRONMENT VARIABLES (NEVER commit this!) ---
+.env
+*.env
+
+# --- Python Virtual Environment (very large, don't commit) ---
+vkiraar/
+venv/
+env/
+.venv/
+
+# --- Python Cache Files ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# --- Database Files (local only) ---
+*.db
+*.sqlite3
+*.sqlite
+
+# --- Flask Migrations (optional: include if you want DB history) ---
+# migrations/
+
+# --- IDE / Editor Files ---
+.vscode/
+.idea/
+*.suo
+*.user
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Upload folders (user uploaded files, don't commit) ---
+pkg/static/uploads/
+
+# --- Build / Distribution ---
+dist/
+build/
+*.egg-info/

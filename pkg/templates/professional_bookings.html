@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container py-2 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" style="height:36px;"></a>
+            <div>
+                <a href="/professional/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
+                </a>
+                <a href="/find-jobs/" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-briefcase me-1"></i> Dashboard
+                </a>
+                <a href="/logout/" class="btn btn-outline-danger btn-sm rounded-pill">
+                    <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="booking-card">
+                    <div class="booking-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-calendar-check me-2"></i> My Bookings</h4>
+                        <span class="badge bg-light text-dark">{{ bookings|length }} booking(s)</span>
+                    </div>
+
+{% if bookings %}
+                        {% for booking in bookings %}
+                        <div class="booking-item" id="pro-booking-item-{{ booking.booking_id }}">
+                            <!-- Client price change hint (subtle inline) -->
+                            <div id="client-price-alert-{{ booking.booking_id }}" class="d-none mt-1 mb-2" style="font-size:0.8rem;">
+                                <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i><strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong> has changed the price</small>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-md-5">
+                                    <h6 class="fw-bold mb-1">
+                                        <i class="fa-solid fa-user me-1 text-muted"></i>
+                                        {{ booking.user.first_name }} {{ booking.user.last_name }}
+                                    </h6>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fa-solid fa-calendar me-1"></i>
+                                        {{ booking.scheduled_date.strftime('%A, %b %d, %Y') if booking.scheduled_date else 'Date TBD' }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="status-badge status-{{ booking.job_status }}">
+                                        {{ booking.job_status|capitalize }}
+                                    </span>
+                                    {% if booking.is_refunded %}
+                                        <span class="status-badge bg-secondary text-white ms-1">Refunded</span>
+                                    {% else %}
+                                        <span class="status-badge payment-{{ booking.payment_status }} ms-1">
+                                            {{ booking.payment_status|capitalize }}
+                                        </span>
+                                    {% endif %}
+                                    {% if booking.completion_date %}
+                                    <small class="d-block text-muted mt-1">
+                                        {{ booking.completion_date.strftime('%b %d, %Y') }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2 text-md-center my-2 my-md-0">
+                                    <strong id="pro-booking-price-{{ booking.booking_id }}">₦{{ "%.2f"|format(booking.booking_price) }}</strong>
+                                    {% if booking.payment_status == 'unpaid' %}
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm" style="transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="openEditPriceModal({{ booking.booking_id }}, {{ booking.booking_price }})">
+                                            <i class="fa-solid fa-pen-to-square me-1"></i> Change Price
+                                        </button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3 text-md-end mt-2 mt-md-0 d-flex flex-wrap justify-content-md-end justify-content-start gap-2 align-items-center">
+                                    {% if booking.payment_status == 'paid' and not booking.is_refunded %}
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="refundClient({{ booking.booking_id }})">
+                                            <i class="fa-solid fa-rotate-left me-1"></i> Refund
+                                        </button>
+                                    {% endif %}
+                                    <a href="/professional/chat/{{ booking.booking_id }}/" class="chat-toggle-btn">
+                                        <i class="fa-solid fa-comment me-1"></i> Chat
+                                    </a>
+                                </div>
+                            </div>
+                            {% if booking.address %}
+                            <div class="mt-2 small text-muted">
+                                <i class="fa-solid fa-location-dot me-1"></i> {{ booking.address }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <p class="mb-1 fw-semibold">No bookings yet</p>
+                            <p class="small">When clients book your services, they'll appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Price Modal -->
+    <div class="modal fade" id="editPriceModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title font-weight-bold brand-text">Edit Booking Price</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-3 text-muted">Update the agreed upon price before the client pays.</p>
+            <input type="hidden" id="editPriceBookingId" value="">
+            <div class="input-group mb-3">
+              <span class="input-group-text">₦</span>
+              <input type="number" id="editPriceValue" class="form-control" placeholder="New Price" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary rounded-pill px-4" onclick="submitNewPrice()">Save Price</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+
+    <script>
+        // ── CometChat config ──────────────────────────────────────────────
+        var APP_ID = "{{ cometchat_app_id }}";
+        var REGION = "{{ cometchat_region }}";
+        var PRO_UID = "pro-{{ professional.professional_id }}";
+
+        var proAuthToken = null;
+        var chatListeners = {};  // booking_id -> listenerID
+
+        // ── Init CometChat and listen for client price changes ───────────
+        $(document).ready(function() {
+            {% for booking in bookings %}
+            {% if booking.price_updated and booking.price_updated_by == 'client' %}
+            // Show hint for pending client price update
+            (function(bookingId) {
+                var alertEl = document.getElementById('client-price-alert-' + bookingId);
+                if (alertEl) {
+                    alertEl.classList.remove('d-none');
+                    alertEl.style.display = 'block';
+                }
+            })({{ booking.booking_id }});
+            {% endif %}
+            {% endfor %}
+
+            // Init CometChat to listen for real-time price updates from client
+            var appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(REGION).build();
+            CometChat.init(APP_ID, appSetting).then(function() {
+                $.ajax({
+                    url: '/cometchat/pro-auth-token/',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': document.getElementById('csrf_token').value },
+                    success: function(data) {
+                        CometChat.login(data.authToken).then(function() {
+                            CometChat.addMessageListener('pro_price_listener', new CometChat.MessageListener({
+                                onTextMessageReceived: function(textMessage) {
+                                    var text = textMessage.getText();
+                                    // Check for client price update: [PRICE_CLIENT_UPDATE]
+                                    if (text && text.startsWith('[PRICE_CLIENT_UPDATE]')) {
+                                        var parts = text.replace('[PRICE_CLIENT_UPDATE] ', '').split('|');
+                                        if (parts.length >= 3) {
+                                            var bookingId = parts[0].replace('Booking #', '').trim();
+                                            var newPrice = parts[2];
+                                            // Update price display
+                                            var priceEl = document.getElementById('pro-booking-price-' + bookingId);
+                                            if (priceEl) {
+                                                var formatted = parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                                priceEl.textContent = '₦' + formatted;
+                                            }
+                                            // Show hint
+                                            var alertEl = document.getElementById('client-price-alert-' + bookingId);
+                                            if (alertEl) {
+                                                alertEl.classList.remove('d-none');
+                                                alertEl.style.display = 'block';
+                                            }
+                                        }
+                                    }
+                                }
+                            }));
+                        });
+                    }
+                });
+            });
+        });
+
+        function openEditPriceModal(bookingId, currentPrice) {
+            document.getElementById('editPriceBookingId').value = bookingId;
+            document.getElementById('editPriceValue').value = currentPrice;
+            var myModal = new bootstrap.Modal(document.getElementById('editPriceModal'));
+            myModal.show();
+        }
+
+        function submitNewPrice() {
+            var bookingId = document.getElementById('editPriceBookingId').value;
+            var newPrice = document.getElementById('editPriceValue').value;
+
+            if (!newPrice || newPrice < 0) {
+                alert('Please enter a valid price.');
+                return;
+            }
+
+            $.ajax({
+                url: '/booking/' + bookingId + '/edit-price/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'X-CSRFToken': document.getElementById('csrf_token').value },
+                data: JSON.stringify({ new_price: newPrice }),
+                success: function(data) {
+                    if (data.status === 'success') {
+                        // Close the modal
+                        var modalEl = document.getElementById('editPriceModal');
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                        // Show a subtle hint in the modal's place
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '✓ You have changed the price',
+                            text: 'Price updated to ₦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
+                            showConfirmButton: false,
+                            timer: 3000
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update price.', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var err = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while updating the price.';
+                    Swal.fire('Error', err, 'error');
+                }
+            });
+        }
+
+        function refundClient(bookingId) {
+            if (confirm("Are you sure you want to refund this client? This cannot be undone.")) {
+                $.ajax({
+                    url: '/professional/refund/' + bookingId + '/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': document.getElementById('csrf_token').value },
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message || 'Refund failed.');
+                        }
+                    },
+                    error: function(xhr) {
+                        var err = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while processing the refund.';
+                        alert(err);
+                    }
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

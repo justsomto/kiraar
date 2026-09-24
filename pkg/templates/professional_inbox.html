@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container py-2 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" style="height:36px;"></a>
+            <div>
+                <a href="/professional/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
+                </a>
+                <a href="/find-jobs/" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-briefcase me-1"></i> Dashboard
+                </a>
+                <a href="/logout/" class="btn btn-outline-danger btn-sm rounded-pill">
+                    <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="inbox-card">
+                    <div class="inbox-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-inbox me-2"></i> My Inbox</h4>
+                        <span class="badge bg-light text-dark">{{ clients|length }} conversation(s)</span>
+                    </div>
+
+                    {% if clients %}
+                        {% for c in clients %}
+                        <a class="client-item" href="/professional/bookings/">
+                            <div class="client-avatar">
+                                {{ c.user.first_name[0] }}{{ c.user.last_name[0] }}
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">{{ c.user.first_name }} {{ c.user.last_name }}</div>
+                                <div class="client-meta">
+                                    {{ c.booking_count }} booking(s) &middot;
+                                    Last: {{ c.latest_booking.scheduled_date.strftime('%b %d, %Y') if c.latest_booking.scheduled_date else 'N/A' }}
+                                    &middot;
+                                    Status: 
+                                    {% if c.latest_booking.job_status == 'pending' %}
+                                        <span class="text-warning">Pending</span>
+                                    {% elif c.latest_booking.job_status == 'in-progress' %}
+                                        <span class="text-primary">In Progress</span>
+                                    {% elif c.latest_booking.job_status == 'completed' %}
+                                        <span class="text-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="inbox-badge-count">{{ c.booking_count }}</span>
+                                <i class="fa-solid fa-chevron-right ms-2 text-muted small"></i>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-comment-slash"></i>
+                            <p class="mb-1 fw-semibold">No conversations yet</p>
+                            <p class="small">When clients book your services, they'll appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

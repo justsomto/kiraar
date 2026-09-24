@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #611f47 0%, #3a102a 100%); padding: 30px 25px; text-align: center; color: #ffffff; }
+        .header h1 { margin: 0 0 5px 0; font-size: 24px; letter-spacing: 0.5px; }
+        .header p { margin: 0; font-size: 14px; opacity: 0.85; }
+        .content { padding: 35px 30px; color: #333333; line-height: 1.6; }
+        .content h2 { color: #611f47; margin-top: 0; font-size: 20px; }
+        .receipt-card { background: #fdf5f9; border: 2px dashed #611f47; border-radius: 10px; text-align: center; padding: 22px; margin: 25px 0; }
+        .receipt-card .amount { font-size: 32px; font-weight: bold; color: #611f47; margin: 5px 0; }
+        .status-badge { display: inline-block; background-color: #d1e7dd; color: #0f5132; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 12px; margin-top: 6px; }
+        .details-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .details-table td { padding: 11px 12px; border-bottom: 1px solid #eeeeee; font-size: 14px; }
+        .details-table td.label { color: #666666; width: 40%; font-weight: 500; }
+        .details-table td.value { color: #222222; font-weight: 600; }
+        .escrow-box { background-color: #e8f4fd; border-left: 4px solid #0d6efd; padding: 14px 18px; margin: 25px 0; border-radius: 6px; font-size: 13px; color: #084298; line-height: 1.5; }
+        .btn-box { text-align: center; margin: 25px 0 10px; }
+        .btn { background: #611f47; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block; font-size: 14px; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eeeeee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Receipt 🧾</h1>
+            <p>Thank you for booking with Kiraar</p>
+        </div>
+        <div class="content">
+            <h2>Hello, {{ client_name }}!</h2>
+            <p>We have received your payment for <strong>Booking #{{ booking_id }}</strong>. Here is your official payment receipt:</p>
+
+            <div class="receipt-card">
+                <div style="font-size: 13px; text-transform: uppercase; color: #777;">Amount Paid</div>
+                <div class="amount">₦{{ "{:,.2f}".format(amount) }}</div>
+                <span class="status-badge">✓ PAYMENT VERIFIED</span>
+            </div>
+
+            <h3 style="font-size: 15px; margin-bottom: 5px; color: #333; text-transform: uppercase; letter-spacing: 0.5px;">Booking &amp; Payment Details</h3>
+            <table class="details-table">
+                <tr>
+                    <td class="label">Booking ID</td>
+                    <td class="value">#{{ booking_id }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Artisan</td>
+                    <td class="value">{{ professional_name }}{% if business_name %} ({{ business_name }}){% endif %}</td>
+                </tr>
+                <tr>
+                    <td class="label">Scheduled Date</td>
+                    <td class="value">{{ scheduled_date }}</td>
+                </tr>
+                {% if address %}
+                <tr>
+                    <td class="label">Location</td>
+                    <td class="value">{{ address }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="label">Payment Reference</td>
+                    <td class="value" style="font-family: monospace; font-size: 13px;">{{ reference }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Payment Method</td>
+                    <td class="value">Paystack Online Payment</td>
+                </tr>
+            </table>
+
+            <div class="escrow-box">
+                <strong>🛡️ 100% Escrow Protection:</strong><br>
+                Your money is securely held by Kiraar. The artisan is NOT paid until the work is completed and you release payment from your dashboard.
+            </div>
+
+            <div class="btn-box">
+                <a href="http://127.0.0.1:5057/client/bookings/" class="btn">View Your Bookings</a>
+            </div>
+
+            <p style="font-size: 12px; color: #888; margin-top: 25px; text-align: center;">
+                Need help with this booking? You can file a complaint or contact our support anytime from your dashboard.
+            </p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Kiraar Platform. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

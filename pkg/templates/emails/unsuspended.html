@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #198754 0%, #146c43 100%); padding: 30px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 28px; letter-spacing: 1px; }
+        .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+        .content h2 { color: #198754; margin-top: 0; }
+        .btn-box { text-align: center; margin: 30px 0; }
+        .btn { background-color: #198754; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; }
+        .badge { background-color: #d1e7dd; color: #0f5132; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Account Reinstated ✅</h1>
+        </div>
+        <div class="content">
+            <h2>Welcome back, {{ first_name }}!</h2>
+            <p>Good news — your professional account on Kiraar has been <span class="badge">Reinstated</span> by our administration team.</p>
+            <p>You can now log back in, accept bookings, and receive payments as normal.</p>
+            <div class="btn-box">
+                <a href="http://127.0.0.1:5057/login/" class="btn">Log In to Your Account</a>
+            </div>
+            <p>Thank you for your patience while we looked into this.</p>
+            <p>Best regards,<br><strong>The Kiraar Team</strong></p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Kiraar Platform. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

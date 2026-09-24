@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+    .wrap { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .hdr { background: linear-gradient(135deg, #611f47 0%, #8a2c62 100%); padding: 32px 24px; text-align: center; }
+    .hdr h1 { color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 0.5px; }
+    .hdr p { color: #f0d6e8; margin: 6px 0 0; font-size: 14px; }
+    .body { padding: 36px 30px; color: #333333; line-height: 1.7; }
+    .body h2 { color: #611f47; margin-top: 0; font-size: 20px; }
+    .info-card { background-color: #fdf8fb; border: 1px solid #f2e2ed; border-radius: 8px; padding: 18px; margin: 20px 0; }
+    .info-row { padding: 8px 0; border-bottom: 1px solid #f0e0ec; display: flex; justify-content: space-between; font-size: 14px; }
+    .info-row:last-child { border-bottom: none; }
+    .label { font-weight: 700; color: #611f47; }
+    .value { color: #444444; text-align: right; }
+    .price-value { font-weight: bold; color: #28a745; font-size: 16px; }
+    .btn-wrap { text-align: center; margin: 30px 0 20px; }
+    .btn { background-color: #611f47; color: #ffffff !important; padding: 13px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px; }
+    .foot { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eee; }
+    .foot a { color: #611f47; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <h1>📅 New Booking Request</h1>
+      <p>Booking #{{ booking_id }}</p>
+    </div>
+    <div class="body">
+      <h2>Hello {{ pro_name }},</h2>
+      <p>You have received a new booking request on Kiraar! Here are the details of the job:</p>
+
+      <div class="info-card">
+        <div class="info-row"><span class="label">Client Name:</span><span class="value">{{ client_name }}</span></div>
+        <div class="info-row"><span class="label">Service Required:</span><span class="value">{{ service_name }}</span></div>
+        <div class="info-row"><span class="label">Scheduled Date:</span><span class="value">{{ scheduled_date }}</span></div>
+        <div class="info-row"><span class="label">Job Location:</span><span class="value">{{ address or 'To be confirmed' }}</span></div>
+        <div class="info-row"><span class="label">Agreed Rate:</span><span class="value price-value">₦{{ "{:,.2f}".format(booking_price) }}</span></div>
+      </div>
+
+      <p>Please log in to your dashboard to view the booking, discuss requirements with your client via chat, and accept the request.</p>
+
+      <div class="btn-wrap">
+        <a href="http://127.0.0.1:5057/professional/bookings/" class="btn">View My Bookings</a>
+      </div>
+      <p style="color: #888; font-size: 13px; text-align: center;">Tip: Quick responses build great client reviews and higher earnings.</p>
+    </div>
+    <div class="foot">
+      &copy; 2026 Kiraar Platform. All rights reserved.<br>
+      <a href="http://127.0.0.1:5057/contact/">Contact Support</a> &bull; <a href="http://127.0.0.1:5057/escrow-policy/">Escrow Policy</a>
+    </div>
+  </div>
+</body>
+</html>

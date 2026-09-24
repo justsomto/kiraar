@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #198754 0%, #146c43 100%); padding: 30px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
+        .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+        .content h2 { color: #198754; margin-top: 0; }
+        .details-box { background-color: #f8f9fa; border-left: 4px solid #198754; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Complaint Status Update</h1>
+        </div>
+        <div class="content">
+            <h2>Hello, {{ client_name }}</h2>
+            <p>This is an update regarding your complaint on Booking <strong>#{{ booking_id }}</strong>.</p>
+            
+            <div class="details-box">
+                <p style="margin: 0 0 8px 0;"><strong>Subject:</strong> {{ subject }}</p>
+                <p style="margin: 0;"><strong>Current Status:</strong> <strong style="color: #198754; text-transform: uppercase;">{{ new_status }}</strong></p>
+            </div>
+
+            <p>Our admin team has reviewed and marked this complaint as <strong>{{ new_status }}</strong>.</p>
+            <p>If you have any further questions or require additional assistance, please reach out to our support team.</p>
+            <p>Best regards,<br><strong>Kiraar Support Team</strong></p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Kiraar Platform. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

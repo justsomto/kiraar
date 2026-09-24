@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #198754 0%, #146c43 100%); padding: 30px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 0.5px; }
+        .content { padding: 35px 30px; color: #333333; line-height: 1.6; }
+        .content h2 { color: #198754; margin-top: 0; }
+        .amount-card { background: #e8f5e9; border: 2px dashed #198754; border-radius: 8px; text-align: center; padding: 20px; margin: 25px 0; }
+        .amount-card .amount { font-size: 32px; font-weight: bold; color: #198754; margin: 5px 0; }
+        .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .details-table td { padding: 10px 12px; border-bottom: 1px solid #eeeeee; font-size: 14px; }
+        .details-table td.label { color: #777777; width: 40%; font-weight: 500; }
+        .details-table td.value { color: #222222; font-weight: 600; }
+        .btn-box { text-align: center; margin: 30px 0 10px; }
+        .btn { background-color: #198754; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eeeeee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Sent to Your Bank! 💰</h1>
+        </div>
+        <div class="content">
+            <h2>Hello, {{ professional_name }}!</h2>
+            <p>Great news! Your payment for <strong>Booking #{{ booking_id }}</strong> has been released and sent directly to your bank account via Paystack.</p>
+            
+            <div class="amount-card">
+                <div style="font-size: 13px; text-transform: uppercase; color: #555;">Payout Amount (90%)</div>
+                <div class="amount">₦{{ "{:,.2f}".format(amount) }}</div>
+                <div style="font-size: 12px; color: #666;">Transferred to your bank</div>
+            </div>
+
+            <h3 style="font-size: 16px; margin-bottom: 5px; color: #333;">Transfer Details:</h3>
+            <table class="details-table">
+                <tr>
+                    <td class="label">Booking ID</td>
+                    <td class="value">#{{ booking_id }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Bank Name</td>
+                    <td class="value">{{ bank_name or 'Bank Account' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Account Number</td>
+                    <td class="value">{{ account_number or 'On file' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Transfer Reference</td>
+                    <td class="value" style="font-family: monospace; font-size: 13px;">{{ reference }}</td>
+                </tr>
+            </table>
+
+            <div class="btn-box">
+                <a href="http://127.0.0.1:5057/find-jobs/" class="btn">View Your Dashboard</a>
+            </div>
+
+            <p style="font-size: 13px; color: #666; margin-top: 25px;">
+                Note: Depending on your bank, transfers usually arrive within minutes or up to a few hours.
+            </p>
+            <p>Thank you for offering your services on Kiraar!</p>
+            <p>Best regards,<br><strong>Kiraar Finance Team</strong></p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Kiraar Platform. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Somto">
+    <meta name="description" content="Find and hire vetted, reliable local artisans on Kiraar. From plumbers and electricians to mechanics, get trusted professionals at your doorstep today.">
+    <meta name="robots" content="index, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon-32x32.png">
+    <title>Kiraar</title>
+</head>
+<body>
+    <div class="container-fluid overflow-hidden">
+        
+        <!-- Header / Navigation -->
+        <header>
+            <div class="row align-items-center bg-body-tertiary py-2">
+            <div class="col-4 col-md-4 d-flex justify-content-center align-items-center ps-3">
+                <a href="/">
+                    <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded kiraar-logo-lg">
+                </a>
+            </div>
+
+                <div class="col-8 col-md-8 d-flex justify-content-end">
+                    <nav class="navbar navbar-expand-lg w-100">
+                        <div class="container-fluid justify-content-end">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse justify-content-end nav-buttons" id="navbarNavAltMarkup">
+                                <div class="navbar-nav align-items-center">
+                                    {% if session.get('user_id') %}
+                                        <a class="nav-link mx-2 px-3 py-2" href="/results/">Find Professionals</a>
+                                        <a class="nav-link mx-2 px-3 py-2" href="/client/bookings/">My Bookings</a>
+                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
+                                    {% elif session.get('professional_id') %}
+                                        <a class="nav-link mx-2 px-3 py-2" href="/find-jobs/">Dashboard</a>
+                                        <a class="nav-link mx-2 px-3 py-2" href="/professional/bookings/">Bookings</a>
+                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
+                                    {% else %}
+                                        <a class="nav-link mx-3 px-3 py-2" href="/signup/">Sign Up</a>
+                                        <a class="nav-link mx-3 px-3 py-2" href="/login/">Login</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Input Hero Segment -->
+        <div class="row my-2 justify-content-center">
+            <div class="col-11 col-md-8 col-lg-6 wrapper">
+                <form action="/results/" method="GET">
+                    <div class="input-group flex-nowrap shadow-sm">
+                        <span class="input-group-text" id="addon-wrapping"> 🔍 I need a – </span>
+                        <input type="text" name="search" class="form-control py-2" placeholder="Enter a Service (e.g. Plumber, Electrician)" aria-label="Search" aria-describedby="addon-wrapping">
+                        <button class="btn" style="background:#611f47; color:white; font-weight:600;" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Job Categories Grid (Clickable links to /results/) -->
+        <div id="services-grid" class="row job-icons text-center g-4 my-4 justify-content-center">
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=Home Repairs" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/support.png" alt="tools" class="img-fluid">
+                    <p class="small m-0 mt-1">Home Repairs</p>
+                </a>
+            </div>
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=Carpentry" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/drill.png" alt="drill" class="img-fluid">
+                    <p class="small m-0 mt-1">Carpentry</p>
+                </a>
+            </div>
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=Moving" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/moving.png" alt="moving" class="img-fluid">
+                    <p class="small m-0 mt-1">Moving</p>
+                </a>
+            </div>
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=House Cleaning" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/cleaning-service.png" alt="cleaning-service" class="img-fluid">
+                    <p class="small m-0 mt-1">House Cleaning</p>
+                </a>
+            </div>
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=Auto-Repair" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/maintenance.png" alt="maintenance" class="img-fluid">
+                    <p class="small m-0 mt-1">Auto-Repair</p>
+                </a>
+            </div>
+            <div class="col-4 col-md-2">
+                <a href="/results/?category=Painting" class="text-decoration-none text-dark d-block">
+                    <img src="/static/images/paint-roller.png" alt="painting" class="img-fluid">
+                    <p class="small m-0 mt-1">Painting</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Banner Header -->
+        <div class="row my-4">
+            <div class="col-md-12 d-flex justify-content-center align-items-center heading1 py-4">
+                <h2 class="m-0 text-center fw-bold">How Kiraar Works for You</h2>
+            </div>
+        </div>
+
+        <!-- What We Do Grid Showcase -->
+        <div class="row what-we-do g-4 py-3 justify-content-center">
+            <div class="col-10 col-md-4">
+                <img src="/static/images/what-we-do1.jpg" alt="finding-help" class="img-fluid rounded">
+            </div>
+            <div class="col-10 col-md-4">
+                <img src="/static/images/what-we-do2.jpg" alt="grow your reach" class="img-fluid rounded">
+            </div>
+            <div class="col-10 col-md-4">
+                <img src="/static/images/what-we-do3.jpg" alt="finding-help" class="img-fluid rounded">
+            </div>
+        </div>
+
+        <!-- How It Works: For Users Section -->
+        <div class="row how-it-works1 mt-5 py-5 g-4 align-items-center justify-content-center">
+            <div class="col-md-4 offset-md-2">
+                <h2 class="fw-bold mb-0">For Users</h2>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-binoculars"></i>
+                <p class="small">We will locate the registered domestic help you need, right in your neighborhood.</p>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-people-group"></i>
+                <p class="small">Pick the expert you want. As soon as they accept, you have direct contact to discuss the job</p>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <p class="small">Your chosen professional arrives on-site and gets straight to work finishing your job.</p>
+            </div>
+        </div>
+
+        <!-- How It Works: For Professionals Section -->
+        <div class="row how-it-works2 py-5 g-4 align-items-center justify-content-center border-top border-secondary">
+            <div class="col-md-4 offset-md-2">
+                <h2 class="fw-bold mb-0">For Professionals</h2>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-briefcase"></i>
+                <p class="small">Sign up as a provider on kiraar and upload your required verification documents to get started.</p>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-id-card"></i>
+                <p class="small">Get listed under your trade on kiraar so local clients can seamlessly find and book your services.</p>
+            </div>
+            <div class="col-10 col-sm-4 col-md-2 box text-center">
+                <i class="fa-solid fa-calendar-check"></i>
+                <p class="small">Accept incoming customer requests, deliver great service on-site, and get paid securely through the platform.</p>
+            </div>
+        </div>
+
+        <!-- Metrics Achievement Counters -->
+        <div class="row achievement text-center py-5 g-4 justify-content-center">
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Furniture Assembled:</p>
+                <p class="m-0">36,000+</p>
+            </div>
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Moving tasks:</p>
+                <p class="m-0">3,000+</p>
+            </div>
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Items mounted:</p>
+                <p class="m-0">1 million+</p>
+            </div>
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Home Repairs:</p>
+                <p class="m-0">700,000+</p>
+            </div>
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Homes cleaned:</p>
+                <p class="m-0">890,000+</p>
+            </div>
+            <div class="col-6 col-md-2 mt-2">
+                <p class="mb-1">Vehicles Repairs/Servicing:</p>
+                <p class="m-0">2 million+</p>
+            </div>
+        </div>
+
+        <!-- Testimonials Headers -->
+        <div class="row text-center mt-5 mb-4">
+            <div class="col-md-12 d-flex justify-content-center align-items-center py-5 testimonial-button">
+                <h2 class="fw-bold m-0 w-70">Testimonials</h2>
+            </div>
+            <div class="col-md-12 d-flex justify-content-center align-items-center py-3 under-testimonial-button">
+                <h3 class="m-0 fw-normal">What the people are saying about Kiraar</h3>
+            </div>
+        </div>
+
+        <!-- Testimonials Grid -->
+        <div class="row testimonials g-4 pb-5 justify-content-center">
+            <div class="col-11 col-md-4 d-flex justify-content-center">
+                <div class="card shadow-sm" style="width: 300px;">
+                    <div class="card-body text-center p-4">
+                        <div><div><div><img src="/static/images/testimonial1.jpg" alt="David A."></div></div></div>
+                        <p class="card-text small justify-text mt-3">As a local electrician, finding consistent clients used to be a hassle. Since I got listed under my trade on kiraar, my calendar has been completely full. The onboarding process was straightforward, and being able to accept requests and get paid securely right through the platform has completely transformed my business!</p>
+                        <h6 class="card-text fw-bold mt-3 mb-0">— David A., Certified Electrician</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11 col-md-4 d-flex justify-content-center">
+                <div class="card shadow-sm" style="width: 300px;">
+                    <div class="card-body text-center p-4">
+                        <div><div><div><img src="/static/images/testimonial2.jpg" alt="Kim M."></div></div></div>
+                        <p class="card-text small justify-text mt-3">"I needed an emergency plumber over the weekend and didn't know who to trust. I hopped on kiraar, find a verified professional right in my neighborhood, and booked them within minutes. The provider arrived on time, did an amazing job, and the pricing was clear from the start. I won't use anything else for my home needs."</p>
+                        <h6 class="card-text fw-bold mt-3 mb-0">— Kim M., Homeowner</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-11 col-md-4 d-flex justify-content-center">
+                <div class="card shadow-sm" style="width: 300px;">
+                    <div class="card-body text-center p-4">
+                        <div><div><div><img src="/static/images/testimonial3.jpg" alt="Elena R."></div></div></div>
+                        <p class="card-text small justify-text mt-3">"kiraar has given my mobile hair styling business incredible local visibility. Customers love how seamlessly they can find and book my services, and I love the control it gives me over my schedule. It’s the perfect platform for any service provider looking to grow their reach and scale their income."</p>
+                        <h6 class="card-text fw-bold mt-3 mb-0">— Elena R., Professional Hair Stylist</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form & Map Section (id="contact-section") -->
+        <div id="contact-section" class="row my-5 py-4 g-4 align-items-center justify-content-center border-top">
+            <div class="col-11 col-md-6 d-md-flex align-items-center justify-content-center">
+                <div class="px-md-5 w-100">
+                    <form action="/contact/" method="post" class="my-4 contact-us-form p-4 border rounded bg-white">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <h4 class="fw-bold mb-4">Got More Question? Reach out to us</h4>
+                        <div class="my-3">
+                            <input type="text" name="username" class="form-control py-2" placeholder="FullName" required>
+                        </div>
+                        <div class="my-3">
+                            <input type="text" name="phone" class="form-control py-2" placeholder="Phone No">
+                        </div>
+                        <div class="my-3">
+                            <input type="email" name="email" class="form-control py-2" placeholder="Email Address" required>
+                        </div>
+                        <div class="my-3">
+                            <textarea name="message" class="form-control" placeholder="Anything you would like us to know?" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn px-4 py-2 fw-bold" style="background-color: #611f47; color: #ffffff;">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-11 col-md-6 d-md-flex align-items-center justify-content-center">
+                <div class="shadow-sm rounded overflow-hidden" style="width: 500px; height: 400px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.3380660368016!2d3.3514960735048396!3d6.604845122215785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9234071499cb%3A0x2b1a5de922a9039b!2s5%20Ogunsiji%20Cl%2C%20Allen%2C%20Ikeja%20101233%2C%20Lagos!5e0!3m2!1sen!2sng!4v1777232974629!5m2!1sen!2sng" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQs Accordion Section Layout -->
+        <div class="row my-5 justify-content-center">
+            <div class="col-md-12 d-flex justify-content-center align-items-center py-5 faqs">
+                <h2 class="fw-bold m-0">We have answers to your Questions!</h2>
+            </div>
+            <div class="col-11 col-md-10 col-lg-8">
+                <div class="accordion accordion-flush border rounded shadow-sm" id="accordionFlushExample">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                What is kiraar and how does it work?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">kiraar is a local service platform that connects homeowners and businesses with verified, registered domestic and professional service providers right in their neighborhood. You simply open the platform, search for the service you need, select a trusted provider closest to you, book a time, and get the job done.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                Are the service providers on kiraar verified?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">Yes, absolutely. Your safety and peace of mind are our top priorities. Every service provider listed on kiraar must undergo a strict onboarding process, which includes identity verification and the submission of official registration documents before they can accept jobs.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                How much does it cost to use kiraar?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">Booking services through kiraar is free for customers. You only pay for the actual service delivered by the provider. Prices are transparent, and you can discuss the scope and final cost directly with your chosen provider before work begins.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+                                Can I schedule a service for a later date?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">Yes. kiraar gives you complete command of your timeline. You can request immediate assistance for urgent needs or schedule a booking for a specific date and time that perfectly fits your calendar.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+                                How do I become a service provider on kiraar?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">Getting started is easy!<br><br>Register on the platform as a provider.<br><br>Complete your business profile by selecting your trade or specialized skill.<br><br>Submit the required identification and verification documents. Once our team reviews and approves your application, you’ll be listed locally and ready to receive requests.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSix" aria-expanded="false" aria-controls="flush-collapseSix">
+                                How do I get jobs on the platform?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">Once your profile is active, kiraar lists you under your specific trade based on your location. When nearby users search for your services, your profile appears. If they choose you, you’ll receive an instant service request that you can accept or decline based on your availability.</div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSeven" aria-expanded="false" aria-controls="flush-collapseSeven">
+                                How and when do I get paid?
+                            </button>
+                        </h2>
+                        <div id="flush-collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body text-secondary justify-text">All payments are handled securely through the platform. Once you accept a request, complete the job on-site, and the customer confirms successful delivery, your earnings are processed and deposited securely into your linked account.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Grid Section (Keeps id references intact) -->
+        <footer class="row footer pt-5 pb-4 px-3 px-md-5">
+            <div class="col-sm-6 col-md-3 mb-4">
+                <ul class="p-0">
+                    <li class="mb-4"><h3>Get Help</h3></li>
+                    <li class="mb-2"><a href="#services-grid" class="text-decoration-none">See All Services</a></li>
+                    <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact Support</a></li>
+                    <li class="mb-2"><a href="/login/" class="text-decoration-none">Login In</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-6 col-md-3 mb-4">
+                <ul class="p-0">
+                    <li class="mb-3"><h3>Company</h3></li>
+                    <li class="mb-2"><a href="/about/" class="text-decoration-none">About Us</a></li>
+                    <li class="mb-2"><a href="/privacy/" class="text-decoration-none">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms/" class="text-decoration-none">Terms and Conditions</a></li>
+                    <li class="mb-2"><a href="/escrow-policy/" class="text-decoration-none">Escrow &amp; Refund Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center mb-4">
+                <a href="/">
+                    <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded" style="max-height: 45px; background-color: #ffffff;">
+                </a>
+            </div>
+        </footer>
+
+        <!-- Legal Bar / Under Footer -->
+        <div class="row under-footer border-top border-secondary py-4 text-center fs-6">
+            <div class="col-md-6 mb-3 mb-md-0 d-flex justify-content-center align-items-center">
+                Copyright © kiraar 2026
+            </div>
+            <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <span class="me-2">Follow us! We're friendly:</span>
+                <i class="fa-brands fa-facebook mx-3"></i>
+                <i class="fa-brands fa-square-instagram mx-3"></i>
+                <i class="fa-brands fa-x-twitter mx-3"></i>
+                <i class="fa-brands fa-linkedin mx-3"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

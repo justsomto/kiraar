@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+    .wrap { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .hdr { background: linear-gradient(135deg, #611f47 0%, #8a2c62 100%); padding: 32px 24px; text-align: center; }
+    .hdr h1 { color: #ffffff; margin: 0; font-size: 22px; }
+    .hdr p { color: #f0d6e8; margin: 6px 0 0; font-size: 14px; }
+    .body { padding: 36px 30px; color: #333333; line-height: 1.7; }
+    .body h2 { color: #611f47; margin-top: 0; font-size: 20px; }
+    .status-badge { display: inline-block; background-color: #e8f5e9; color: #2e7d32; font-weight: bold; padding: 4px 12px; border-radius: 12px; font-size: 13px; }
+    .actions { margin: 28px 0; text-align: center; }
+    .btn-review { display: inline-block; background-color: #611f47; color: #ffffff !important; padding: 13px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 15px; margin: 6px; }
+    .btn-complaint { display: inline-block; background-color: #ffffff; color: #dc3545 !important; border: 2px solid #dc3545; padding: 11px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; margin: 6px; }
+    .foot { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eee; }
+    .foot a { color: #611f47; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <h1>✅ Job Marked as Completed</h1>
+      <p>Booking #{{ booking_id }}</p>
+    </div>
+    <div class="body">
+      <h2>Hi {{ client_name }},</h2>
+      <p>Your artisan, <strong>{{ professional_name }}</strong>, has marked your booking as <span class="status-badge">Completed</span>.</p>
+      
+      <p>Please inspect the work performed. If you are satisfied, kindly take a moment to leave a review and release the escrow payment. If there was an issue, you can file an anonymous complaint through our dispute center.</p>
+
+      <div class="actions">
+        <a href="{{ review_url }}" class="btn-review">⭐ Leave a Review & Release</a><br>
+        <a href="{{ complaint_url }}" class="btn-complaint">⚠️ Report an Issue / Complaint</a>
+      </div>
+
+      <p style="font-size: 13px; color: #777;">Note: In accordance with our Escrow Policy, if no dispute is opened within 48 hours, payment will automatically release to the professional.</p>
+    </div>
+    <div class="foot">
+      &copy; 2026 Kiraar Platform. All rights reserved.<br>
+      <a href="http://127.0.0.1:5057/escrow-policy/">Escrow & Refund Policy</a> &bull; <a href="http://127.0.0.1:5057/contact/">Contact Support</a>
+    </div>
+  </div>
+</body>
+</html>

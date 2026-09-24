@@ -1,0 +1,1766 @@
+/* ==========================================================================
+   1. Global Reset & Core HTML Elements
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    background-image: url('/static/images/body-background.jpg'); /* Adjusted to use local static route */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+li {
+    list-style-type: none;
+}
+
+
+/* ==========================================================================
+   2. Layout Wrappers & Navigation Components
+   ========================================================================== */
+.nav-buttons div a {
+    border: 1px solid black;
+    border-radius: 25px;
+    background-color: #611f47;
+    color: #ffffff;
+}
+
+.wrapper {
+    background-image: linear-gradient(rgba(20, 20, 20, 0.75), rgba(20, 20, 20, 0.85)), url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1920&q=80');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper div {
+    min-width: 60%;
+    min-height: 60px;
+    font-size: 40px;
+}
+
+
+/* ==========================================================================
+   3. Cards, Sections & Hover Effects
+   ========================================================================== */
+.heading1 {
+    background-color: #611f47;
+    color: white;
+}
+
+.justify-text {
+    text-align: justify;
+}
+
+.job-icons div,
+.what-we-do div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px 10px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-icons div:hover,
+.what-we-do div:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.job-icons div img {
+    width: 50px;
+    margin-bottom: 8px;
+}
+
+
+/* ==========================================================================
+   4. How It Works Structural Blocks
+   ========================================================================== */
+.how-it-works1,
+.how-it-works2 {
+    background-color: #611f47;
+}
+
+.how-it-works1 .col-md-2,
+.how-it-works2 .col-md-2 {
+    border-right: 2px solid #3b0125;
+    border-radius: 0px 20px 20px 0px;
+    padding: 40px;
+}
+
+.how-it-works1 .col-md-2 i,
+.how-it-works2 .col-md-2 i {
+    font-size: 40px;
+    color: #3b0125;
+    margin-bottom: 15px;
+}
+
+.how-it-works1 .box,
+.how-it-works2 .box {
+    background-color: white;
+}
+
+.how-it-works1 .offset-md-2 h2,
+.how-it-works2 .offset-md-2 h2 {
+    color: white;
+}
+
+
+/* ==========================================================================
+   5. Achievements, Testimonials & Forms
+   ========================================================================== */
+.achievement {
+    color: #ffffff;
+    background-color: #611f47;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.testimonial-button h2,
+.faqs h2 {
+    border: 1px solid black;
+    border-radius: 27px;
+    background-color: #611f47;
+    color: #ffffff;
+    padding: 12px;
+}
+
+.under-testimonial-button,
+.testimonials {
+    background-color: #611f47;
+}
+
+.under-testimonial-button {
+    color: #ffffff;
+}
+
+.testimonials .card {
+    border-radius: 20px;
+}
+
+.testimonials div div div img {
+    width: 100px;
+    border-radius: 50%;
+}
+
+.card-body:hover {
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+.contact-us-form {
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.accordion-button {
+    background-color: #611f47;
+    color: #ffffff;
+}
+
+.accordion-button:hover {
+    background-color: white;
+    color: #611f47;
+}
+
+
+/* ==========================================================================
+   6. Footer Styling
+   ========================================================================== */
+.footer,
+.under-footer {
+    background-color: #611f47;
+    color: #ffffff;
+}
+
+.footer {
+    margin-top: 50px;
+}
+
+.footer ul li a {
+    color: #ffffff;
+}
+
+
+/* ==========================================================================
+   7. Kiraar Native & Dashboard Components
+   ========================================================================== */
+.kiraar-brand-heading,
+.kiraar-brand-text,
+.kiraar-video-box,
+.kiraar-community-card h2 {
+    color: #611f47;
+}
+
+.kiraar-callout-card {
+    border-color: #611f47 !important;
+}
+
+.kiraar-video-box {
+    border-color: #611f47 !important;
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.kiraar-video-box:hover {
+    background-color: #611f47 !important;
+    color: #ffffff !important;
+    box-shadow: 0px 12px 30px rgba(97, 31, 71, 0.15) !important;
+}
+
+.kiraar-community-card {
+    background-color: #fcf8fa !important;
+}
+
+.kiraar-auth-card {
+    background-color: #ffffff;
+    border: 1px solid #611f47;
+    border-radius: 24px;
+}
+
+.kiraar-btn-solid {
+    background-color: #611f47;
+    color: #ffffff;
+    border: 1px solid #611f47;
+    border-radius: 30px;
+    transition: background-color 0.2s ease;
+}
+
+.kiraar-btn-solid:hover {
+    background-color: #3c0a28;
+    border-color: #611f47;
+    color: #ffffff;
+}
+
+.kiraar-btn-outline {
+    background-color: #ffffff;
+    color: #611f47;
+    border: 1px solid #611f47;
+    border-radius: 30px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.kiraar-btn-outline:hover {
+    background-color: #611f47; /* Swapped to brand plum for better contrast */
+    color: #ffffff;
+    border-color: #611f47;
+}
+
+/* Small primary Kiraar button used across profile components */
+.btn-kiraar-sm {
+    background-color: #611f47;
+    color: #ffffff;
+    border: none;
+    border-radius: 18px;
+    padding: .25rem .6rem;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+}
+.btn-kiraar-sm:hover,
+.btn-kiraar-sm:focus {
+    background-color: #3c0a28;
+    color: #ffffff;
+    outline: none;
+}
+
+.kiraar-legal-link {
+    color: #611f47;
+}
+
+.kiraar-legal-link:hover {
+    color: #611f47;
+    text-decoration: underline !important;
+}
+
+/* Inner Application Dashboard Additions */
+.inner-page {
+    background-color: #fcf8fa;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.inner-page > .container {
+    flex: 1;
+}
+
+.brand-bg {
+    background-color: #611f47;
+}
+
+.brand-text {
+    color: #611f47;
+}
+
+.kiraar-card {
+    background-color: #ffffff;
+    border: 1px solid #e1d5dc;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Horizontally scrollable filter buttons (scrollbar hidden) */
+.filter-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+}
+
+.filter-scroll::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+.filter-scroll .filter-btn {
+    float: none;
+    display: inline-block;
+}
+
+.artisan-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.inner-footer {
+    background-color: #611f47;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 50px;
+}
+
+
+/* ==========================================================================
+   8. Premium Material Google Sign-In Component
+   ========================================================================== */
+.gsi-material-button {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-appearance: none;
+    background-color: white;
+    background-image: none;
+    border: 1px solid #747775;
+    border-radius: 20px;
+    box-sizing: border-box;
+    color: #1f1f1f;
+    cursor: pointer;
+    font-family: 'Roboto', arial, sans-serif;
+    font-size: 14px;
+    height: 40px;
+    letter-spacing: 0.25px;
+    outline: none;
+    overflow: hidden;
+    padding: 0 12px;
+    position: relative;
+    text-align: center;
+    transition: background-color .218s, border-color .218s, box-shadow .218s;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 400px;
+    min-width: min-content;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+    height: 20px;
+    margin-right: 10px;
+    min-width: 20px;
+    width: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+    font-family: 'Roboto', arial, sans-serif;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+
+.gsi-material-button .gsi-material-button-state {
+    transition: opacity .218s;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.gsi-material-button:not(:disabled):active .gsi-material-button-state,
+.gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+    background-color: #303030;
+    opacity: 12%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+    background-color: #303030;
+    opacity: 8%;
+}
+
+/* ==========================================================================
+   9. Custom Animations and Alerts
+   ========================================================================== */
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); transform: scale(1); }
+    50% { box-shadow: 0 0 15px rgba(220, 53, 69, 0.9); transform: scale(1.03); }
+    100% { box-shadow: 0 0 5px rgba(220, 53, 69, 0.5); transform: scale(1); }
+}
+
+.unpaid-alert-btn {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600;
+    animation: glow-pulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.unpaid-alert-btn:hover {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b) !important;
+    transform: scale(1.05);
+}
+
+
+/* ==========================================================================
+   10. Utility Classes (Replaces Inline Styles)
+   ========================================================================== */
+
+/* Logo sizing — used in navbars across templates */
+.kiraar-logo-img {
+    max-height: 40px;
+}
+
+/* White social media footer icons (used in privacy, terms, about) */
+.kiraar-footer-icon {
+    color: white;
+}
+
+/* Brand-colored buttons */
+.kiraar-brand-btn {
+    background-color: #611f47;
+    color: #ffffff;
+    border: 1px solid #611f47;
+}
+.kiraar-brand-btn:hover {
+    background-color: #3c0a28;
+    color: #ffffff;
+}
+
+/* Nav header links with brand background */
+.kiraar-header-btn {
+    background-color: #611f47;
+    color: #ffffff;
+    border-radius: 25px;
+    border: 1px solid black;
+    padding: 6px 16px;
+}
+
+/* Footer logo with white background */
+.kiraar-footer-logo {
+    max-height: 40px;
+    background-color: #ffffff;
+}
+
+/* Danger Zone box (edit_client, edit_professional) */
+.danger-zone {
+    border: 2px dashed #dc3545;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff5f5;
+    margin-top: 30px;
+}
+
+/* Visibility eye toggle buttons (edit_professional) */
+.eye-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 2px solid;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: none;
+}
+.eye-btn.visible {
+    color: #0d6efd;
+    border-color: #0d6efd;
+    background-color: #e8f0fe;
+}
+.eye-btn.hidden {
+    color: #6c757d;
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+}
+
+/* Profile picture upload preview (edit_professional) */
+.profile-upload-wrapper {
+    cursor: pointer;
+}
+.profile-upload-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Smooth scrolling — used on index.html <html> tag */
+html.kiraar-smooth {
+    scroll-behavior: smooth;
+}
+
+/* Chat Pay button (professional_profile - inline) */
+.kiraar-chat-pay-btn {
+    font-size: 0.8rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* Service badges used in professional_profile and find_jobs */
+.kiraar-service-badge {
+    background: #f0e6ec;
+    color: #611f47;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin: 3px;
+}
+
+/* Brand gradient backgrounds */
+.kiraar-gradient-bg {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+}
+
+/* Offline-status badge dot */
+.kiraar-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.kiraar-status-dot.online { background-color: #28a745; }
+.kiraar-status-dot.offline { background-color: #dc3545; }
+
+
+/* ==========================================================================
+   11. Professional Profile Components
+   ========================================================================== */
+
+/* Profile-specific grid layout (professional_profile.html) */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+    padding: 20px 24px 60px;
+}
+.profile-grid .profile-card {
+    grid-column: span 3;
+    border-radius: 16px;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background: white;
+}
+.profile-grid .profile-card .profile-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    padding: 30px;
+    text-align: center;
+    color: white;
+}
+.profile-grid .profile-card .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+}
+.profile-grid .chat-panel {
+    grid-column: span 6;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 550px;
+}
+.profile-grid .booking-panel {
+    grid-column: span 3;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background: white;
+    overflow-y: auto;
+}
+.profile-grid .chat-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.profile-grid .chat-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    object-fit: cover;
+}
+.profile-grid .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profile-grid .msg-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    word-break: break-word;
+}
+.profile-grid .msg-sent {
+    background: #611f47;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+.profile-grid .msg-received {
+    background: white;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.profile-grid .msg-time {
+    font-size: 0.68rem;
+    opacity: 0.65;
+    margin-top: 3px;
+}
+.profile-grid .msg-image { max-width: 200px; border-radius: 10px; cursor: pointer; }
+.profile-grid .msg-file { color: inherit; text-decoration: underline; font-size: 0.85rem; }
+.profile-grid .msg-audio { width: 100%; max-width: 220px; height: 36px; }
+.profile-grid .msg-media-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+.profile-grid .msg-media-row audio,
+.profile-grid .msg-media-row video {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: 200px;
+}
+.profile-grid .msg-media-row img.msg-image {
+    flex: 0 0 auto;
+    max-width: 180px;
+}
+.profile-grid .msg-media-row a.msg-file {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.profile-grid .msg-action-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: opacity 0.2s, background 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+.profile-grid .msg-action-btn:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.08);
+}
+.profile-grid .msg-sent .msg-action-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+.profile-grid .chat-input-area {
+    border-top: 1px solid #eee;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.profile-grid .chat-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+.profile-grid #messageInput {
+    flex: 1;
+    border: 1.5px solid #ddd;
+    border-radius: 24px;
+    padding: 8px 16px;
+    outline: none;
+    font-size: 0.9rem;
+    transition: border 0.2s;
+}
+.profile-grid #messageInput:focus { border-color: #611f47; }
+.profile-grid .chat-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.15s, background 0.15s;
+}
+.profile-grid .chat-btn:hover { transform: scale(1.1); }
+.profile-grid .btn-send { background: #611f47; color: white; }
+.profile-grid .btn-attach { background: #f0e6ec; color: #611f47; }
+.profile-grid .btn-record { background: #f0e6ec; color: #611f47; }
+.profile-grid .btn-record.recording { background: #dc3545; color: white; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.profile-grid #fileInput { display: none; }
+.profile-grid #recordingTimer { font-size: 0.78rem; color: #dc3545; display: none; }
+.profile-grid .chat-placeholder {
+    text-align: center;
+    color: #aaa;
+    margin: auto;
+    padding: 30px;
+}
+
+@media (max-width: 992px) {
+    .profile-grid {
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+        height: auto;
+        min-height: 100vh;
+        padding: 16px;
+        overflow-y: auto;
+    }
+    .profile-grid .profile-card { grid-column: span 5; }
+    .profile-grid .chat-panel { grid-column: span 7; }
+    .profile-grid .booking-panel { grid-column: span 12; }
+}
+@media (max-width: 576px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 12px;
+    }
+    .profile-grid .profile-card { grid-column: span 1; }
+    .profile-grid .chat-panel { grid-column: span 1; }
+    .profile-grid .booking-panel { grid-column: span 1; }
+}
+
+
+/* ==========================================================================
+   12. Inbox Components (professional_inbox.html)
+   ========================================================================== */
+.inbox-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    background: white;
+    overflow: hidden;
+}
+.inbox-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 20px 24px;
+}
+.client-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+.client-item:hover { background: #f9f5f7; }
+.client-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #611f47;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.client-info { flex: 1; margin-left: 14px; min-width: 0; }
+.client-name { font-weight: 600; color: #333; }
+.client-meta { font-size: 0.8rem; color: #888; }
+.inbox-badge-count {
+    background: #611f47;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+}
+.empty-state i { font-size: 3rem; margin-bottom: 15px; }
+
+
+/* ==========================================================================
+   13. Professional Chat Layout (professional_chat.html)
+   ========================================================================== */
+.pro-chat-body { background-color: #f5f6fa; height: 100vh; overflow: hidden; }
+.chat-wrapper {
+    height: calc(100vh - 60px);
+    display: flex;
+    gap: 0;
+}
+.chat-client-sidebar {
+    width: 300px;
+    min-width: 250px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.chat-client-sidebar .sidebar-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 24px 20px;
+    text-align: center;
+}
+.chat-client-sidebar .sidebar-header img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.5);
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+.chat-client-sidebar .sidebar-body { padding: 16px 20px; flex: 1; }
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.88rem;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: #888; font-weight: 500; }
+.detail-value { color: #333; font-weight: 600; text-align: right; }
+
+.chat-main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+.chat-main-panel .chat-main-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.chat-main-panel .chat-main-header-left { display: flex; align-items: center; gap: 10px; }
+.chat-main-panel .chat-main-header img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    object-fit: cover;
+}
+.chat-main-panel .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f9f9f9;
+}
+.chat-main-panel .msg-bubble {
+    max-width: 70%;
+    padding: 11px 16px;
+    border-radius: 18px;
+    font-size: 0.93rem;
+    word-break: break-word;
+    line-height: 1.4;
+}
+.chat-main-panel .msg-sent {
+    background: #611f47;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+.chat-main-panel .msg-received {
+    background: white;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.chat-main-panel .msg-time { font-size: 0.65rem; opacity: 0.6; margin-top: 4px; }
+.chat-main-panel .msg-image { max-width: 220px; border-radius: 10px; cursor: pointer; }
+.chat-main-panel .msg-audio { width: 100%; max-width: 220px; height: 36px; }
+.chat-main-panel .msg-file { color: inherit; text-decoration: underline; font-size: 0.85rem; }
+.chat-main-panel .msg-media-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+.chat-main-panel .msg-media-row audio,
+.chat-main-panel .msg-media-row video {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: 200px;
+}
+.chat-main-panel .msg-media-row img.msg-image {
+    flex: 0 0 auto;
+    max-width: 180px;
+}
+.chat-main-panel .msg-media-row a.msg-file {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chat-main-panel .msg-action-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: opacity 0.2s, background 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+.chat-main-panel .msg-action-btn:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.08);
+}
+.chat-main-panel .msg-sent .msg-action-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+.chat-main-panel .chat-input-area {
+    border-top: 1px solid #eee;
+    padding: 12px 20px;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.chat-main-panel .chat-input-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+.chat-main-panel #messageInput {
+    flex: 1;
+    border: 1.5px solid #ddd;
+    border-radius: 24px;
+    padding: 10px 18px;
+    outline: none;
+    font-size: 0.93rem;
+}
+.chat-main-panel #messageInput:focus { border-color: #611f47; }
+.chat-main-panel .chat-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+.chat-main-panel .chat-btn:hover { transform: scale(1.1); }
+.chat-main-panel .btn-send { background: #611f47; color: white; }
+.chat-main-panel .btn-attach { background: #f0e6ec; color: #611f47; }
+.chat-main-panel .btn-record { background: #f0e6ec; color: #611f47; }
+.chat-main-panel .btn-record.recording { background: #dc3545; color: white; animation: pulse 1s infinite; }
+.chat-main-panel #fileInput { display: none; }
+.chat-main-panel #recordingTimer { font-size: 0.78rem; color: #dc3545; display: none; }
+.chat-back-btn {
+    color: white;
+    text-decoration: none;
+    opacity: 0.85;
+    font-size: 0.9rem;
+}
+.chat-back-btn:hover { opacity: 1; color: white; }
+
+@media (max-width: 768px) {
+    .chat-client-sidebar { display: none; }
+    .chat-wrapper { height: calc(100vh - 60px); }
+}
+
+
+/* ==========================================================================
+   14. Booking Management (professional_bookings.html, client_bookings.html)
+   ========================================================================== */
+.booking-mgmt-body { background-color: #f5f6fa; }
+
+.booking-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    background: white;
+    overflow: hidden;
+}
+.booking-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 20px 24px;
+}
+.booking-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.booking-item:last-child { border-bottom: none; }
+
+/* Status badges */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.status-pending { background: #fff3cd; color: #856404; }
+.status-in-progress { background: #cce5ff; color: #004085; }
+.status-completed { background: #d4edda; color: #155724; }
+.payment-unpaid { background: #ffeeba; color: #856404; }
+.payment-paid { background: #d4edda; color: #155724; }
+
+/* Pay button (client_bookings) */
+.pay-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.pay-btn:hover { background-color: #218838; color: white; }
+
+/* Status tabs (find_jobs/professional_bookings) */
+.status-tab {
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+}
+.status-tab.active { background: #611f47; color: white; border-color: #611f47; }
+.status-tab:not(.active) { background: white; color: #666; border: 1px solid #ddd; }
+.status-tab:not(.active):hover { border-color: #611f47; color: #611f47; }
+
+/* Booking card items (find_jobs) */
+.booking-card-item {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    background: white;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+.booking-card-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 5px solid #198754;
+}
+.booking-card-header.pending { border-left-color: #ffc107; }
+.booking-card-header.in-progress { border-left-color: #0d6efd; }
+.booking-card-header.completed { border-left-color: #198754; }
+.booking-body { display: none; border-top: 1px solid #f0f0f0; }
+
+/* Pro chat toggle button (professional_bookings) */
+.chat-toggle-btn {
+    background: none;
+    border: 1px solid #611f47;
+    color: #611f47;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+.chat-toggle-btn:hover { background: #611f47; color: white; }
+
+
+/* ==========================================================================
+   15. Review Modal Components
+   ========================================================================== */
+.review-stars {
+    color: #ddd;
+    cursor: pointer;
+}
+.review-stars i:hover,
+.review-stars i.active {
+    color: #ffc107;
+}
+
+
+/* ==========================================================================
+   16. Common Layout Overrides
+   ========================================================================== */
+/* Page-level background override for dashboard pages */
+.page-bg-light { background-color: #f5f6fa; }
+
+/* Full-height chat body override */
+.chat-page-body { background-color: #f5f6fa; height: 100vh; overflow: hidden; }
+
+/* Navbar fixed height utility */
+.navbar-fixed { height: 60px; }
+
+/* Booking price highlight */
+.booking-price { font-weight: 700; }
+
+/* Selected filter badge (results.html) */
+.filter-selected-badge {
+    background-color: #611f47;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 4px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.filter-selected-badge i {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+/* ==========================================================================
+   17. Price Update & Hint Styling
+   ========================================================================== */
+.price-change-hint {
+    background: #fff5f5;
+    border-left: 4px solid #dc3545;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+}
+.price-change-hint i {
+    color: #dc3545;
+}
+.price-change-hint strong {
+    color: #dc3545;
+}
+.price-change-hint .btn-got-it {
+    background: #611f47;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    padding: 4px 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.price-change-hint .btn-got-it:hover {
+    background: #3c0a28;
+    transform: scale(1.05);
+}
+
+/* Professional price edit success hint */
+.price-edit-success {
+    color: #198754;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.price-edit-success i {
+    color: #198754;
+}
+
+/* ==========================================================================
+   18. Print & Misc Cleanup
+   ========================================================================== */
+@media print {
+    .nav-buttons,
+    .chat-input-area,
+    .chat-btn,
+    .filter-scroll,
+    .inner-footer,
+    footer { display: none !important; }
+}
+
+
+/* ==========================================================================
+   19. Admin Dashboard (extracted from admin_dashboard.html <style>)
+   ========================================================================== */
+:root {
+    --admin-primary: #611f47;
+    --admin-dark: #1a1a2e;
+}
+
+.admin-body {
+    background: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+}
+.sidebar {
+    background: var(--admin-dark);
+    min-height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+.sidebar-brand {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+.sidebar-brand img {
+    height: 32px;
+    filter: brightness(0) invert(1);
+}
+.sidebar-nav {
+    padding: 16px 0;
+}
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border-left-color: #9b3d71;
+}
+.sidebar-nav a i {
+    width: 20px;
+    text-align: center;
+}
+.main-content {
+    margin-left: 250px;
+    padding: 24px 32px;
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+.top-bar h2 {
+    font-weight: 700;
+    color: var(--admin-dark);
+    margin: 0;
+}
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+}
+.stat-card .stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--admin-dark);
+    line-height: 1.2;
+}
+.stat-card .stat-label {
+    font-size: 0.82rem;
+    color: #888;
+    font-weight: 500;
+}
+.card-section {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.card-section .card-header {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    padding: 16px 24px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.card-section .card-body {
+    padding: 20px 24px;
+}
+.badge-status {
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-in-progress { background: #cce5ff; color: #004085; }
+.badge-completed { background: #d4edda; color: #155724; }
+.badge-paid { background: #d4edda; color: #155724; }
+.badge-unpaid { background: #ffeeba; color: #856404; }
+.badge-verified { background: #d4edda; color: #155724; }
+.badge-suspended { background: #f8d7da; color: #721c24; }
+
+.search-wrapper {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+}
+.search-input-group {
+    display: flex;
+    gap: 8px;
+}
+.search-input-group input {
+    flex: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.search-input-group input:focus {
+    border-color: #611f47;
+}
+.search-input-group select {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 8px 14px;
+    outline: none;
+}
+.search-input-group button {
+    background: #611f47;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 28px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.search-input-group button:hover {
+    background: #3c0a28;
+}
+.search-results {
+    margin-top: 16px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.search-result-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.1s;
+}
+.search-result-item:hover {
+    background: #fcf8fa;
+}
+.search-result-item:last-child {
+    border-bottom: none;
+}
+.search-result-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.search-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+}
+.search-empty i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+.quick-action-btn {
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: all 0.2s;
+}
+.sidebar-toggle {
+    display: none;
+    background: var(--admin-dark);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.show { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 16px; }
+    .sidebar-toggle { display: block; }
+}
+
+
+/* ==========================================================================
+   20. Admin Login (extracted from admin_login.html <style>)
+   ========================================================================== */
+.admin-auth-body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.admin-auth-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 420px;
+    width: 100%;
+}
+.admin-lock-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: white;
+    font-size: 28px;
+}
+.admin-btn {
+    background: linear-gradient(135deg, #611f47, #9b3d71);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.admin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(97, 31, 71, 0.4);
+    color: white;
+}
+.admin-input {
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    transition: border-color 0.2s;
+}
+.admin-input:focus {
+    border-color: #611f47;
+    box-shadow: 0 0 0 3px rgba(97, 31, 71, 0.1);
+}
+.brand-link {
+    color: #611f47;
+    text-decoration: none;
+    font-weight: 600;
+}
+.brand-link:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   21. Utility Classes for Inline Styles
+   ========================================================================== */
+
+/* Logo sizing variants */
+.kiraar-nav-logo {
+    height: 36px;
+}
+.kiraar-chat-logo {
+    height: 32px;
+}
+.kiraar-logo-lg {
+    max-height: 45px;
+    background-color: #ffffff;
+}
+
+/* Fixed card widths */
+.kiraar-card-300 {
+    width: 300px;
+}
+.kiraar-map-box {
+    width: 500px;
+    height: 400px;
+}
+.kiraar-card-500 {
+    width: 500px;
+}
+
+/* Profile image sizing */
+.kiraar-profile-sm {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.kiraar-profile-circle {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+/* Stat card gradient backgrounds for icons */
+.kiraar-stat-purple {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+.kiraar-stat-pink {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+.kiraar-stat-blue {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+.kiraar-stat-green {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+/* Brand outline badges (service tags) */
+.kiraar-badge-outline {
+    background: #f0e6ec;
+    color: #611f47;
+    border: 1px solid #611f47;
+}
+.kiraar-badge-outline-sm {
+    background: #f0e6ec;
+    color: #611f47;
+    border: 1px solid #611f47;
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+/* Soft brand background */
+.kiraar-bg-soft {
+    background: #fcf8fa;
+}
+
+/* Brand border accent */
+.kiraar-border-brand {
+    border-color: #611f47 !important;
+}
+
+/* Price input group branding */
+.kiraar-input-group-text {
+    background: #f0e6ec;
+    color: #611f47;
+    font-weight: 600;
+}
+
+/* Brand-colored price update button */
+.kiraar-price-update-btn {
+    background: #611f47;
+    color: white;
+    border-color: #611f47;
+    font-weight: 600;
+}
+
+/* Inline brand color for headings/text */
+.kiraar-text-admin-dark {
+    color: #1a1a2e;
+}
+
+/* Price hint for professional changes */
+.kiraar-price-hint-pro {
+    color: #198754;
+}
+.kiraar-price-hint-client {
+    color: #dc3545;
+}
+
+/* Chat price editor styles */
+.kiraar-chat-price-input .input-group-text {
+    background: #f0e6ec;
+    color: #611f47;
+    font-weight: 600;
+}
+.kiraar-chat-price-input .form-control {
+    border-color: #ddd;
+}
+.kiraar-chat-price-input .btn {
+    background: #611f47;
+    color: white;
+    border-color: #611f47;
+    font-weight: 600;
+}
+
+/* Service badge used in professional_profile */
+.kiraar-service-tag {
+    background: #f0e6ec;
+    color: #611f47;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin: 3px;
+}
+
+/* Brand text on white background for nav links */
+.kiraar-nav-link {
+    color: #611f47;
+    text-decoration: none;
+    font-weight: 600;
+}
+.kiraar-nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Category delete button */
+.kiraar-delete-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Price update alert border */
+.kiraar-price-alert {
+    border-left: 4px solid #dc3545;
+    background: #fff5f5;
+}
+
+/* Professional service badge in profile */
+.kiraar-pro-service-badge {
+    background: #f0e6ec;
+    color: #611f47;
+    border: 1px solid #611f47;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 5px 12px;
+}
+
+/* Price alert hint */
+.kiraar-price-hint-danger {
+    color: #dc3545;
+    font-size: 0.8rem;
+}
+
+/* Pay button override style */
+.kiraar-pay-btn {
+    font-weight: bold;
+}
+
+/* Profile card border image */
+.kiraar-profile-border {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}

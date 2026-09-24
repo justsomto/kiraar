@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Your Profile - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="inner-page">
+    <div class="container py-5">
+        <h2 class="mb-4">Edit Your Profile</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" class="card p-4 shadow-sm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" name="phone_number" value="{{ user.phone_number or '' }}">
+                </div>
+
+                <div class="col-12">
+                    <hr>
+                    <p class="text-muted small mb-2">Leave the fields below blank if you don't want to change your password.</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-control" name="new_password" autocomplete="new-password">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" name="confirm_password" autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> Save Changes</button>
+                <a href="/results/" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+
+        <!-- ⚠️ DANGER ZONE: Delete Account -->
+        <div style="border: 2px dashed #dc3545; border-radius: 10px; padding: 20px; background-color: #fff5f5; margin-top: 30px;">
+            <h5 class="text-danger fw-bold"><i class="fa-solid fa-skull-crossbones me-2"></i>Danger Zone</h5>
+            <p class="text-danger mb-1 fw-semibold">Delete Your Account</p>
+            <p class="text-muted small mb-3">
+                ⚠️ This action is <strong>permanent and cannot be undone.</strong> Your account and all your data will be wiped from our system forever.
+            </p>
+            <form method="post" action="/client/delete-account/" id="deleteAccountForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="button" class="btn btn-outline-danger fw-bold" onclick="confirmDelete()">
+                    <i class="fa-solid fa-trash me-1"></i> Permanently Delete My Account
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scary delete confirmation
+        function confirmDelete() {
+            var answer = confirm(
+                '⚠️ WARNING: This will PERMANENTLY delete your account.\n\n' +
+                'All your data will be gone forever and CANNOT be recovered.\n\n' +
+                'Are you absolutely sure you want to do this?'
+            );
+            if (answer) {
+                document.getElementById('deleteAccountForm').submit();
+            }
+        }
+    </script>
+</body>
+</html>

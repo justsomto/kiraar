@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Unavailable (503) - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon-32x32.png">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eaeaea;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 540px;
+            width: 100%;
+        }
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #fd7e14;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="py-3 bg-white border-bottom shadow-sm">
+        <div class="container text-center">
+            <a href="/">
+                <img src="/static/images/logo4.png" alt="Kiraar Logo" style="height: 42px;">
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container flex-grow-1 d-flex align-items-center justify-content-center py-5">
+        <div class="error-card">
+            <div class="mb-3">
+                <img src="/static/images/logo4.png" alt="Kiraar 503" class="img-fluid mb-3" style="max-height: 110px; opacity: 0.95;">
+            </div>
+            <div class="error-code">503</div>
+            <h3 class="fw-bold text-dark mb-2">Service Temporarily Unavailable</h3>
+            <p class="text-muted mb-4">
+                We are currently performing routine maintenance or experiencing high traffic. Please check back in a few moments.
+            </p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <button onclick="window.location.reload()" class="btn text-white px-4 py-2 rounded-pill fw-bold" style="background:#611f47;">
+                    <i class="fa-solid fa-rotate-right me-1"></i> Refresh Page
+                </button>
+                <a href="/" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-bold">
+                    <i class="fa-solid fa-house me-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-3 text-center text-muted small bg-white border-top">
+        &copy; 2026 Kiraar. All rights reserved.
+    </footer>
+
+</body>
+</html>

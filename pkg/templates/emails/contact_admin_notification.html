@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px; margin: 0; }
+    .card { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 8px; border-top: 4px solid #611f47; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    h2 { color: #611f47; margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    td { padding: 9px 8px; font-size: 14px; border-bottom: 1px solid #f0e6ed; }
+    .label { font-weight: bold; width: 30%; color: #333; }
+    .val { color: #555; }
+    .msg-box { margin-top: 20px; padding: 15px; background: #fdf8fb; border-radius: 6px; border-left: 3px solid #611f47; }
+    .foot { margin-top: 25px; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📩 New Support Inquiry - Kiraar</h2>
+    <p style="color: #555;">You have received a new contact message from the website:</p>
+    <table>
+      <tr><td class="label">Sender Name:</td><td class="val">{{ name }}</td></tr>
+      <tr><td class="label">Email:</td><td class="val"><a href="mailto:{{ sender_email }}" style="color: #611f47;">{{ sender_email }}</a></td></tr>
+      <tr><td class="label">Phone:</td><td class="val">{{ phone or 'Not provided' }}</td></tr>
+      <tr><td class="label">Subject / Topic:</td><td class="val"><strong>{{ subject }}</strong></td></tr>
+    </table>
+    <div class="msg-box">
+      <p style="margin: 0; font-weight: bold; color: #611f47;">Message:</p>
+      <p style="margin-top: 8px; color: #444; white-space: pre-wrap; line-height: 1.6;">{{ message_content }}</p>
+    </div>
+    <div class="foot">
+      Kiraar Administration Mailer &bull; Lagos, Nigeria
+    </div>
+  </div>
+</body>
+</html>

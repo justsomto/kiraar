@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Analytics - Kiraar Admin</title>
+    <!-- Simple Bootstrap 5 & FontAwesome -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <style>
+        .fin-header {
+            background: linear-gradient(135deg, #611f47 0%, #3e0f2c 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(97, 31, 71, 0.15);
+        }
+        .filter-pill {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #611f47;
+            background: #ffffff;
+            border: 1.5px solid #e2d2dc;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .filter-pill:hover {
+            background: #fbf5f8;
+            color: #611f47;
+            border-color: #611f47;
+        }
+        .filter-pill.active {
+            background: #611f47;
+            color: #ffffff;
+            border-color: #611f47;
+            box-shadow: 0 2px 8px rgba(97, 31, 71, 0.25);
+        }
+        .stat-card-custom {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid #f0edf0;
+            height: 100%;
+            transition: transform 0.15s ease;
+        }
+        .stat-card-custom:hover {
+            transform: translateY(-2px);
+        }
+        .stat-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .icon-purple { background: #f4eaf0; color: #611f47; }
+        .icon-green { background: #e8f5e9; color: #2e7d32; }
+        .icon-blue { background: #e3f2fd; color: #1565c0; }
+        .icon-orange { background: #fff3e0; color: #ef6c00; }
+        .icon-yellow { background: #fffde7; color: #f57f17; }
+        .icon-teal { background: #e0f2f1; color: #00695c; }
+    </style>
+</head>
+<body class="admin-body" style="background-color: #f8f6f8; min-height: 100vh;">
+
+    <div class="container py-4">
+
+        <!-- Top Header Banner -->
+        <div class="fin-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold" style="color: #611f47 !important;">
+                        <i class="fa-solid fa-coins me-1" style="color: #611f47;"></i> Admin Financials
+                    </span>
+                </div>
+                <h2 class="fw-bold mb-1">Financial Analytics &amp; Revenue</h2>
+                <p class="mb-0 small" style="opacity: 0.85;">
+                    Live tracking of gross income, Kiraar platform fees (10%), artisan payouts (90%), and Paystack gateway charges.
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/admin/dashboard/" class="btn btn-light rounded-pill px-4 fw-semibold shadow-sm" style="color: #611f47;">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Period Filter Pills -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-4 p-3 bg-white rounded-4 shadow-sm border">
+            <span class="small fw-bold text-muted me-2"><i class="fa-solid fa-filter me-1"></i> Filter Period:</span>
+            <a href="/admin/financials/?period=all" class="filter-pill {% if period == 'all' or not period %}active{% endif %}">
+                <i class="fa-solid fa-globe me-1"></i> All Time
+            </a>
+            <a href="/admin/financials/?period=today" class="filter-pill {% if period == 'today' %}active{% endif %}">
+                <i class="fa-solid fa-calendar-day me-1"></i> Today
+            </a>
+            <a href="/admin/financials/?period=week" class="filter-pill {% if period == 'week' %}active{% endif %}">
+                <i class="fa-solid fa-calendar-week me-1"></i> This Week
+            </a>
+            <a href="/admin/financials/?period=month" class="filter-pill {% if period == 'month' %}active{% endif %}">
+                <i class="fa-solid fa-calendar-days me-1"></i> This Month
+            </a>
+            <a href="/admin/financials/?period=year" class="filter-pill {% if period == 'year' %}active{% endif %}">
+                <i class="fa-solid fa-calendar me-1"></i> This Year
+            </a>
+        </div>
+
+        <!-- Primary Stats Cards -->
+        <div class="row g-3 mb-4">
+            <!-- Gross Revenue -->
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card-custom d-flex align-items-center gap-3">
+                    <div class="stat-icon-wrapper icon-purple">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Gross Revenue</div>
+                        <div class="fs-5 fw-bold" style="color: #611f47;">₦{{ "{:,.2f}".format(total_gross_revenue) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kiraar 10% Fee -->
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card-custom d-flex align-items-center gap-3">
+                    <div class="stat-icon-wrapper icon-teal">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Kiraar 10% Fee</div>
+                        <div class="fs-5 fw-bold text-teal" style="color: #00695c;">₦{{ "{:,.2f}".format(platform_fee) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Net Profit -->
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card-custom d-flex align-items-center gap-3">
+                    <div class="stat-icon-wrapper icon-green">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Net Profit</div>
+                        <div class="fs-5 fw-bold text-success">₦{{ "{:,.2f}".format(net_profit) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artisan 90% Payouts -->
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card-custom d-flex align-items-center gap-3">
+                    <div class="stat-icon-wrapper icon-blue">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Artisan 90% Share</div>
+                        <div class="fs-5 fw-bold text-primary">₦{{ "{:,.2f}".format(professional_payouts) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gateway Fees -->
+            <div class="col-6 col-md-4 col-lg">
+                <div class="stat-card-custom d-flex align-items-center gap-3">
+                    <div class="stat-icon-wrapper icon-orange">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Gateway Cost</div>
+                        <div class="fs-5 fw-bold text-warning" style="color: #e65100 !important;">₦{{ "{:,.2f}".format(gateway_fee) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="stat-card-custom d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small"><i class="fa-solid fa-clock-rotate-left me-1 text-warning"></i> Pending Payouts (In Escrow)</div>
+                        <div class="fs-4 fw-bold text-warning">₦{{ "{:,.2f}".format(pending_payouts) }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Funds held in escrow until clients release payment or 2-day auto timer fires.</div>
+                    </div>
+                    <div class="stat-icon-wrapper icon-yellow">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="stat-card-custom d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small"><i class="fa-solid fa-check-double me-1 text-success"></i> Paid Transactions Count</div>
+                        <div class="fs-4 fw-bold" style="color: #611f47;">{{ transaction_count }} <span class="fs-6 text-muted fw-normal">transaction(s)</span></div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Total verified customer bookings in this selected time range.</div>
+                    </div>
+                    <div class="stat-icon-wrapper icon-purple">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Trend Line Chart -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0" style="color: #611f47;">
+                    <i class="fa-solid fa-chart-area me-2"></i>Revenue Trend Over Time
+                </h5>
+                <span class="badge bg-light text-muted border px-3 py-1">Gross Volume (₦)</span>
+            </div>
+            <div class="card-body p-4">
+                {% if trend and trend|length > 0 %}
+                <canvas id="financialChart" height="90"></canvas>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fa-solid fa-chart-line fa-2x mb-2" style="color: #611f47; opacity: 0.4;"></i>
+                    <p class="mb-0 small">No historical trend data for this specific filter. Switch to <strong>"All Time"</strong> to view full revenue charts.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Detailed Transactions Breakdown Table -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0" style="color: #611f47;">
+                    <i class="fa-solid fa-list-check me-2"></i>Paid Bookings &amp; Fee Breakdown
+                </h5>
+                <span class="badge rounded-pill" style="background: #f4eaf0; color: #611f47;">
+                    {{ paid_bookings|length if paid_bookings else 0 }} record(s)
+                </span>
+            </div>
+            <div class="card-body p-0">
+                {% if paid_bookings and paid_bookings|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Client</th>
+                                <th>Professional</th>
+                                <th>Total Price</th>
+                                <th>Kiraar (10%)</th>
+                                <th>Artisan (90%)</th>
+                                <th>Payment Ref</th>
+                                <th>Payout Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in paid_bookings %}
+                            <tr>
+                                <td class="fw-bold">#{{ b.booking_id }}</td>
+                                <td class="small">
+                                    {% if b.user %}
+                                        {{ b.user.first_name }} {{ b.user.last_name }}
+                                        <div class="text-muted" style="font-size: 0.72rem;">{{ b.user.email }}</div>
+                                    {% else %}
+                                        <span class="text-muted">Client #{{ b.user_id }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small">
+                                    {% if b.professional %}
+                                        {{ b.professional.first_name }} {{ b.professional.last_name }}
+                                        {% if b.professional.business_name %}
+                                        <div class="text-muted" style="font-size: 0.72rem;">{{ b.professional.business_name }}</div>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">Pro #{{ b.professional_id }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-bold" style="color: #611f47;">₦{{ "%.2f"|format(b.booking_price|float) }}</td>
+                                <td class="small text-success fw-semibold">₦{{ "%.2f"|format(b.booking_price|float * 0.10) }}</td>
+                                <td class="small text-primary fw-semibold">₦{{ "%.2f"|format(b.booking_price|float * 0.90) }}</td>
+                                <td class="small" style="font-family: monospace; font-size: 0.75rem;">{{ b.payment_reference or 'N/A' }}</td>
+                                <td>
+                                    {% if b.is_paid_out %}
+                                    <span class="badge bg-success rounded-pill"><i class="fa-solid fa-check me-1"></i>Disbursed to Bank</span>
+                                    {% elif b.job_status == 'completed' %}
+                                    <span class="badge bg-warning text-dark rounded-pill"><i class="fa-solid fa-hourglass-half me-1"></i>Ready for Release</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary rounded-pill"><i class="fa-solid fa-vault me-1"></i>In Escrow (Work in Progress)</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    {{ b.scheduled_date.strftime('%b %d, %Y') if b.scheduled_date else 'N/A' }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-receipt fa-3x mb-3" style="color: #611f47; opacity: 0.3;"></i>
+                    <h6 class="fw-bold mb-1" style="color: #611f47;">No Paid Transactions for this Period</h6>
+                    <p class="small mb-3 text-muted">There are no paid bookings matching the selected filter (<strong>{{ period|capitalize }}</strong>).</p>
+                    <a href="/admin/financials/?period=all" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="fa-solid fa-globe me-1"></i> View All Time Records
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ChartJS Initialization -->
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% if trend and trend|length > 0 %}
+    <script>
+        var labels = {{ trend|map(attribute='label')|list|tojson }};
+        var values = {{ trend|map(attribute='value')|list|tojson }};
+        var chartEl = document.getElementById('financialChart');
+        if (chartEl) {
+            new Chart(chartEl, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Gross Volume (₦)',
+                        data: values,
+                        backgroundColor: 'rgba(97, 31, 71, 0.12)',
+                        borderColor: '#611f47',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#611f47',
+                        pointRadius: 4,
+                        tension: 0.35,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₦' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: ₦' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    {% endif %}
+</body>
+</html>

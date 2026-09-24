@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Somto">
+    <meta name="description" content="Join Kiraar - Create an account to hire vetted artisans or register as a professional to offer your services.">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <title>Sign Up - Kiraar</title>
+    <style>
+        .active-tab-btn {
+            background-color: #611f47 !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(97, 31, 71, 0.35);
+        }
+        .inactive-tab-btn {
+            background-color: transparent !important;
+            color: #6c757d !important;
+        }
+        .inactive-tab-btn:hover {
+            color: #611f47 !important;
+        }
+        @media (max-width: 480px) {
+            .btn-group .btn {
+                font-size: 0.82rem !important;
+                padding-left: 6px !important;
+                padding-right: 6px !important;
+            }
+            .kiraar-auth-card {
+                padding: 1.5rem 1.1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="container py-5 d-flex justify-content-center align-items-center">
+        <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5 p-4 p-sm-5 kiraar-auth-card shadow-sm">
+            
+            <!-- Logo Header -->
+            <div class="text-center mb-3">
+                <a href="/">
+                    <img src="/static/images/logo4.png" alt="Kiraar" style="height: 42px;">
+                </a>
+            </div>
+
+            <!-- Switcher Tabs between Client and Professional -->
+            <div class="d-flex justify-content-center mb-4">
+                <div class="btn-group p-1 bg-light rounded-pill shadow-sm w-100" role="group">
+                    <button type="button" class="btn rounded-pill fw-semibold py-2 w-50 active-tab-btn" id="tabClientBtn" onclick="switchSignupTab('client')">
+                        <i class="fa-solid fa-user me-1"></i> Become a Client
+                    </button>
+                    <button type="button" class="btn rounded-pill fw-semibold py-2 w-50 inactive-tab-btn" id="tabProBtn" onclick="switchSignupTab('pro')">
+                        <i class="fa-solid fa-briefcase me-1"></i> Become a Professional
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flashed Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show kiraar-flash" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- ======================================================== -->
+            <!-- CARD 1: BECOME A CLIENT (ACTIVE BY DEFAULT)              -->
+            <!-- ======================================================== -->
+            <div id="clientSignupCard">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold mb-1">Welcome!</h3>
+                    <h5 class="text-secondary fw-normal mb-2">Find Professionals.</h5>
+                    <p class="text-muted small">Create an account to locate the right artisans for your home & service needs.</p>
+                </div>
+
+                <!-- Google Identity Provider -->
+                <div class="d-flex justify-content-center mb-3">
+                    <a href="/auth/google/client/" class="gsi-material-button text-decoration-none d-inline-block">
+                        <div class="gsi-material-button-state"></div>
+                        <div class="gsi-material-button-content-wrapper">
+                            <div class="gsi-material-button-icon">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
+                                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                                    <path fill="none" d="M0 0h48v48H0z"></path>
+                                </svg>
+                            </div>
+                            <span class="gsi-material-button-contents">Sign up with Google</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Separator -->
+                <div class="d-flex align-items-center my-3">
+                    <hr class="flex-grow-1 text-muted opacity-25">
+                    <span class="mx-3 text-muted small fw-semibold">OR SIGN UP WITH EMAIL</span>
+                    <hr class="flex-grow-1 text-muted opacity-25">
+                </div>
+
+                <form action="{{ url_for('signup_client') }}" method="post" novalidate>
+                    {{ client_form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ client_form.first_name.label(class="form-label small fw-semibold text-secondary") }}
+                            {{ client_form.first_name(class="form-control", placeholder="e.g. Abiodun") }}
+                            {% for error in client_form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ client_form.last_name.label(class="form-label small fw-semibold text-secondary") }}
+                            {{ client_form.last_name(class="form-control", placeholder="e.g. Chidi") }}
+                            {% for error in client_form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ client_form.email.label(class="form-label small fw-semibold text-secondary") }}
+                        {{ client_form.email(class="form-control", placeholder="name@example.com") }}
+                        {% for error in client_form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ client_form.phone.label(class="form-label small fw-semibold text-secondary") }}
+                        {{ client_form.phone(class="form-control", placeholder="+234...") }}
+                        {% for error in client_form.phone.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ client_form.password.label(class="form-label small fw-semibold text-secondary") }}
+                        <div class="input-group">
+                            {{ client_form.password(class="form-control", id="clientPasswordInput", placeholder="Create a strong password") }}
+                            <button type="button" class="btn btn-outline-secondary bg-white text-secondary" id="clientTogglePasswordBtn" style="border-left: none;">
+                                <i class="fa-solid fa-eye" id="clientEyeIcon"></i>
+                            </button>
+                        </div>
+                        {% for error in client_form.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        {{ client_form.submit(class="btn btn-lg py-2 text-white kiraar-btn-solid") }}
+                    </div>
+                </form>
+
+                <!-- Legal and Login links -->
+                <p class="small text-center text-secondary px-2 mb-3 lh-base">
+                    By signing up you agree to our 
+                    <a href="/terms/" class="text-decoration-none fw-bold kiraar-legal-link">Terms of Use</a> 
+                    and 
+                    <a href="/privacy/" class="text-decoration-none fw-bold kiraar-legal-link">Privacy Policy</a>.
+                </p>
+
+                <hr class="text-muted opacity-25 mb-3">
+
+                <p class="text-center text-secondary mb-0">
+                    Already have an account? 
+                    <a href="/login/" class="text-decoration-none fw-bold kiraar-legal-link ms-1">Log in</a>
+                </p>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- CARD 2: BECOME A PROFESSIONAL                            -->
+            <!-- ======================================================== -->
+            <div id="proSignupCard" class="d-none">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold mb-1">Welcome!</h3>
+                    <h5 class="text-secondary fw-normal mb-2">Find Clients.</h5>
+                    <p class="text-muted small">Grow your business and find active clients near you.</p>
+                </div>
+
+                <!-- Google Identity Provider -->
+                <div class="d-flex justify-content-center mb-3">
+                    <a href="/auth/google/pro/" class="gsi-material-button text-decoration-none d-inline-block">
+                        <div class="gsi-material-button-state"></div>
+                        <div class="gsi-material-button-content-wrapper">
+                            <div class="gsi-material-button-icon">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
+                                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                                    <path fill="none" d="M0 0h48v48H0z"></path>
+                                </svg>
+                            </div>
+                            <span class="gsi-material-button-contents">Sign up with Google</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Separator -->
+                <div class="d-flex align-items-center my-3">
+                    <hr class="flex-grow-1 text-muted opacity-25">
+                    <span class="mx-3 text-muted small fw-semibold">OR SIGN UP WITH EMAIL</span>
+                    <hr class="flex-grow-1 text-muted opacity-25">
+                </div>
+
+                <form action="{{ url_for('signup_pro') }}" method="post" novalidate>
+                    {{ pro_form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ pro_form.first_name.label(class="form-label small fw-semibold text-secondary") }}
+                            {{ pro_form.first_name(class="form-control", placeholder="e.g. Abiodun") }}
+                            {% for error in pro_form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ pro_form.last_name.label(class="form-label small fw-semibold text-secondary") }}
+                            {{ pro_form.last_name(class="form-control", placeholder="e.g. Chidi") }}
+                            {% for error in pro_form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ pro_form.business_name.label(class="form-label small fw-semibold text-secondary") }}
+                        {{ pro_form.business_name(class="form-control", placeholder="e.g. Chidi's Plumbing Services") }}
+                        {% for error in pro_form.business_name.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Services multi-select dropdown with search -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Select Your Services</label>
+                        <div class="dropdown">
+                            <button class="form-control text-start dropdown-toggle d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="servicesDropdownBtn" style="background-color: #fff;">
+                                <span id="servicesSelectedText" class="text-muted small">Choose services...</span>
+                            </button>
+                            <div class="dropdown-menu w-100 p-2" aria-labelledby="servicesDropdownBtn" style="max-height: 280px; overflow-y: auto;">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control form-control-sm" id="servicesSearchInput" placeholder="Search services..." oninput="filterServices(this)">
+                                </div>
+                                <div id="servicesCheckboxList">
+                                    {% for value, label in pro_form.services.choices %}
+                                    <div class="dropdown-item p-0 mb-1 service-item">
+                                        <label class="d-flex align-items-center gap-2 px-2 py-1" style="cursor: pointer;">
+                                            <input class="form-check-input m-0 service-checkbox" type="checkbox" name="services" value="{{ value }}" id="svc_{{ value }}" {% if pro_form.services.data and value in pro_form.services.data %}checked{% endif %}>
+                                            <span class="small">{{ label }}</span>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-muted small mt-1">Select all the services you offer (you can change these later).</div>
+                        {% for error in pro_form.services.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ pro_form.email.label(class="form-label small fw-semibold text-secondary") }}
+                        {{ pro_form.email(class="form-control", placeholder="name@example.com") }}
+                        {% for error in pro_form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ pro_form.phone.label(class="form-label small fw-semibold text-secondary") }}
+                        {{ pro_form.phone(class="form-control", placeholder="+234...") }}
+                        {% for error in pro_form.phone.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ pro_form.password.label(class="form-label small fw-semibold text-secondary") }}
+                        <div class="input-group">
+                            {{ pro_form.password(class="form-control", id="proPasswordInput", placeholder="Create a strong password") }}
+                            <button type="button" class="btn btn-outline-secondary bg-white text-secondary" id="proTogglePasswordBtn" style="border-left: none;">
+                                <i class="fa-solid fa-eye" id="proEyeIcon"></i>
+                            </button>
+                        </div>
+                        {% for error in pro_form.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        {{ pro_form.submit(class="btn btn-lg py-2 text-white kiraar-btn-solid") }}
+                    </div>
+                </form>
+
+                <!-- Legal and Login links -->
+                <p class="small text-center text-secondary px-2 mb-3 lh-base">
+                    By signing up you agree to our 
+                    <a href="/terms/" class="text-decoration-none fw-bold kiraar-legal-link">Terms of Use</a> 
+                    and 
+                    <a href="/privacy/" class="text-decoration-none fw-bold kiraar-legal-link">Privacy Policy</a>.
+                </p>
+
+                <hr class="text-muted opacity-25 mb-3">
+
+                <p class="text-center text-secondary mb-0">
+                    Already have an account? 
+                    <a href="/login/" class="text-decoration-none fw-bold kiraar-legal-link ms-1">Log in</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+        
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Tab switching function
+        function switchSignupTab(tab) {
+            if (tab === 'pro') {
+                $('#clientSignupCard').addClass('d-none');
+                $('#proSignupCard').removeClass('d-none');
+                $('#tabProBtn').removeClass('inactive-tab-btn').addClass('active-tab-btn');
+                $('#tabClientBtn').removeClass('active-tab-btn').addClass('inactive-tab-btn');
+            } else {
+                $('#proSignupCard').addClass('d-none');
+                $('#clientSignupCard').removeClass('d-none');
+                $('#tabClientBtn').removeClass('inactive-tab-btn').addClass('active-tab-btn');
+                $('#tabProBtn').removeClass('active-tab-btn').addClass('inactive-tab-btn');
+            }
+        }
+
+        // Initialize active tab from backend or URL
+        $(document).ready(function() {
+            var initialTab = "{{ active_tab|default('client') }}";
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('tab') === 'pro' || initialTab === 'pro') {
+                switchSignupTab('pro');
+            } else {
+                switchSignupTab('client');
+            }
+
+            // Client password toggle
+            $('#clientTogglePasswordBtn').click(function() {
+                var input = $('#clientPasswordInput');
+                var icon = $('#clientEyeIcon');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Professional password toggle
+            $('#proTogglePasswordBtn').click(function() {
+                var input = $('#proPasswordInput');
+                var icon = $('#proEyeIcon');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Update services count text
+            function updateServicesText() {
+                var checked = $('.service-checkbox:checked');
+                var text = checked.length > 0 ? checked.length + ' service(s) selected' : 'Choose services...';
+                $('#servicesSelectedText').text(text);
+            }
+            $('.service-checkbox').on('change', updateServicesText);
+            updateServicesText();
+
+            // Prevent dropdown from closing when clicking search
+            $('#servicesSearchInput').on('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+
+        // Filter services by search input
+        function filterServices(input) {
+            var query = input.value.toLowerCase().trim();
+            $('.service-item').each(function() {
+                var label = $(this).find('span').text().toLowerCase();
+                $(this).toggle(!query || label.includes(query));
+            });
+        }
+    </script>
+</body>
+</html>

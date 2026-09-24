@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with {{ client.first_name }} - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-light bg-white py-1 border-bottom" style="height:60px;">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" style="height:32px;"></a>
+            <a href="/find-jobs/" class="btn btn-outline-secondary btn-sm rounded-pill">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="chat-wrapper">
+        <!-- ── LEFT: Client Details Sidebar ── -->
+        <div class="chat-client-sidebar">
+            <div class="sidebar-header">
+                <img src="/static/images/testimonial1.jpg" alt="Client">
+                <h5 class="fw-bold mb-0">{{ client.first_name }} {{ client.last_name }}</h5>
+                <small class="opacity-75"><span class="badge bg-success" style="width:8px;height:8px;display:inline-block;border-radius:50%;margin-right:4px;"></span>Online</small>
+            </div>
+            <div class="sidebar-body">
+                <h6 class="text-muted small fw-bold mb-3"><i class="fa-solid fa-circle-info me-1"></i>BOOKING DETAILS</h6>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Booking ID</span>
+                    <span class="detail-value">#{{ booking.booking_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        {% if booking.job_status == 'pending' %}
+                            <span class="text-warning">Pending</span>
+                        {% elif booking.job_status == 'in-progress' %}
+                            <span class="text-primary">In Progress</span>
+                        {% elif booking.job_status == 'completed' %}
+                            <span class="text-success">Completed</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">{{ booking.scheduled_date.strftime('%b %d, %Y') if booking.scheduled_date else 'TBD' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Price</span>
+                    <span class="detail-value" id="proChatPriceDisplay">₦{{ "%.2f"|format(booking.booking_price) }}</span>
+                </div>
+                {% if booking.payment_status == 'unpaid' %}
+                <div class="detail-row" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
+                    <div style="width:100%;">
+                        <label class="detail-label mb-1 d-block">Edit Price</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text" style="background:#f0e6ec;color:#611f47;font-weight:600;">₦</span>
+                            <input type="number" id="proChatNewPrice" class="form-control" value="{{ booking.booking_price }}" step="0.01" min="0" style="border-color: #ddd;">
+                            <button class="btn btn-sm" style="background:#611f47;color:white;border-color:#611f47;font-weight:600;" onclick="submitProChatPrice({{ booking.booking_id }})">
+                                <i class="fa-solid fa-check me-1"></i> Update
+                            </button>
+                        </div>
+                        <!-- Hint: professional changed the price (self) -->
+                        <div id="proChatPriceHint" class="mt-1" style="display:none;">
+                            <small style="color:#198754;"><i class="fa-solid fa-circle-check me-1"></i>You have changed the price</small>
+                        </div>
+                        <!-- Hint: client changed the price -->
+                        <div id="clientChangedPriceHint" class="mt-1" style="display:none;">
+                            <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i>{{ client.first_name }} has changed the price</small>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if booking.address %}
+                <div class="detail-row">
+                    <span class="detail-label">Address</span>
+                    <span class="detail-value">{{ booking.address }}</span>
+                </div>
+                {% endif %}
+                {% if prof_service_names %}
+                <div class="detail-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                    <span class="detail-label">Services</span>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for name in prof_service_names %}
+                            <span class="badge rounded-pill" style="background:#f0e6ec;color:#611f47;border:1px solid #611f47;font-size:0.72rem;font-weight:500;">{{ name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ── RIGHT: Chat Panel ── -->
+        <div class="chat-main-panel">
+            <div class="chat-main-header">
+                <div class="chat-main-header-left">
+                    <a href="/find-jobs/" class="back-btn-home me-2 d-md-none"><i class="fa-solid fa-arrow-left"></i></a>
+                    <img src="/static/images/testimonial1.jpg" alt="Photo">
+                    <div>
+                        <div class="fw-bold">{{ client.first_name }} {{ client.last_name }}</div>
+                        <div class="small opacity-75" id="chatStatus">Connecting...</div>
+                    </div>
+                </div>
+                <small class="opacity-75">
+                    <i class="fa-solid fa-calendar-check me-1"></i>
+                    Booking #{{ booking.booking_id }}
+                </small>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="text-center text-muted small py-5">
+                    <i class="fa-solid fa-comments fa-3x mb-3"></i><br>
+                    Loading chat...
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div id="recordingTimer"><i class="fa-solid fa-circle text-danger"></i> Recording... <span id="timerCount">0s</span></div>
+                <div class="chat-input-row mt-1">
+                    <button class="chat-btn btn-attach" onclick="document.getElementById('fileInput').click()">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" onchange="sendFile(this)">
+                    <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendText()">
+                    <button class="chat-btn btn-record" id="recordBtn" onclick="toggleRecording()">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <button class="chat-btn btn-send" onclick="sendText()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
+    <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+
+    <script>
+        var APP_ID = "{{ cometchat_app_id }}";
+        var REGION = "{{ cometchat_region }}";
+        var PRO_UID = "pro-{{ professional.professional_id }}";
+        var CLIENT_UID = "user-{{ client.user_id }}";
+
+        CometChat.init(APP_ID, new CometChat.AppSettingsBuilder()
+            .subscribePresenceForAllUsers().setRegion(REGION).autoEstablishSocketConnection(true).build()
+        ).then(function() {
+            $.ajax({
+                url: '/cometchat/pro-auth-token/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function(data) {
+CometChat.login(data.authToken).then(function() {
+                        document.getElementById('chatStatus').textContent = 'Online';
+                        loadMessages();
+                        listenForMessages();
+                        listenForClientPriceChanges();
+                    }).catch(console.error);
+                }
+            });
+        });
+
+        function loadMessages() {
+            new CometChat.MessagesRequestBuilder().setUID(CLIENT_UID).setLimit(50).build()
+            .fetchPrevious().then(function(messages) {
+                var c = document.getElementById('chatMessages');
+                c.innerHTML = '';
+                if (messages.length === 0) {
+                    c.innerHTML = '<div class="text-center text-muted small py-5"><i class="fa-solid fa-comments fa-3x mb-3"></i><br>No messages yet. Start chatting!</div>';
+                } else {
+                    messages.forEach(function(m) { renderMessage(m); });
+                }
+                scrollToBottom();
+            });
+        }
+
+        function listenForMessages() {
+            CometChat.addMessageListener('pro_chat_' + Date.now(), new CometChat.MessageListener({
+                onTextMessageReceived: function(m) { if (m.getSender().getUid() === CLIENT_UID) { renderMessage(m); scrollToBottom(); } },
+                onMediaMessageReceived: function(m) { if (m.getSender().getUid() === CLIENT_UID) { renderMessage(m); scrollToBottom(); } }
+            }));
+        }
+
+        function renderMessage(m) {
+            if (!m.getSender) return;
+            var sent = m.getSender().getUid() === PRO_UID;
+            var c = document.getElementById('chatMessages');
+            if (!c) return;
+            var b = document.createElement('div');
+            b.className = 'msg-bubble ' + (sent ? 'msg-sent' : 'msg-received');
+            var t = m.getType ? m.getType() : 'text';
+            var h = '';
+            var url = '';
+            if (m.getData) {
+                var data = m.getData();
+                if (data.url) url = data.url;
+                else if (data.attachments && data.attachments.length > 0) url = data.attachments[0].url || data.attachments[0].fileUrl;
+            }
+            if (!url && m.getAttachment) {
+                var att = typeof m.getAttachment === 'function' ? m.getAttachment() : m.getAttachment;
+                if (att) url = att.url || (att.getFileUrl ? att.getFileUrl() : '');
+            }
+            if (t === 'text') h = '<div>' + esc(m.getText()) + '</div>';
+            else if (t === 'image') h = '<img src="' + url + '" class="msg-image" onclick="window.open(this.src)">';
+            else if (t === 'audio') h = '<audio class="msg-audio" controls src="' + url + '"></audio>';
+            else if (t === 'video') h = '<video class="msg-image" controls style="max-width:220px" src="' + url + '"></video>';
+            else h = '<a class="msg-file" href="' + url + '" target="_blank"><i class="fa-solid fa-file me-1"></i>File</a>';
+            h += '<div class="msg-time">' + new Date(m.getSentAt() * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '</div>';
+            b.innerHTML = h;
+            c.appendChild(b);
+        }
+
+        function sendText() {
+            var i = document.getElementById('messageInput');
+            var t = i.value.trim();
+            if (!t) return;
+            i.value = '';
+            CometChat.sendMessage(new CometChat.TextMessage(CLIENT_UID, t, CometChat.RECEIVER_TYPE.USER))
+            .then(function(m) { renderMessage(m); scrollToBottom(); }).catch(console.warn);
+        }
+
+        function sendFile(input) {
+            var f = input.files[0];
+            if (!f) return;
+            var t = f.type.startsWith('image/') ? CometChat.MESSAGE_TYPE.IMAGE :
+                    f.type.startsWith('video/') ? CometChat.MESSAGE_TYPE.VIDEO :
+                    f.type.startsWith('audio/') ? CometChat.MESSAGE_TYPE.AUDIO : CometChat.MESSAGE_TYPE.FILE;
+            CometChat.sendMediaMessage(new CometChat.MediaMessage(CLIENT_UID, f, t, CometChat.RECEIVER_TYPE.USER))
+            .then(function(m) { renderMessage(m); scrollToBottom(); }).catch(console.warn);
+            input.value = '';
+        }
+
+        // ── Voice note recording ───────────────────────────────────────
+        var mediaRecorder = null;
+        var audioChunks   = [];
+        var timerInterval = null;
+        var timerSeconds  = 0;
+        var isRecording   = false;
+
+        function toggleRecording() {
+            if (!isRecording) { startRecording(); }
+            else { stopRecording(); }
+        }
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                isRecording = true;
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
+                mediaRecorder.onstop = function() {
+                    var blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    var file = new File([blob], 'voice-note.webm', { type: 'audio/webm' });
+                    var t = CometChat.MESSAGE_TYPE.AUDIO;
+                    CometChat.sendMediaMessage(new CometChat.MediaMessage(CLIENT_UID, file, t, CometChat.RECEIVER_TYPE.USER))
+                    .then(function(m) { renderMessage(m); scrollToBottom(); }).catch(console.warn);
+                    stream.getTracks().forEach(function(t) { t.stop(); });
+                };
+                document.getElementById('recordingTimer').style.display = 'block';
+                document.getElementById('recordBtn').classList.add('recording');
+                timerSeconds = 0;
+                timerInterval = setInterval(function() {
+                    timerSeconds++;
+                    document.getElementById('timerCount').textContent = timerSeconds + 's';
+                }, 1000);
+            }).catch(function() {
+                alert('Microphone access denied. Please allow it in browser settings.');
+            });
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            if (mediaRecorder) mediaRecorder.stop();
+            clearInterval(timerInterval);
+            document.getElementById('recordingTimer').style.display = 'none';
+            document.getElementById('recordBtn').classList.remove('recording');
+        }
+
+        function scrollToBottom() { var e = document.getElementById('chatMessages'); if (e) e.scrollTop = e.scrollHeight; }
+        function esc(t) { var d = document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+        // ── Listen for client-side price change notifications in real-time ──
+        function listenForClientPriceChanges() {
+            CometChat.addMessageListener('pro_chat_price_listener', new CometChat.MessageListener({
+                onTextMessageReceived: function(textMessage) {
+                    var text = textMessage.getText();
+                    if (text && text.startsWith('[PRICE_CLIENT_UPDATE]')) {
+                        var parts = text.replace('[PRICE_CLIENT_UPDATE] ', '').split('|');
+                        if (parts.length >= 3) {
+                            var newPrice = parts[2];
+                            // Update price display
+                            document.getElementById('proChatPriceDisplay').textContent = '₦' + parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                            // Update input field
+                            document.getElementById('proChatNewPrice').value = newPrice.replace(/,/g, '');
+                            // Show "client changed the price" hint
+                            var clientHint = document.getElementById('clientChangedPriceHint');
+                            if (clientHint) clientHint.style.display = 'block';
+                            // Auto-hide after 5 seconds
+                            setTimeout(function() {
+                                if (clientHint) clientHint.style.display = 'none';
+                            }, 5000);
+                        }
+                    }
+                }
+            }));
+        }
+
+        // ── Price Update from Professional Chat ──────────────────────────
+        function submitProChatPrice(bookingId) {
+            var newPrice = document.getElementById('proChatNewPrice').value;
+            if (!newPrice || newPrice < 0) {
+                alert('Please enter a valid price.');
+                return;
+            }
+            $.ajax({
+                url: '/booking/' + bookingId + '/edit-price/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'X-CSRFToken': document.getElementById('csrf_token').value },
+                data: JSON.stringify({ new_price: newPrice }),
+                success: function(data) {
+                    if (data.status === 'success') {
+                        // Update the price display
+                        document.getElementById('proChatPriceDisplay').textContent = '₦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        // Show the hint
+                        var hint = document.getElementById('proChatPriceHint');
+                        hint.style.display = 'block';
+                        // Hide the hint after 5 seconds
+                        setTimeout(function() {
+                            hint.style.display = 'none';
+                        }, 5000);
+                    } else {
+                        alert(data.message || 'Failed to update price.');
+                    }
+                },
+                error: function(xhr) {
+                    var err = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred.';
+                    alert(err);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

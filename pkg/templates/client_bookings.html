@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container py-2 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" style="height:36px;"></a>
+            <div>
+                <a href="/client/bookings/" class="btn {% if unpaid_bookings_count > 0 %}unpaid-alert-btn{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3 position-relative me-2">
+                    <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
+                    {% if unpaid_bookings_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" style="font-size:0.6rem; border: 1px solid white;">
+                        {{ unpaid_bookings_count }}
+                    </span>
+                    {% endif %}
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                </a>
+                <a href="/results/" class="btn btn-outline-secondary btn-sm rounded-pill me-2">
+                    <i class="fa-solid fa-search me-1"></i> Find Professionals
+                </a>
+                <a href="/logout/" class="btn btn-outline-danger btn-sm rounded-pill">
+                    <i class="fa-solid fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Add a place for flash messages -->
+        <div id="flash-container"></div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="booking-card">
+                    <div class="booking-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fa-solid fa-calendar-check me-2"></i> My Bookings</h4>
+                        <span class="badge bg-light text-dark">{{ bookings|length }} booking(s)</span>
+                    </div>
+
+                    {% if bookings %}
+                        {% for booking in bookings %}
+<div class="booking-item" id="booking-item-{{ booking.booking_id }}">
+                            <!-- Price Update Hint (subtle inline) -->
+                            <div id="price-alert-{{ booking.booking_id }}" class="d-none mt-1 mb-2" style="font-size:0.8rem;">
+                                <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i><strong>{{ booking.professional.first_name }} {{ booking.professional.last_name }}</strong> has changed the price</small>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <h6 class="fw-bold mb-1">
+                                        <i class="fa-solid fa-user-tie me-1 text-muted"></i>
+                                        {{ booking.professional.first_name }} {{ booking.professional.last_name }}
+                                    </h6>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fa-solid fa-calendar me-1"></i>
+                                        {{ booking.scheduled_date.strftime('%A, %b %d, %Y') if booking.scheduled_date else 'Date TBD' }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="status-badge status-{{ booking.job_status }}">
+                                        {{ booking.job_status|capitalize }}
+                                    </span>
+                                    {% if booking.is_refunded %}
+                                        <span class="status-badge bg-secondary text-white ms-1">Refunded</span>
+                                    {% else %}
+                                        <span class="status-badge payment-{{ booking.payment_status }} ms-1" id="payment-status-badge-{{ booking.booking_id }}">
+                                            {{ booking.payment_status|capitalize }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2 text-md-center my-2 my-md-0">
+                                    <strong id="booking-price-{{ booking.booking_id }}">₦{{ "%.2f"|format(booking.booking_price) }}</strong>
+                                </div>
+                                <div class="col-md-3 text-md-end mt-2 mt-md-0">
+                                    {% if booking.payment_status == 'unpaid' %}
+                                        <button class="pay-btn" id="pay-btn-{{ booking.booking_id }}" onclick="payWithPaystack({{ booking.booking_id }}, {{ booking.booking_price }}, '{{ user.email }}')">
+                                            <i class="fa-solid fa-credit-card me-1"></i> Pay Now
+                                        </button>
+                                    {% else %}
+                                        {% if booking.is_refunded %}
+                                            <span class="text-secondary small fw-bold"><i class="fa-solid fa-rotate-left me-1"></i> Refunded</span>
+                                        {% else %}
+                                            <span class="text-success small fw-bold"><i class="fa-solid fa-check-circle me-1"></i> Paid</span>
+                                            {% if booking.job_status == 'completed' %}
+                                                {% if not booking.review %}
+                                                    <button class="btn btn-sm btn-outline-warning rounded-pill mt-2" onclick="openReviewModal({{ booking.booking_id }})">
+                                                        <i class="fa-solid fa-star"></i> Leave Review
+                                                    </button>
+                                                {% else %}
+                                                    <div class="mt-2 text-warning small fw-bold">
+                                                        {% for i in range(booking.review.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if not booking.is_paid_out %}
+                                                    <button class="btn btn-sm btn-success rounded-pill mt-2 ms-2" onclick="releasePayment({{ booking.booking_id }}, this)">
+                                                        <i class="fa-solid fa-money-bill-wave me-1"></i> Release Payment
+                                                    </button>
+                                                    {% if booking.completion_date %}
+                                                        <div class="small text-muted mt-1" data-completion="{{ booking.completion_date.isoformat() }}" id="auto-release-note-{{ booking.booking_id }}">
+                                                            <i class="fa-solid fa-clock me-1"></i>Auto-releases automatically if not confirmed
+                                                        </div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="badge bg-success ms-2">Released</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if booking.address %}
+                            <div class="mt-2 small text-muted">
+                                <i class="fa-solid fa-location-dot me-1"></i> {{ booking.address }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <p class="mb-1 fw-semibold">No bookings yet</p>
+                            <p class="small">When you book a professional, it will appear here.</p>
+                            <a href="/results/" class="btn btn-outline-primary mt-3 rounded-pill">Browse Professionals</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title font-weight-bold brand-text">Rate Professional</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-3">How was your experience?</p>
+            <div class="rating-stars mb-4 fs-2" style="color: #ddd; cursor: pointer;">
+                <i class="fa-solid fa-star" data-val="1"></i>
+                <i class="fa-solid fa-star" data-val="2"></i>
+                <i class="fa-solid fa-star" data-val="3"></i>
+                <i class="fa-solid fa-star" data-val="4"></i>
+                <i class="fa-solid fa-star" data-val="5"></i>
+            </div>
+            <input type="hidden" id="reviewRating" value="0">
+            <input type="hidden" id="reviewBookingId" value="">
+            <textarea id="reviewText" class="form-control" rows="3" placeholder="Leave a comment (optional)..."></textarea>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary rounded-pill px-4" onclick="submitReview()">Submit Review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Paystack Inline JS -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    
+    <script>
+        // ── Check for pending price updates on page load and listen for real-time updates ──
+        $(document).ready(function() {
+            {% for booking in bookings %}
+            {% if booking.price_updated and booking.price_updated_by == 'professional' %}
+            // Show subtle inline hint for pending price update by professional
+            (function(bookingId) {
+                var priceAlert = document.getElementById('price-alert-' + bookingId);
+                if (priceAlert) {
+                    priceAlert.classList.remove('d-none');
+                    priceAlert.style.display = 'block';
+                }
+            })({{ booking.booking_id }});
+            {% endif %}
+            {% endfor %}
+
+            // ── Init CometChat and listen for real-time price update notifications ──
+            var appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion("{{ cometchat_region }}").build();
+            CometChat.init("{{ cometchat_app_id }}", appSetting).then(() => {
+                $.ajax({
+                    url: '/cometchat/auth-token/',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                    success: function(data) {
+                        if (data.authToken) {
+                            CometChat.login(data.uid, data.authToken).then(
+                                user => {
+                                    CometChat.addMessageListener(
+                                        "client_price_listener",
+                                        new CometChat.MessageListener({
+                                            onTextMessageReceived: function(textMessage) {
+                                                var text = textMessage.getText();
+                                                // Check for new price update format: [PRICE_PRO_UPDATE]
+                                                if (text && text.startsWith('[PRICE_PRO_UPDATE]')) {
+                                                    var parts = text.replace('[PRICE_PRO_UPDATE] ', '').split('|');
+                                                    if (parts.length >= 3) {
+                                                        var bookingId = parts[0].replace('Booking #', '').trim();
+                                                        var newPrice = parts[2];
+                                                        // Update the price display
+                                                        var priceEl = document.getElementById('booking-price-' + bookingId);
+                                                        if (priceEl) {
+                                                            var formatted = parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                                            priceEl.textContent = '₦' + formatted;
+                                                        }
+                                                        // Show the subtle inline hint
+                                                        var alertEl = document.getElementById('price-alert-' + bookingId);
+                                                        if (alertEl) {
+                                                            alertEl.classList.remove('d-none');
+                                                            alertEl.style.display = 'block';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    );
+                                }
+                            );
+                        }
+                    }
+                });
+            });
+        });
+
+        function showFlashMessage(msg, type) {
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var html = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
+                       msg +
+                       '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                       '</div>';
+            document.getElementById('flash-container').innerHTML = html;
+        }
+
+        function payWithPaystack(bookingId, amount, email) {
+            var handler = PaystackPop.setup({
+                key: '{{ paystack_public_key }}', 
+                email: email,
+                amount: amount * 100, // Paystack expects amount in kobo
+                currency: 'NGN',
+                ref: 'KIRAAR_' + bookingId + '_' + Math.floor((Math.random() * 1000000000) + 1), // Generate a random reference
+                callback: function(response) {
+                    // Payment successful on frontend, now verify on backend
+                    var reference = response.reference;
+                    var btn = document.getElementById('pay-btn-' + bookingId);
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Verifying...';
+                    btn.disabled = true;
+
+                    $.ajax({
+                        url: '/client/verify-payment/' + bookingId,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                        data: JSON.stringify({ reference: reference }),
+                        success: function(data) {
+                            if (data.status === 'success') {
+                                showFlashMessage(data.message, 'success');
+                                btn.outerHTML = '<span class="text-success small fw-bold"><i class="fa-solid fa-check-circle me-1"></i> Paid</span>';
+                                var badge = document.getElementById('payment-status-badge-' + bookingId);
+                                if (badge) {
+                                    badge.className = 'status-badge payment-paid ms-1';
+                                    badge.innerText = 'Paid';
+                                }
+                                // Update navbar button to stop blinking
+                                var navBtn = document.querySelector('a[href="/client/bookings/"]');
+                                if (navBtn) {
+                                    navBtn.classList.remove('unpaid-alert-btn');
+                                    navBtn.classList.add('btn-outline-secondary');
+                                    var navBadge = navBtn.querySelector('.badge');
+                                    if (navBadge) {
+                                        var count = parseInt(navBadge.innerText) - 1;
+                                        if (count <= 0) {
+                                            navBadge.style.display = 'none';
+                                        } else {
+                                            navBadge.innerText = count;
+                                        }
+                                    }
+                                }
+                            } else {
+                                showFlashMessage(data.message, 'error');
+                                btn.innerHTML = '<i class="fa-solid fa-credit-card me-1"></i> Pay Now';
+                                btn.disabled = false;
+                            }
+                        },
+                        error: function(xhr) {
+                            showFlashMessage('Verification failed. Please contact support.', 'error');
+                            btn.innerHTML = '<i class="fa-solid fa-credit-card me-1"></i> Pay Now';
+                            btn.disabled = false;
+                        }
+                    });
+                },
+                onClose: function() {
+                    console.log('Payment window closed.');
+                }
+            });
+            handler.openIframe();
+        }
+
+        // ── Review Logic ──────────────────────────────────────────────────
+        function openReviewModal(bookingId) {
+            document.getElementById('reviewBookingId').value = bookingId;
+            document.getElementById('reviewRating').value = 0;
+            document.getElementById('reviewText').value = '';
+            updateStars(0);
+            var myModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            myModal.show();
+        }
+
+        $('.rating-stars i').on('click', function() {
+            var val = $(this).data('val');
+            document.getElementById('reviewRating').value = val;
+            updateStars(val);
+        });
+
+        function updateStars(val) {
+            $('.rating-stars i').each(function() {
+                if ($(this).data('val') <= val) {
+                    $(this).css('color', '#ffc107');
+                } else {
+                    $(this).css('color', '#ddd');
+                }
+            });
+        }
+
+        function submitReview() {
+            var bookingId = document.getElementById('reviewBookingId').value;
+            var rating = document.getElementById('reviewRating').value;
+            var text = document.getElementById('reviewText').value;
+
+            if (rating == 0) {
+                alert('Please select a star rating.');
+                return;
+            }
+
+            $.ajax({
+                url: '/client/review/' + bookingId + '/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                data: JSON.stringify({ rating: rating, review_text: text }),
+                success: function(data) {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(data.error || 'Failed to submit review.');
+                    }
+                },
+                error: function(xhr) {
+                    var err = xhr.responseJSON ? xhr.responseJSON.error : 'An error occurred.';
+                    alert(err);
+                }
+            });
+        }
+        
+        // ── Show the auto-release deadline (completion_date + 2 days) ──────
+        document.querySelectorAll('[id^="auto-release-note-"]').forEach(function(el) {
+            var completedAt = new Date(el.dataset.completion);
+            var deadline = new Date(completedAt.getTime() + 2 * 24 * 60 * 60 * 1000);
+            var now = new Date();
+            var msLeft = deadline - now;
+
+            if (msLeft <= 0) {
+                el.innerHTML = '<i class="fa-solid fa-clock me-1"></i>Auto-release is due — should process shortly';
+            } else {
+                var hoursLeft = Math.ceil(msLeft / (1000 * 60 * 60));
+                var dateStr = deadline.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+                el.innerHTML = '<i class="fa-solid fa-clock me-1"></i>Auto-releases on ' + dateStr + ' (' + hoursLeft + 'h) if not confirmed sooner';
+            }
+        });
+
+        function releasePayment(bookingId, btn) {
+            if (!confirm('Are you sure you want to release payment to the professional? This will transfer funds from escrow.')) return;
+            btn.disabled = true;
+            var original = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Releasing...';
+            fetch('/client/release-payment/' + bookingId + '/', { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token() }}' } })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showFlashMessage('Payout initiated — professional will receive funds shortly.', 'success');
+                        // mark UI
+                        var badge = document.getElementById('payment-status-badge-' + bookingId);
+                        if (badge) badge.innerText = 'Paid';
+                        btn.outerHTML = '<span class="badge bg-success">Released</span>';
+                    } else {
+                        showFlashMessage(data.message || 'Payout failed', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = original;
+                    }
+                }).catch(err => {
+                    showFlashMessage('Network error releasing payout.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = original;
+                });
+        }
+    </script>
+</body>
+</html>

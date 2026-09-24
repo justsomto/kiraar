@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="admin-auth-body">
+
+    <div class="admin-auth-card">
+        <!-- Lock Icon -->
+        <div class="admin-lock-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+
+        <!-- Heading -->
+        <div class="text-center mb-4">
+            <h3 class="fw-bold" style="color: #1a1a2e;">Admin Panel</h3>
+            <p class="text-muted small">Enter your credentials to manage Kiraar</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-{{ 'circle-exclamation' if category == 'error' else 'circle-check' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Login Form -->
+        <form action="{{ url_for('admin_login') }}" method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold small text-muted">EMAIL ADDRESS</label>
+                {{ form.email(class="form-control admin-input", placeholder="admin@kiraar.com") }}
+                {% for error in form.email.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold small text-muted">PASSWORD</label>
+                <div class="input-group">
+                    {{ form.password(class="form-control admin-input", id="adminPassword", placeholder="Enter your password") }}
+                    <button type="button" class="btn btn-outline-secondary" id="toggleAdminPassword" style="border-radius: 0 12px 12px 0; border: 2px solid #e0e0e0; border-left: none;">
+                        <i class="fa-solid fa-eye" id="adminEyeIcon"></i>
+                    </button>
+                </div>
+                {% for error in form.password.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="d-grid mb-3">
+                {{ form.submit(class="btn admin-btn") }}
+            </div>
+        </form>
+
+        <!-- Bottom Links -->
+        <div class="text-center mt-3">
+            <a href="/" class="brand-link small">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Kiraar Home
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Password show/hide toggle
+        $('#toggleAdminPassword').click(function() {
+            var inputType = $('#adminPassword').attr('type');
+            if (inputType === 'password') {
+                $('#adminPassword').attr('type', 'text');
+                $('#adminEyeIcon').removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                $('#adminPassword').attr('type', 'password');
+                $('#adminEyeIcon').removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        // Auto-dismiss flash alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
+

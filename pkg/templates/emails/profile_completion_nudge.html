@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+    .wrap { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .hdr { background: linear-gradient(135deg, #611f47 0%, #8a2c62 100%); padding: 34px 24px; text-align: center; }
+    .hdr h1 { color: #ffffff; margin: 0; font-size: 22px; }
+    .hdr p { color: #f0d6e8; margin: 6px 0 0; font-size: 14px; }
+    .body { padding: 36px 30px; color: #333333; line-height: 1.7; }
+    .body h2 { color: #611f47; margin-top: 0; font-size: 20px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; background: #faf8fa; padding: 12px 14px; border-radius: 6px; }
+    .step-num { background-color: #611f47; color: #ffffff; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 12px; }
+    .btn-wrap { text-align: center; margin: 28px 0; }
+    .btn { background-color: #611f47; color: #ffffff !important; padding: 13px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px; }
+    .foot { background-color: #f8f9fa; padding: 20px; text-align: center; color: #888888; font-size: 12px; border-top: 1px solid #eee; }
+    .foot a { color: #611f47; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <h1>Complete Your Professional Profile</h1>
+      <p>Start receiving high-paying client bookings in Nigeria</p>
+    </div>
+    <div class="body">
+      <h2>Welcome, {{ first_name }}! 🎉</h2>
+      <p>Your Kiraar professional account is active. To help clients find, trust, and book you, please finish setting up your profile:</p>
+
+      <div class="step"><div class="step-num">1</div><div><strong>Profile Photo</strong> — Upload a clear professional photo so clients recognize you.</div></div>
+      <div class="step"><div class="step-num">2</div><div><strong>Bio & About</strong> — Describe your experience, skills, and craftsmanship.</div></div>
+      <div class="step"><div class="step-num">3</div><div><strong>Phone Number</strong> — So verified clients can reach you when booked.</div></div>
+      <div class="step"><div class="step-num">4</div><div><strong>Location</strong> — Ensure clients in your city or area can discover you.</div></div>
+      <div class="step"><div class="step-num">5</div><div><strong>Services & Pricing</strong> — List what you do and your base rates.</div></div>
+      <div class="step"><div class="step-num">6</div><div><strong>Bank Details</strong> — Secure Nigerian account info for Paystack escrow payouts.</div></div>
+
+      <div class="btn-wrap">
+        <a href="http://127.0.0.1:5057/professional/edit/" class="btn">Complete My Profile Now</a>
+      </div>
+
+      <p style="font-size: 13px; color: #777;">Once complete, our verification team will review your profile and give you a verified badge! 🛡️</p>
+      <p>Best regards,<br><strong>The Kiraar Team</strong></p>
+    </div>
+    <div class="foot">
+      &copy; 2026 Kiraar Platform. All rights reserved.<br>
+      <a href="http://127.0.0.1:5057/contact/">Contact Support</a> &bull; <a href="http://127.0.0.1:5057/terms/">Terms</a>
+    </div>
+  </div>
+</body>
+</html>

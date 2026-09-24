@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Professional Profile - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <style>
+        /* ── Page variables using Kiraar's primary brand colour ── */
+        :root {
+            --kiraar-primary: #611f47;
+            --kiraar-primary-light: #f5eaf1;
+            --kiraar-primary-mid: #8a2d64;
+        }
+
+        .page-hero {
+            background: linear-gradient(135deg, var(--kiraar-primary) 0%, var(--kiraar-primary-mid) 100%);
+            padding: 2rem 0 3.5rem;
+            margin-bottom: -2rem;
+        }
+        .page-hero h1 { color: #fff; font-weight: 700; }
+        .page-hero p  { color: rgba(255,255,255,0.75); }
+
+        /* ── Section cards ── */
+        .section-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(97,31,71,0.08);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--kiraar-primary);
+            border-bottom: 2px solid var(--kiraar-primary-light);
+            padding-bottom: .6rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        /* ── Form controls ── */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--kiraar-primary);
+            box-shadow: 0 0 0 .2rem rgba(97,31,71,.15);
+        }
+        .form-label { font-weight: 600; font-size: .875rem; color: #444; }
+
+        /* ── Profile picture ── */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-wrapper img {
+            width: 110px; height: 110px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--kiraar-primary);
+        }
+        .avatar-edit-btn {
+            position: absolute; bottom: 4px; right: 4px;
+            background: var(--kiraar-primary);
+            color: #fff; border-radius: 50%;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: .8rem;
+            border: 2px solid #fff;
+            transition: background .2s;
+        }
+        .avatar-edit-btn:hover { background: var(--kiraar-primary-mid); }
+
+        /* ── Eye visibility toggle ── */
+        .eye-btn {
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            padding: .375rem .75rem;
+            font-size: .78rem;
+            border-radius: 0 .375rem .375rem 0;
+            cursor: pointer;
+            display: flex; align-items: center; gap: .35rem;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .eye-btn.visible { background: var(--kiraar-primary-light); color: var(--kiraar-primary); border-color: var(--kiraar-primary); }
+        .eye-btn.hidden  { background: #f8f9fa; color: #888; }
+        .eye-btn:hover   { opacity: .85; }
+
+        /* ── Save button ── */
+        .btn-kiraar {
+            background: var(--kiraar-primary);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: .55rem 1.8rem;
+            font-weight: 600;
+            transition: background .2s, transform .15s;
+        }
+        .btn-kiraar:hover { background: var(--kiraar-primary-mid); color: #fff; transform: translateY(-1px); }
+
+        /* ── Product grid ── */
+        .product-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            border: none;
+            transition: transform .2s;
+        }
+        .product-card:hover { transform: translateY(-3px); }
+        .product-card img { height: 150px; object-fit: cover; width: 100%; }
+        .product-delete-btn {
+            position: absolute; top: 8px; right: 8px;
+            width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(220,53,69,.9);
+            color: #fff; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; cursor: pointer;
+            transition: background .2s;
+        }
+        .product-delete-btn:hover { background: #b02a37; }
+
+        /* ── Upload area ── */
+        .upload-area {
+            background: var(--kiraar-primary-light);
+            border: 2px dashed var(--kiraar-primary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ── Danger zone ── */
+        .danger-zone {
+            border: 2px dashed #dc3545;
+            border-radius: 14px;
+            padding: 1.5rem;
+            background: #fff5f5;
+        }
+        .danger-zone h5 { color: #dc3545; }
+
+
+    </style>
+</head>
+<body class="inner-page">
+
+    <!-- Page Hero Banner -->
+    <div class="page-hero">
+        <div class="container text-center">
+            <h1 class="mb-1"><i class="fa-solid fa-user-pen me-2"></i>Edit Your Profile</h1>
+            <p class="mb-0">Keep your information up to date so clients can find and trust you</p>
+        </div>
+    </div>
+
+    <div class="container py-4" style="max-width: 860px;">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                        <i class="fa-solid fa-{{ 'circle-check' if category == 'success' else 'circle-exclamation' }} me-2"></i>{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- ── PROFILE PICTURE ── -->
+            <div class="section-card">
+                <div class="section-title"><i class="fa-solid fa-camera"></i> Profile Photo</div>
+                <div class="text-center">
+                    <div class="avatar-wrapper mb-2">
+                        <img id="profile_picture_preview"
+                             src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
+                             alt="Profile Photo">
+                        <label for="profile_picture" class="avatar-edit-btn" title="Change profile photo">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                    </div>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="d-none" onchange="previewProfilePicture(this)">
+                    <div class="small text-muted mt-1">Click the photo to upload your own picture</div>
+                </div>
+            </div>
+
+            <!-- ── PERSONAL INFORMATION ── -->
+            <div class="section-card">
+                <div class="section-title"><i class="fa-solid fa-id-card"></i> Personal Information</div>
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="first_name" value="{{ professional.first_name }}" required>
+                            <input type="checkbox" name="show_first_name" id="chkFirstName" class="d-none"
+                                {% if professional.show_first_name is none or professional.show_first_name %}checked{% endif %}>
+                            <button type="button" class="eye-btn {% if professional.show_first_name is none or professional.show_first_name %}visible{% else %}hidden{% endif %}" onclick="toggleEye('chkFirstName', this)">
+                                <i class="fa-solid {% if professional.show_first_name is none or professional.show_first_name %}fa-eye{% else %}fa-eye-slash{% endif %}"></i>
+                                <span>{% if professional.show_first_name is none or professional.show_first_name %}Visible{% else %}Hidden{% endif %}</span>
+                            </button>
+                        </div>
+                        <small class="text-muted">Controls if clients can see your first name.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="last_name" value="{{ professional.last_name }}" required>
+                            <input type="checkbox" name="show_last_name" id="chkLastName" class="d-none"
+                                {% if professional.show_last_name is none or professional.show_last_name %}checked{% endif %}>
+                            <button type="button" class="eye-btn {% if professional.show_last_name is none or professional.show_last_name %}visible{% else %}hidden{% endif %}" onclick="toggleEye('chkLastName', this)">
+                                <i class="fa-solid {% if professional.show_last_name is none or professional.show_last_name %}fa-eye{% else %}fa-eye-slash{% endif %}"></i>
+                                <span>{% if professional.show_last_name is none or professional.show_last_name %}Visible{% else %}Hidden{% endif %}</span>
+                            </button>
+                        </div>
+                        <small class="text-muted">Controls if clients can see your last name.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Business Name <span class="text-muted fw-normal">(optional)</span></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="business_name" value="{{ professional.business_name or '' }}" placeholder="e.g. Chidi's Plumbing Services">
+                            <input type="checkbox" name="show_business_name" id="chkBusinessName" class="d-none"
+                                {% if professional.show_business_name is none or professional.show_business_name %}checked{% endif %}>
+                            <button type="button" class="eye-btn {% if professional.show_business_name is none or professional.show_business_name %}visible{% else %}hidden{% endif %}" onclick="toggleEye('chkBusinessName', this)">
+                                <i class="fa-solid {% if professional.show_business_name is none or professional.show_business_name %}fa-eye{% else %}fa-eye-slash{% endif %}"></i>
+                                <span>{% if professional.show_business_name is none or professional.show_business_name %}Visible{% else %}Hidden{% endif %}</span>
+                            </button>
+                        </div>
+                        <small class="text-muted">Controls if clients can see your business name.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" name="phone_number" value="{{ professional.phone_number or '' }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Business Type</label>
+                        <select class="form-select" name="business_type">
+                            <option value="Independent" {% if professional.business_type == 'Independent' %}selected{% endif %}>Independent / Solo</option>
+                            <option value="Company" {% if professional.business_type == 'Company' %}selected{% endif %}>Company / Agency</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location" value="{{ professional.location or '' }}" placeholder="e.g. Ikeja, Lagos">
+                        <small class="text-muted"><i class="fa-solid fa-circle-info me-1"></i> Please fill in your city and state so customers in your area can see you.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Availability Status</label>
+                        <select class="form-select" name="status">
+                            <option value="Active &amp; Online" {% if professional.status == 'Active & Online' %}selected{% endif %}>🟢 Active &amp; Online</option>
+                            <option value="Busy" {% if professional.status == 'Busy' %}selected{% endif %}>🟡 Busy</option>
+                            <option value="Offline" {% if professional.status == 'Offline' %}selected{% endif %}>⚫ Offline</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Time on Kiraar</label>
+                        <input type="text" class="form-control" value="{{ years_on_kiraar }} year(s)" disabled style="background:#f8f9fa; color:#888;">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Bio <span class="text-muted fw-normal">— Tell clients who you are</span></label>
+                        <textarea class="form-control" name="bio" rows="4" placeholder="Write a short description of your skills and experience...">{{ professional.bio or '' }}</textarea>
+                        <small class="text-muted mt-2 d-block"><i class="fa-solid fa-circle-info me-1"></i> Customers can see if you have a bio — a short, friendly bio makes a great first impression.</small>
+                    </div>
+
+                    <!-- Services dropdown -->
+                    <div class="col-12">
+                        <label class="form-label">Services You Offer</label>
+                        <div class="dropdown">
+                            <button class="form-control text-start dropdown-toggle d-flex align-items-center justify-content-between"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                    id="editServicesDropdownBtn" style="background:#fff;">
+                                <span id="editServicesSelectedText" class="text-muted small">Choose services...</span>
+                            </button>
+                            <div class="dropdown-menu w-100 p-2" style="max-height:280px;overflow-y:auto;">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control form-control-sm" id="editServicesSearchInput"
+                                           placeholder="Search services..." oninput="filterEditServices(this)">
+                                </div>
+                                <div id="editServicesCheckboxList">
+                                    {% for category in service_categories %}
+                                    <div class="dropdown-item p-0 mb-1 edit-service-item">
+                                        <label class="d-flex align-items-center gap-2 px-2 py-1" style="cursor:pointer;">
+                                            <input class="form-check-input m-0 edit-service-checkbox" type="checkbox"
+                                                   name="services" value="{{ category.service_category_id }}"
+                                                   {% if category.service_category_id in prof_service_ids %}checked{% endif %}>
+                                            <span class="small">{{ category.service_category_name }}</span>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted">Select all the services you offer to clients.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SAVE BUTTON ── -->
+            <div class="d-flex gap-2 mb-4">
+                <button type="submit" class="btn-kiraar">
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Save Changes
+                </button>
+                <a href="/find-jobs/" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+        </form>
+
+        <!-- ── MY PRODUCTS & PAST JOBS ── -->
+        <div class="section-card">
+            <div class="section-title"><i class="fa-solid fa-images"></i> My Products &amp; Past Jobs</div>
+            <p class="text-muted small mb-3">Show off pictures of jobs you've done or items you sell. Clients can see these on your profile.</p>
+
+            <!-- Upload Form -->
+            <div class="upload-area">
+                <form action="/professional/products/add/" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Item Photo</label>
+                            <input type="file" class="form-control form-control-sm" name="product_image" accept="image/*" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control form-control-sm" name="product_name" placeholder="e.g. Leather Sofa" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Price (₦)</label>
+                            <input type="number" class="form-control form-control-sm" name="price" placeholder="0" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control form-control-sm" name="description" placeholder="Optional details">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-sm w-100" style="background:var(--kiraar-primary);color:#fff;border-radius:8px;">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Uploaded Items Grid -->
+            {% if products %}
+            <div class="row g-3">
+                {% for p in products %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="card product-card position-relative">
+                        {% if p.product_image %}
+                            <img src="/static/uploads/{{ p.product_image }}" alt="Product">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center bg-light text-muted" style="height:150px;">
+                                <i class="fa-solid fa-image fa-2x"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <h6 class="mb-1 text-truncate fw-semibold">{{ p.product_name }}</h6>
+                            <p class="fw-bold mb-1" style="color:var(--kiraar-primary);font-size:.85rem;">₦{{ "{:,.2f}".format(p.price) }}</p>
+                            {% if p.description %}
+                                <p class="text-muted" style="font-size:.75rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ p.description }}</p>
+                            {% endif %}
+                        </div>
+                        <form action="/professional/products/delete/{{ p.product_id }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="product-delete-btn" onclick="return confirm('Delete this item?');" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-4">
+                <i class="fa-regular fa-folder-open fa-3x mb-2" style="color:#ddd;"></i>
+                <p class="mb-0">You haven't uploaded anything yet.<br>Use the form above to add your first item!</p>
+            </div>
+            {% endif %}
+        </div>
+        <!-- ── WITHDRAWAL / PAYMENT DETAILS ── -->
+        <div class="section-card mb-4">
+            <div class="section-header">
+                <i class="fa-solid fa-building-columns me-2"></i> Withdrawal & Payment Details
+            </div>
+            <div class="section-body">
+                <div class="alert border-0 small mb-4 py-2 px-3" style="background:#f5eaf1; color:#611f47; border-left: 4px solid #611f47 !important;">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    A <strong>10% service fee</strong> is deducted from each booking to support platform operations
+                    <span class="text-muted">(e.g. ₦1,000 received &rarr; ₦900 paid to you).</span>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Bank Name</label>
+                        <input id="bankInput" name="bank_name" list="bankList" type="text" class="form-control" placeholder="Search or type bank name (e.g. First Bank)" value="{{ professional.bank_name or '' }}">
+                        <datalist id="bankList"></datalist>
+                        <input type="hidden" id="bankCode" name="bank_code" value="">
+                        <input type="hidden" id="csrfToken" name="csrf_token" value="{{ csrf_token() }}">
+                        <div id="bankAlerts" class="mt-2"></div>
+                        <small class="text-muted">Start typing to see matching banks (powered by Paystack).</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Account Number</label>
+                        <input id="accountNumber" type="text" class="form-control" name="account_number" value="{{ professional.account_number or '' }}" placeholder="10-digit account number" maxlength="10">
+                        <div id="acctVerifyStatus" class="small text-muted mt-1"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Account Name</label>
+                        <input id="accountName" type="text" class="form-control" name="account_name" value="{{ professional.account_name or '' }}" placeholder="Name on your bank account">
+                        <div id="acctVerifyError" class="small text-danger mt-1" style="display:none;"></div>
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block"><i class="fa-solid fa-lock me-1"></i> We take your privacy seriously! Your bank details stay completely hidden and are only accessed by Kiraar when sending your withdrawal.</small>
+                <div class="mt-3 d-flex gap-2">
+                    <button id="saveBankBtn" type="button" class="btn btn-kiraar btn-sm">Save Bank Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── DANGER ZONE ── -->
+        <div class="danger-zone mb-5">
+            <h5 class="fw-bold"><i class="fa-solid fa-skull-crossbones me-2"></i>Danger Zone</h5>
+            <p class="fw-semibold mb-1" style="color:#dc3545;">Delete Your Account</p>
+            <p class="text-muted small mb-3">
+                ⚠️ This action is <strong>permanent and cannot be undone.</strong>
+                All your profile data, services, bookings and history will be wiped from our system forever.
+            </p>
+            <form method="post" action="/professional/delete-account/" id="deleteAccountForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="button" class="btn btn-outline-danger fw-bold rounded-pill" onclick="confirmDelete()">
+                    <i class="fa-solid fa-trash me-1"></i> Permanently Delete My Account
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        
+        // Preview profile picture before upload
+        function previewProfilePicture(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile_picture_preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Toggle the eye button for name visibility
+        function toggleEye(checkboxId, btn) {
+            var checkbox = document.getElementById(checkboxId);
+            checkbox.checked = !checkbox.checked;
+            var icon = btn.querySelector('i');
+            var label = btn.querySelector('span');
+            if (checkbox.checked) {
+                btn.className = 'eye-btn visible';
+                icon.className = 'fa-solid fa-eye';
+                label.textContent = 'Visible';
+            } else {
+                btn.className = 'eye-btn hidden';
+                icon.className = 'fa-solid fa-eye-slash';
+                label.textContent = 'Hidden';
+            }
+        }
+
+        // Update services dropdown count text
+        function updateEditServicesText() {
+            var checkboxes = document.querySelectorAll('.edit-service-checkbox:checked');
+            var text = checkboxes.length > 0 ? checkboxes.length + ' service(s) selected' : 'Choose services...';
+            document.getElementById('editServicesSelectedText').textContent = text;
+        }
+
+        // Filter services in the dropdown by search text
+        function filterEditServices(input) {
+            var query = input.value.toLowerCase().trim();
+            document.querySelectorAll('.edit-service-item').forEach(function(item) {
+                var label = item.querySelector('span').textContent.toLowerCase();
+                item.style.display = (!query || label.includes(query)) ? '' : 'none';
+            });
+        }
+
+        // Init on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateEditServicesText();
+            document.querySelectorAll('.edit-service-checkbox').forEach(function(cb) {
+                cb.addEventListener('change', updateEditServicesText);
+            });
+            var searchInput = document.getElementById('editServicesSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('click', function(e) { e.stopPropagation(); });
+            }
+            // Load Paystack bank list and wire up searchable select
+            try {
+                initBankSelect();
+            } catch (err) {
+                console.warn('Bank select init error:', err);
+            }
+        });
+
+        // Scary delete confirmation
+        function confirmDelete() {
+            var answer = confirm(
+                '⚠️ WARNING: This will PERMANENTLY delete your account.\n\n' +
+                'All your data — profile, services, bookings — will be gone forever and CANNOT be recovered.\n\n' +
+                'Are you absolutely sure you want to do this?'
+            );
+            if (answer) {
+                document.getElementById('deleteAccountForm').submit();
+            }
+        }
+
+        // --- Bank datalist integration (single input) ---
+        let _kiraarBanks = [];
+        async function initBankSelect() {
+            const bankInput = document.getElementById('bankInput');
+            const bankList = document.getElementById('bankList');
+            if (!bankInput || !bankList) return;
+
+            const selected = bankInput.value || '';
+
+            try {
+                const res = await fetch('/api/paystack/banks/');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    _kiraarBanks = data.data || [];
+                    renderBankDatalist(_kiraarBanks, selected);
+                } else {
+                    console.warn('Could not load banks:', data);
+                }
+            } catch (e) {
+                console.warn('Error fetching banks:', e);
+            }
+        }
+
+        function renderBankDatalist(list, selected) {
+            const bankList = document.getElementById('bankList');
+            const bankInput = document.getElementById('bankInput');
+            if (!bankList) return;
+            bankList.innerHTML = '';
+            list.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b.name || b.code || '';
+                // attach bank code on the option element for later lookup
+                opt.dataset.code = b.code || '';
+                bankList.appendChild(opt);
+            });
+            if (selected) bankInput.value = selected;
+        }
+
+        // Map name -> code for quick lookup when a user selects a bank from the datalist
+        function getBankCodeByName(name) {
+            if (!name) return '';
+            const lower = name.toLowerCase();
+            for (const b of _kiraarBanks) {
+                if ((b.name || '').toLowerCase() === lower) return b.code || '';
+            }
+            return '';
+        }
+
+        // Watch account number input and bank selection to trigger resolve
+        (function watchAccountResolve(){
+            const acctInput = document.getElementById('accountNumber');
+            const bankInput = document.getElementById('bankInput');
+            const bankCodeInput = document.getElementById('bankCode');
+            const acctNameInput = document.getElementById('accountName');
+            const statusEl = document.getElementById('acctVerifyStatus');
+            const errorEl = document.getElementById('acctVerifyError');
+            const saveBtn = document.getElementById('saveBankBtn');
+
+            if (!acctInput || !bankInput) return;
+
+            const bankAlerts = document.getElementById('bankAlerts');
+            // Update bankCode as user types or selects from datalist. If a single match exists, auto-set its code.
+            bankInput.addEventListener('input', function(){
+                const v = (bankInput.value || '').toLowerCase().trim();
+                if (!v) {
+                    bankCodeInput.value = '';
+                    return;
+                }
+                const exact = _kiraarBanks.find(b => ((b.name || '').toLowerCase() === v));
+                if (exact) {
+                    bankCodeInput.value = exact.code || '';
+                    bankInput.value = exact.name || bankInput.value;
+                } else {
+                    bankCodeInput.value = '';
+                }
+                // clear any previous alerts when user types
+                if (bankAlerts) bankAlerts.innerHTML = '';
+                // reset account name state when bank changes
+                acctNameInput.readOnly = false;
+                errorEl.style.display = 'none';
+                statusEl.textContent = '';
+            });
+
+            // When user finalizes selection (change or blur), ensure we have an exact match
+            bankInput.addEventListener('change', function(){
+                const v = (bankInput.value || '').trim();
+                const exact = _kiraarBanks.find(b => (b.name || '') === v);
+                if (exact) {
+                    bankCodeInput.value = exact.code || '';
+                    if (bankAlerts) bankAlerts.innerHTML = '';
+                } else {
+                    bankCodeInput.value = '';
+                    if (bankAlerts) bankAlerts.innerHTML = '<div class="alert alert-danger p-2">Please select a bank from the list.</div>';
+                }
+            });
+
+            bankInput.addEventListener('blur', function(){
+                const v = (bankInput.value || '').trim();
+                const exact = _kiraarBanks.find(b => (b.name || '') === v);
+                if (!exact) {
+                    bankCodeInput.value = '';
+                }
+            });
+
+            acctInput.addEventListener('input', function(){
+                const val = acctInput.value.replace(/\D/g,'');
+                acctInput.value = val;
+                if (val.length === 10) {
+                    const bankCode = bankCodeInput.value || getBankCodeByName(bankInput.value);
+                    if (!bankCode) {
+                        if (bankAlerts) {
+                            bankAlerts.innerHTML = '<div class="alert alert-danger p-2">Please select a valid bank from the list.</div>';
+                        } else {
+                            errorEl.textContent = 'Please select a valid bank from the list';
+                            errorEl.style.display = 'block';
+                        }
+                        return;
+                    }
+                    // Begin verification
+                    if (bankAlerts) bankAlerts.innerHTML = '';
+                    errorEl.style.display = 'none';
+                    statusEl.textContent = 'Verifying account name...';
+                    acctNameInput.readOnly = true;
+                    fetch(`/api/resolve-account/?account_number=${encodeURIComponent(val)}&bank_code=${encodeURIComponent(bankCode)}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.status === 'success' && data.account_name) {
+                                acctNameInput.value = data.account_name;
+                                acctNameInput.readOnly = true;
+                                statusEl.textContent = 'Account name verified';
+                            } else {
+                                acctNameInput.readOnly = false;
+                                acctNameInput.value = '';
+                                if (bankAlerts) {
+                                    bankAlerts.innerHTML = '<div class="alert alert-danger p-2">Invalid account details.</div>';
+                                } else {
+                                    errorEl.textContent = 'Invalid account details';
+                                    errorEl.style.display = 'block';
+                                }
+                                statusEl.textContent = '';
+                            }
+                        })
+                        .catch(err => {
+                            acctNameInput.readOnly = false;
+                            acctNameInput.value = '';
+                            if (bankAlerts) {
+                                bankAlerts.innerHTML = '<div class="alert alert-danger p-2">Verification failed. Try again.</div>';
+                            } else {
+                                errorEl.textContent = 'Verification failed. Try again.';
+                                errorEl.style.display = 'block';
+                            }
+                            statusEl.textContent = '';
+                        });
+                } else {
+                    // reset state when not 10 digits
+                    statusEl.textContent = '';
+                    errorEl.style.display = 'none';
+                    acctNameInput.readOnly = false;
+                }
+            });
+
+            // Save Bank Details button handler
+            saveBtn && saveBtn.addEventListener('click', function(){
+                const bank_code = bankCodeInput.value || getBankCodeByName(bankInput.value);
+                const bank_name = bankInput.value || '';
+                const account_number = acctInput.value || '';
+                const account_name = acctNameInput.value || '';
+                if (!bank_code || account_number.length !== 10 || !account_name) {
+                    alert('Please ensure bank, 10-digit account number, and verified account name are provided.');
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+
+                const csrfToken = document.getElementById('csrfToken')?.value || '';
+                fetch('/api/withdrawal-settings/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ bank_code, bank_name, account_number, account_name })
+                }).then(r => r.json())
+                  .then(data => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Bank Details';
+                    // ensure single alert area
+                    if (bankAlerts) bankAlerts.innerHTML = '';
+                    if (data.status === 'success') {
+                        const html = '<div class="alert alert-success alert-dismissible fade show mt-2" role="alert">Bank details saved successfully.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                        if (bankAlerts) bankAlerts.innerHTML = html;
+                        else showFlashMessage('Bank details saved successfully', 'success');
+                    } else {
+                        const msg = data.message || (data.detail && JSON.stringify(data.detail)) || 'Save failed';
+                        const html = '<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">Could not save bank details: ' + msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                        if (bankAlerts) bankAlerts.innerHTML = html;
+                        else showFlashMessage('Could not save bank details: ' + msg, 'error');
+                    }
+                }).catch(err => {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Bank Details';
+                    const html = '<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">Network error saving bank details.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                    if (bankAlerts) bankAlerts.innerHTML = html;
+                    else showFlashMessage('Network error saving bank details.', 'error');
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
