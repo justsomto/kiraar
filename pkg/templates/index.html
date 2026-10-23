@@ -18,42 +18,96 @@
 <body>
     <div class="container-fluid overflow-hidden">
         
-        <!-- Header / Navigation -->
-        <header>
-            <div class="row align-items-center bg-body-tertiary py-2">
-            <div class="col-4 col-md-4 d-flex justify-content-center align-items-center ps-3">
-                <a href="/">
-                    <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded kiraar-logo-lg">
-                </a>
-            </div>
+                <!-- Header / Upwork-style Offcanvas Navigation -->
+        <header class="sticky-top bg-white border-bottom shadow-sm">
+            <nav class="navbar navbar-expand-lg py-2">
+                <div class="container-fluid px-3 px-md-4">
+                    <!-- Brand Logo -->
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                        <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 42px;" class="img-fluid">
+                    </a>
 
-                <div class="col-8 col-md-8 d-flex justify-content-end">
-                    <nav class="navbar navbar-expand-lg w-100">
-                        <div class="container-fluid justify-content-end">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
+                    <!-- Mobile Hamburger Button (triggers offcanvas drawer from left) -->
+                    <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#kiraarNavbarOffcanvas" aria-controls="kiraarNavbarOffcanvas" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                            <div class="collapse navbar-collapse justify-content-end nav-buttons" id="navbarNavAltMarkup">
-                                <div class="navbar-nav align-items-center">
-                                    {% if session.get('user_id') %}
-                                        <a class="nav-link mx-2 px-3 py-2" href="/results/">Find Professionals</a>
-                                        <a class="nav-link mx-2 px-3 py-2" href="/client/bookings/">My Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% elif session.get('professional_id') %}
-                                        <a class="nav-link mx-2 px-3 py-2" href="/find-jobs/">Dashboard</a>
-                                        <a class="nav-link mx-2 px-3 py-2" href="/professional/bookings/">Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% else %}
-                                        <a class="nav-link mx-3 px-3 py-2" href="/signup/">Sign Up</a>
-                                        <a class="nav-link mx-3 px-3 py-2" href="/login/">Login</a>
-                                    {% endif %}
-                                </div>
+                    <!-- Offcanvas Menu (Drawer on Mobile, Top Bar on Desktop) -->
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="kiraarNavbarOffcanvas" aria-labelledby="kiraarNavbarLabel">
+                        <!-- Drawer Header (only visible on mobile) -->
+                        <div class="offcanvas-header border-bottom">
+                            <a href="/" class="d-flex align-items-center text-decoration-none">
+                                <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 36px;">
+                            </a>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Drawer Body -->
+                        <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
+                            <!-- Left Navigation Links (Upwork Style) -->
+                            <ul class="navbar-nav me-auto mb-3 mb-lg-0 py-2 py-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/results/">
+                                        <i class="fa-solid fa-magnifying-glass me-2 text-muted d-lg-none"></i>Find Artisans
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/about/">
+                                        <i class="fa-solid fa-circle-info me-2 text-muted d-lg-none"></i>How It Works
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/contact/">
+                                        <i class="fa-solid fa-headset me-2 text-muted d-lg-none"></i>Support
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <!-- Right Auth / Profile Controls -->
+                            <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-3 pt-lg-0 border-top border-lg-0">
+                                {% if session.get('user_id') %}
+                                    <!-- Logged-in Client Profile Dropdown -->
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span><i class="fa-solid fa-circle-user me-1 text-primary"></i> {{ session.get('user_name', 'Client') }}</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                            <li><a class="dropdown-item py-2" href="/client/bookings/"><i class="fa-solid fa-calendar-check me-2 text-muted"></i>My Bookings</a></li>
+                                            <li><a class="dropdown-item py-2" href="/client/edit/"><i class="fa-solid fa-user-pen me-2 text-muted"></i>Edit Profile</a></li>
+                                            {% if session.get('has_dual_account') %}
+                                            <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Pro</a></li>
+                                            {% endif %}
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                        </ul>
+                                    </div>
+                                {% elif session.get('professional_id') %}
+                                    <!-- Logged-in Professional Profile Dropdown -->
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span><i class="fa-solid fa-briefcase me-1 text-success"></i> {{ session.get('professional_name', 'Professional') }}</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                            <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-chart-line me-2 text-muted"></i>Pro Dashboard</a></li>
+                                            <li><a class="dropdown-item py-2" href="/professional/bookings/"><i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Client Bookings</a></li>
+                                            <li><a class="dropdown-item py-2" href="/edit-profile/"><i class="fa-solid fa-id-card me-2 text-muted"></i>Edit Profile</a></li>
+                                            {% if session.get('has_dual_account') %}
+                                            <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Client</a></li>
+                                            {% endif %}
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                        </ul>
+                                    </div>
+                                {% else %}
+                                    <!-- Guest (Not Logged In) -->
+                                    <a href="/login/" class="btn btn-outline-dark btn-sm rounded-pill px-3 py-2 text-center">Log In</a>
+                                    <a href="/signup/" class="btn btn-sm rounded-pill px-3 py-2 text-white text-center" style="background:#611f47;">Sign Up</a>
+                                {% endif %}
                             </div>
                         </div>
-                    </nav>
+                    </div>
                 </div>
-            </div>
+            </nav>
         </header>
 
         <!-- Search Input Hero Segment -->
