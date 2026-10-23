@@ -114,9 +114,9 @@
             <div class="col-11 col-md-8 col-lg-6 wrapper">
                 <form action="/results/" method="GET">
                     <div class="input-group flex-nowrap shadow-sm">
-                        <span class="input-group-text" id="addon-wrapping"> 🔍 I need a – </span>
-                        <input type="text" name="search" class="form-control py-2" placeholder="Enter a Service (e.g. Plumber, Electrician)" aria-label="Search" aria-describedby="addon-wrapping">
-                        <button class="btn" style="background:#611f47; color:white; font-weight:600;" type="submit">Search</button>
+                        <span class="input-group-text bg-white border-end-0 text-muted" id="addon-wrapping">🔍<span class="d-none d-sm-inline ms-1 text-dark">I need a –</span></span>
+                        <input type="text" name="search" class="form-control py-2 border-start-0" placeholder="e.g. Plumber, Electrician, Painter" aria-label="Search" aria-describedby="addon-wrapping">
+                        <button class="btn px-3 px-sm-4" style="background:#611f47; color:white; font-weight:600;" type="submit">Search</button>
                     </div>
                 </form>
             </div>
@@ -144,7 +144,7 @@
 
         <!-- How It Works: For Users Section -->
         <div class="row how-it-works1 mt-5 py-5 g-4 align-items-center justify-content-center">
-            <div class="col-md-4 offset-md-2">
+            <div class="col-12 col-md-4 offset-md-2 text-center text-md-start">
                 <h2 class="fw-bold mb-0">For Users</h2>
             </div>
             <div class="col-10 col-sm-4 col-md-2 box text-center">
@@ -163,7 +163,7 @@
 
         <!-- How It Works: For Professionals Section -->
         <div class="row how-it-works2 py-5 g-4 align-items-center justify-content-center border-top border-secondary">
-            <div class="col-md-4 offset-md-2">
+            <div class="col-12 col-md-4 offset-md-2 text-center text-md-start">
                 <h2 class="fw-bold mb-0">For Professionals</h2>
             </div>
             <div class="col-10 col-sm-4 col-md-2 box text-center">
@@ -221,7 +221,7 @@
         <!-- Testimonials Grid -->
         <div class="row testimonials g-4 pb-5 justify-content-center">
             <div class="col-11 col-md-4 d-flex justify-content-center">
-                <div class="card shadow-sm" style="width: 300px;">
+                <div class="card shadow-sm w-100 border-0 rounded-3" style="max-width: 340px;">
                     <div class="card-body text-center p-4">
                         <div><div><div><img src="/static/images/testimonial1.jpg" alt="David A."></div></div></div>
                         <p class="card-text small justify-text mt-3">As a local electrician, finding consistent clients used to be a hassle. Since I got listed under my trade on kiraar, my calendar has been completely full. The onboarding process was straightforward, and being able to accept requests and get paid securely right through the platform has completely transformed my business!</p>
@@ -230,7 +230,7 @@
                 </div>
             </div>
             <div class="col-11 col-md-4 d-flex justify-content-center">
-                <div class="card shadow-sm" style="width: 300px;">
+                <div class="card shadow-sm w-100 border-0 rounded-3" style="max-width: 340px;">
                     <div class="card-body text-center p-4">
                         <div><div><div><img src="/static/images/testimonial2.jpg" alt="Kim M."></div></div></div>
                         <p class="card-text small justify-text mt-3">"I needed an emergency plumber over the weekend and didn't know who to trust. I hopped on kiraar, find a verified professional right in my neighborhood, and booked them within minutes. The provider arrived on time, did an amazing job, and the pricing was clear from the start. I won't use anything else for my home needs."</p>
@@ -239,7 +239,7 @@
                 </div>
             </div>
             <div class="col-11 col-md-4 d-flex justify-content-center">
-                <div class="card shadow-sm" style="width: 300px;">
+                <div class="card shadow-sm w-100 border-0 rounded-3" style="max-width: 340px;">
                     <div class="card-body text-center p-4">
                         <div><div><div><img src="/static/images/testimonial3.jpg" alt="Elena R."></div></div></div>
                         <p class="card-text small justify-text mt-3">"kiraar has given my mobile hair styling business incredible local visibility. Customers love how seamlessly they can find and book my services, and I love the control it gives me over my schedule. It’s the perfect platform for any service provider looking to grow their reach and scale their income."</p>
@@ -273,7 +273,7 @@
                 </div>
             </div>
             <div class="col-11 col-md-6 d-md-flex align-items-center justify-content-center">
-                <div class="shadow-sm rounded overflow-hidden" style="width: 500px; height: 400px;">
+                <div class="shadow-sm rounded overflow-hidden w-100" style="max-width: 500px; height: 380px;">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.3380660368016!2d3.3514960735048396!3d6.604845122215785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9234071499cb%3A0x2b1a5de922a9039b!2s5%20Ogunsiji%20Cl%2C%20Allen%2C%20Ikeja%20101233%2C%20Lagos!5e0!3m2!1sen!2sng!4v1777232974629!5m2!1sen!2sng" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
@@ -373,7 +373,7 @@
             <div class="col-sm-6 col-md-3 mb-4">
                 <ul class="p-0">
                     <li class="mb-4"><h3>Get Help</h3></li>
-                    <li class="mb-2"><a href="#services-grid" class="text-decoration-none">See All Services</a></li>
+                    <li class="mb-2"><a href="/results/" class="text-decoration-none">See All Services</a></li>
                     <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact Support</a></li>
                     <li class="mb-2"><a href="/login/" class="text-decoration-none">Login In</a></li>
                 </ul>
