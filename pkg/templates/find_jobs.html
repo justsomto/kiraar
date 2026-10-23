@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -74,7 +74,7 @@
             <div class="col-6 col-md-3 mb-2">
                 <div class="kiraar-card p-3">
                     <small class="text-muted">Today's Earnings</small>
-                    <h4 class="font-weight-bold brand-text mb-0">₦{{ "{:,.2f}".format(todays_earnings) }}</h4>
+                    <h4 class="font-weight-bold brand-text mb-0">â‚¦{{ "{:,.2f}".format(todays_earnings) }}</h4>
                 </div>
             </div>
             <div class="col-6 col-md-3 mb-2">
@@ -92,7 +92,7 @@
             <div class="col-6 col-md-3 mb-2">
                 <div class="kiraar-card p-3">
                     <small class="text-muted">Wallet Balance</small>
-                    <h4 class="font-weight-bold text-dark mb-0">₦{{ "{:,.2f}".format(wallet_balance) }}</h4>
+                    <h4 class="font-weight-bold text-dark mb-0">â‚¦{{ "{:,.2f}".format(wallet_balance) }}</h4>
                 </div>
             </div>
         </div>
@@ -196,26 +196,26 @@
                                     <div class="text-muted small mt-1">
                                         <i class="fa-regular fa-calendar me-1"></i>
                                         {{ booking.scheduled_date.strftime('%b %d, %Y') if booking.scheduled_date else 'TBD' }}
-                                        &middot; ₦{{ "%.2f"|format(booking.booking_price) }}
+                                        &middot; â‚¦{{ "%.2f"|format(booking.booking_price) }}
                                         {% if booking.address %}
                                         &middot; <i class="fa-solid fa-location-dot"></i> {{ booking.address }}
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <!-- Status update buttons -->
                                     <form action="/professional/booking/{{ booking.booking_id }}/update-status/" method="POST" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         {% if booking.job_status == 'pending' %}
-                                            <button type="submit" name="status" value="in-progress" class="btn btn-success btn-sm" onclick="return confirm('Accept this booking?')"><i class="fa-solid fa-check me-1"></i>Accept</button>
+                                            <button type="submit" name="status" value="in-progress" class="btn btn-success btn-sm rounded-pill px-3" onclick="return confirm('Accept this booking?')"><i class="fa-solid fa-check me-1"></i>Accept</button>
                                         {% elif booking.job_status == 'in-progress' %}
-                                            <button type="submit" name="status" value="completed" class="btn btn-success btn-sm" onclick="return confirm('Mark as completed?')"><i class="fa-solid fa-check-circle me-1"></i>Complete</button>
+                                            <button type="submit" name="status" value="completed" class="btn btn-success btn-sm rounded-pill px-3" onclick="return confirm('Mark as completed?')"><i class="fa-solid fa-check-circle me-1"></i>Complete</button>
                                         {% elif booking.job_status == 'completed' %}
-                                            <button type="submit" name="status" value="pending" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-rotate-left me-1"></i>Reopen</button>
+                                            <button type="submit" name="status" value="pending" class="btn btn-outline-secondary btn-sm rounded-pill px-3"><i class="fa-solid fa-rotate-left me-1"></i>Reopen</button>
                                         {% endif %}
                                     </form>
                                     <!-- Chat button -->
-                                    <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm">
+                                    <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                         <i class="fa-solid fa-comment me-1"></i> Chat
                                     </a>
                                 </div>
@@ -230,11 +230,11 @@
                                                 {{ booking.professional_service.service_category.service_category_name }}
                                             {% else %}General{% endif %}
                                         </div>
-                                        <div class="col-md-4"><strong>Price:</strong> ₦{{ "%.2f"|format(booking.booking_price) }}</div>
+                                        <div class="col-md-4"><strong>Price:</strong> â‚¦{{ "%.2f"|format(booking.booking_price) }}</div>
                                         <div class="col-md-4"><strong>Address:</strong> {{ booking.address or 'Not provided' }}</div>
                                     </div>
                                     <div class="mt-2">
-                                        <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm">
+                                        <a href="/professional/chat/{{ booking.booking_id }}/" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                             <i class="fa-solid fa-comment me-1"></i> Open Full Chat
                                         </a>
                                     </div>
@@ -265,7 +265,7 @@
     <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
 
     <script>
-        // ── CometChat Notification Listener for Professionals ──────────────
+        // â”€â”€ CometChat Notification Listener for Professionals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         var cometchatAppId = "{{ cometchat_app_id }}";
         var cometchatRegion = "{{ cometchat_region }}";
 
@@ -278,7 +278,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function(data) {
                     CometChat.login(data.authToken).then(function() {
-                        console.log('Pro notifications active ✅');
+                        console.log('Pro notifications active âœ…');
                         CometChat.addMessageListener('pro_notif_' + Date.now(), new CometChat.MessageListener({
                             onTextMessageReceived: function(msg) {
                                 if (msg.getSender().getUid().startsWith('user-')) {
@@ -315,7 +315,7 @@
             Notification.requestPermission();
         }
 
-        // ── Toggle booking body (expand/collapse) ─────────────────────────
+        // â”€â”€ Toggle booking body (expand/collapse) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function toggleBookingBody(bookingId) {
             var body = document.getElementById('bookingBody_' + bookingId);
             if (body.style.display === 'block') {
@@ -326,7 +326,7 @@
             body.style.display = 'block';
         }
 
-        // ── Filter bookings by status ─────────────────────────────────────
+        // â”€â”€ Filter bookings by status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function filterBookings(status, btn) {
             document.querySelectorAll('.status-tab').forEach(function(t) { t.classList.remove('active'); });
             btn.classList.add('active');
@@ -350,3 +350,4 @@
     </script>
 </body>
 </html>
+

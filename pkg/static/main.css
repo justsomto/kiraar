@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    1. Global Reset & Core HTML Elements
    ========================================================================== */
 * {
@@ -297,8 +297,25 @@ li {
     flex-direction: column;
 }
 
-.inner-page > .container {
+.inner-page > .container,
+.inner-page > .container-fluid {
     flex: 1;
+}
+
+/* Mobile: booking rows stack cleanly on small screens */
+@media (max-width: 767px) {
+    .booking-item .row > div {
+        margin-bottom: 6px;
+    }
+    /* Keep dropdowns from going off-screen on phones */
+    .dropdown-menu {
+        min-width: 180px;
+    }
+    /* Sidebar filter list scrollable when inside offcanvas */
+    #filterOffcanvas .d-flex.flex-column {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
 }
 
 .brand-bg {
@@ -465,7 +482,7 @@ li {
    10. Utility Classes (Replaces Inline Styles)
    ========================================================================== */
 
-/* Logo sizing — used in navbars across templates */
+/* Logo sizing â€” used in navbars across templates */
 .kiraar-logo-img {
     max-height: 40px;
 }
@@ -553,7 +570,7 @@ li {
     justify-content: center;
 }
 
-/* Smooth scrolling — used on index.html <html> tag */
+/* Smooth scrolling â€” used on index.html <html> tag */
 html.kiraar-smooth {
     scroll-behavior: smooth;
 }
@@ -1160,6 +1177,25 @@ html.kiraar-smooth {
 .booking-card-header.completed { border-left-color: #198754; }
 .booking-body { display: none; border-top: 1px solid #f0f0f0; }
 
+/* Mobile: booking header stacks vertically on phones */
+@media (max-width: 575px) {
+    .booking-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .booking-card-header > div:last-child {
+        align-self: flex-start;
+    }
+    .booking-item {
+        padding: 14px 16px;
+    }
+    .status-tab {
+        padding: 4px 12px;
+        font-size: 0.78rem;
+    }
+}
+
 /* Pro chat toggle button (professional_bookings) */
 .chat-toggle-btn {
     background: none;
@@ -1764,3 +1800,5 @@ html.kiraar-smooth {
     height: 100px;
     border-radius: 50%;
 }
+
+

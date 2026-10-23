@@ -11,11 +11,11 @@
 
 <body class="inner-page">
 
-    <!-- Simple Navbar -->
+    <!-- Navbar -->
     <nav class="navbar navbar-light bg-light">
-        <div class="container py-2">
+        <div class="container-fluid px-3 py-2">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo4.png" alt="logo-img" class="img-fluid">
+                <img src="/static/images/logo4.png" alt="logo-img" style="max-height:38px;" class="img-fluid">
             </a>
 
             <!-- Right side of navbar -->
@@ -29,8 +29,9 @@
                     </div>
 
                     <!-- My Bookings Link -->
-                    <a href="/client/bookings/" class="btn {% if unpaid_bookings_count > 0 %}unpaid-alert-btn{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3 position-relative" style="margin-left: 10px;">
-                        <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
+                    <a href="/client/bookings/" class="btn {% if unpaid_bookings_count > 0 %}unpaid-alert-btn{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3 position-relative">
+                        <i class="fa-solid fa-calendar-check me-1"></i>
+                        <span class="d-none d-sm-inline">My Bookings</span>
                         {% if unpaid_bookings_count > 0 %}
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" style="font-size:0.6rem; border: 1px solid white;">
                             {{ unpaid_bookings_count }}
@@ -38,29 +39,33 @@
                         {% endif %}
                     </a>
 
-                    <!-- Switch to Pro button: only shows if user has both accounts AND the pro account is NOT suspended -->
                     {% if session.get('has_dual_account') and not session.get('pro_suspended') %}
-                    <a href="/switch-role/" id="switchRoleBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3" style="margin-left: 10px;">
+                    <a href="/switch-role/" id="switchRoleBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-none d-md-inline-flex">
                         <i class="fa-solid fa-right-left me-1"></i> Switch to Pro
                     </a>
                     {% endif %}
 
                     <!-- User dropdown -->
                     <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Welcome, {{ session.get('user_name', 'User') }} 👋
+                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user me-1"></i>
+                            <span class="d-none d-sm-inline">{{ session.get('user_name', 'Me') }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/client/edit/"><i class="fa-solid fa-user-pen me-2"></i>Edit Profile</a></li>
-                            <li><a class="dropdown-item" href="/logout/"><i class="fa-solid fa-right-from-bracket me-2"></i>Log Out</a></li>
+                            {% if session.get('has_dual_account') and not session.get('pro_suspended') %}
+                            <li><a class="dropdown-item text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Pro</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/logout/"><i class="fa-solid fa-right-from-bracket me-2"></i>Log Out</a></li>
                         </ul>
                     </div>
                 {% elif session.get('professional_id') %}
                     <a href="/find-jobs/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Dashboard</a>
-                    <a href="/professional/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Bookings</a>
+                    <a href="/professional/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-none d-sm-inline-flex">Bookings</a>
                     <a href="/logout/" class="btn btn-outline-danger btn-sm rounded-pill px-3">Log Out</a>
                 {% else %}
-                    <a href="/signup-pro/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Become a Professional</a>
+                    <a href="/signup-pro/" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-none d-sm-inline-flex">Become a Pro</a>
                     <a href="/signup-client/" class="btn btn-outline-primary btn-sm rounded-pill px-3">Sign Up</a>
                     <a href="/login/" class="btn btn-primary btn-sm rounded-pill px-3" style="background:#611f47; border-color:#611f47;">Log In</a>
                 {% endif %}
@@ -69,8 +74,8 @@
         </div>
     </nav>
 
-    <!-- Flash messages: shown here so they are consumed right away and don't leak to other pages -->
-    <div class="container mt-3">
+    <!-- Flash messages -->
+    <div class="container-fluid px-3 mt-2">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -83,136 +88,225 @@
         {% endwith %}
     </div>
 
-    <div class="container my-4">
-         
-        <!-- Header Section with standard columns for Title and Search -->
-        <div class="row mb-4">
-            <div class="col-md-7">
-                <h2 class="brand-text">Find Professionals Near You</h2>
-                <p class="text-muted">Search for verified service providers in your city or state.</p>
-            </div>
-            <div class="col-md-5">
-                <div class="input-group mt-2">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by name, business name or service..." value="{{ search_query or '' }}" oninput="filterProfessionals()">
-                    <button class="btn text-white brand-bg" type="button" onclick="filterProfessionals()">
-                        <i class="fa-solid fa-search"></i> Search
-                    </button>
-                </div>
-            </div>
+    <!-- ════════════════════════════════════════════════════════
+         OFFCANVAS FILTER DRAWER (mobile only — slides in from left)
+         On desktop, this content is duplicated in the sidebar column below.
+         ════════════════════════════════════════════════════════ -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+        <div class="offcanvas-header border-bottom">
+            <h6 class="offcanvas-title fw-bold" id="filterOffcanvasLabel">
+                <i class="fa-solid fa-sliders me-2" style="color:#611f47;"></i> Filters
+            </h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
+        <div class="offcanvas-body">
 
-        <!-- Auto-detected Location Display & Location Search -->
-        <div class="row mb-3 align-items-center">
-            <div class="col-md-5 mb-2 mb-md-0">
-                <span id="locationPill" class="badge rounded-pill px-3 py-2" style="background:#f5eaf1; color:#611f47; font-size:0.85rem; font-weight:600;">
-                    <i class="fa-solid fa-location-dot me-1"></i>
-                    <span id="locationText">Detecting your location...</span>
-                </span>
+            <h6 class="fw-bold mb-2"><i class="fa-solid fa-search me-1" style="color:#611f47;"></i> Search</h6>
+            <input type="text" id="searchInputMobile" class="form-control form-control-sm mb-3"
+                   placeholder="Name, service..."
+                   value="{{ search_query or '' }}"
+                   oninput="syncSearch(this)">
+
+            <h6 class="fw-bold mb-1"><i class="fa-solid fa-location-dot me-1" style="color:#611f47;"></i> Your Location</h6>
+            <span class="badge rounded-pill px-2 py-1 mb-2 d-block text-start"
+                  style="background:#f5eaf1; color:#611f47; font-size:0.78rem;">
+                <span id="locationTextMobile">Detecting...</span>
+            </span>
+            <input type="text" id="locationSearchInputMobile" class="form-control form-control-sm mb-3"
+                   placeholder="Filter by city..."
+                   oninput="syncLocation(this)">
+
+            <h6 class="fw-bold mb-2"><i class="fa-solid fa-list me-1" style="color:#611f47;"></i> Service</h6>
+            <div class="d-flex flex-column gap-1" style="max-height:55vh; overflow-y:auto;">
+                <button class="btn btn-sm text-white brand-bg filter-btn-m"
+                        data-service="all"
+                        onclick="toggleFilterMobile(this, 'all')">All</button>
+                {% for category in service_categories %}
+                <button class="btn btn-sm btn-outline-secondary filter-btn-m"
+                        data-service="{{ category.service_category_name }}"
+                        onclick="toggleFilterMobile(this, '{{ category.service_category_name }}')">
+                    {{ category.service_category_name }}
+                </button>
+                {% endfor %}
             </div>
-            <div class="col-md-7">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-map-marker-alt" style="color:#611f47;"></i></span>
-                    <input type="text" id="locationSearchInput" class="form-control border-start-0 ps-0" placeholder="Filter by location (e.g. type the city you see on the left)" oninput="filterProfessionals()">
-                </div>
-            </div>
+
         </div>
-
-        <!-- Filter Badges Section (horizontally scrollable) -->
-        <div class="row mb-2">
-            <div class="col-12">
-                <span class="text-dark me-2 mb-1 d-inline-block"><strong>Sort by Service:</strong></span>
-                <div class="filter-scroll d-inline-block" style="max-width: calc(100% - 140px); vertical-align: middle;">
-                    <button class="btn text-white brand-bg btn-sm filter-btn active-filter" data-service="all" onclick="toggleFilter(this, 'all')">All</button>
-                    {% for category in service_categories %}
-                    <button class="btn btn-outline-secondary btn-sm filter-btn" data-service="{{ category.service_category_name }}" onclick="toggleFilter(this, '{{ category.service_category_name }}')">{{ category.service_category_name }}</button>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Selected filters display -->
-        <div id="selectedFiltersContainer" class="row mb-3" style="display: none;">
-            <div class="col-12">
-                <div id="selectedFiltersList" class="d-flex flex-wrap align-items-center gap-2"></div>
-            </div>
-        </div>
-
-        <!-- Artisan List -->
-        <div class="row" id="professionalList">
-            <div class="col-12">
-
-                {% if professionals %}
-                    {% for professional in professionals %}
-                        {% set trades = prof_trades.get(professional.professional_id, []) %}
-                        <div class="card mb-3 p-3 professional-card"
-                             data-services="{{ trades | join(',') }}"
-                             data-name="{{ professional.first_name }} {{ professional.last_name }}"
-                             data-business="{{ professional.business_name or '' }}"
-                             data-location="{{ (professional.location or '') | lower }}">
-                            <div class="row">
-                                <div class="col-md-2 text-center">
-                                    <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}" alt="Artisan Face" class="artisan-img">
-                                </div>
-                                <div class="col-md-7">
-                                    <h4>
-                                        {% if professional.show_first_name is none or professional.show_first_name %}{{ professional.first_name }}{% endif %}
-                                        {% if professional.show_last_name is none or professional.show_last_name %}{{ professional.last_name }}{% endif %}
-                                        {% if (professional.show_business_name is none or professional.show_business_name) and professional.business_name %}
-                                            <small class="text-muted">({{ professional.business_name }})</small>
-                                        {% endif %}
-                                        {% if professional.account_status == 'verified' %}
-                                            <span class="badge bg-success" style="font-size:0.75rem; vertical-align: middle;">
-                                                <i class="fa-solid fa-circle-check me-1"></i>Verified
-                                            </span>
-                                        {% endif %}
-                                    </h4>
-                                    <p class="mb-1">
-                                        <strong>Rating:</strong>
-                                        {% set rating = professional.average_rating|float %}
-                                        {% if rating > 0 %}
-                                            {% for i in range(1, 6) %}
-                                                {% if i <= rating %}
-                                                    <i class="fa-solid fa-star text-warning"></i>
-                                                {% elif i - 0.5 <= rating %}
-                                                    <i class="fa-solid fa-star-half-stroke text-warning"></i>
-                                                {% else %}
-                                                    <i class="fa-regular fa-star text-warning"></i>
-                                                {% endif %}
-                                            {% endfor %}
-                                            <span class="ms-1 small">({{ "%.1f"|format(rating) }})</span>
-                                        {% else %}
-                                            <span class="text-muted small">No ratings yet</span>
-                                        {% endif %}
-                                    </p>
-                                    <p class="mb-1"><strong>Business:</strong> {{ professional.business_name or 'N/A' }}</p>
-                                    <p class="mb-1"><strong>Services:</strong>
-                                        {% if trades %}
-                                            {% for trade in trades %}
-                                                <span class="badge bg-secondary">{{ trade }}</span>
-                                            {% endfor %}
-                                        {% else %}
-                                            <span class="text-muted">Not specified</span>
-                                        {% endif %}
-                                    </p>
-                                    <p class="mb-0 text-muted">{{ professional.bio or 'Available for new work.' }}</p>
-                                </div>
-                                <div class="col-md-3 text-end mt-3 mt-md-0">
-                                    <a href="/professional/{{ professional.professional_id }}/profile/" class="btn kiraar-btn-solid w-100">
-                                        <i class="fa-solid fa-handshake me-1"></i> Hire
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="alert alert-info">No professionals are available yet.</div>
-                {% endif %}
-            </div>
-        </div>
-
     </div>
 
-    <footer class="inner-footer py-3 text-center text-white brand-bg">
+    <!-- ════════════════════════════════════════════════════════
+         MAIN LAYOUT: Two columns on desktop, stacked on mobile
+         ════════════════════════════════════════════════════════ -->
+    <div class="container-fluid px-2 px-md-3 my-3">
+
+        <!-- Mobile top bar: search box + "Filters" button -->
+        <div class="d-flex d-md-none gap-2 mb-3">
+            <input type="text" id="searchInputTop" class="form-control form-control-sm"
+                   placeholder="Search name or service..."
+                   value="{{ search_query or '' }}"
+                   oninput="syncSearch(this)">
+            <!-- "Filters" button opens the offcanvas drawer -->
+            <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#filterOffcanvas"
+                    aria-controls="filterOffcanvas">
+                <i class="fa-solid fa-sliders me-1"></i> Filters
+            </button>
+        </div>
+
+        <div class="row">
+
+            <!-- LEFT SIDEBAR: visible only on md+ screens -->
+            <div class="col-md-3 col-lg-2 mb-4 d-none d-md-block">
+                <div class="card p-3">
+
+                    <h6 class="fw-bold mb-2">
+                        <i class="fa-solid fa-search me-1" style="color:#611f47;"></i> Search
+                    </h6>
+                    <input type="text" id="searchInputDesktop" class="form-control form-control-sm mb-3"
+                           placeholder="Name, service..."
+                           value="{{ search_query or '' }}"
+                           oninput="syncSearch(this)">
+
+                    <h6 class="fw-bold mb-1">
+                        <i class="fa-solid fa-location-dot me-1" style="color:#611f47;"></i> Your Location
+                    </h6>
+                    <span class="badge rounded-pill px-2 py-1 mb-2 d-block text-start"
+                          style="background:#f5eaf1; color:#611f47; font-size:0.78rem;">
+                        <span id="locationText">Detecting...</span>
+                    </span>
+                    <input type="text" id="locationSearchInput" class="form-control form-control-sm mb-3"
+                           placeholder="Filter by city..."
+                           oninput="syncLocation(this)">
+
+                    <h6 class="fw-bold mb-2">
+                        <i class="fa-solid fa-list me-1" style="color:#611f47;"></i> Service
+                    </h6>
+                    <div class="d-flex flex-column gap-1" style="max-height:55vh; overflow-y:auto;">
+                        <button class="btn btn-sm text-white brand-bg filter-btn"
+                                data-service="all"
+                                onclick="toggleFilter(this, 'all')">All</button>
+                        {% for category in service_categories %}
+                        <button class="btn btn-sm btn-outline-secondary filter-btn"
+                                data-service="{{ category.service_category_name }}"
+                                onclick="toggleFilter(this, '{{ category.service_category_name }}')">
+                            {{ category.service_category_name }}
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT: artisan cards -->
+            <div class="col-12 col-md-9 col-lg-10">
+
+                <!-- Active filter pills -->
+                <div id="selectedFiltersContainer" class="mb-3" style="display:none;">
+                    <div id="selectedFiltersList" class="d-flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Page title -->
+                <h6 class="fw-bold mb-3 text-muted">
+                    Find Professionals Near You
+                </h6>
+
+                <!-- Artisan cards -->
+                <div id="professionalList">
+                    {% if professionals %}
+                        {% for professional in professionals %}
+                            {% set trades = prof_trades.get(professional.professional_id, []) %}
+                            <div class="card mb-3 professional-card"
+                                 data-services="{{ trades | join(',') }}"
+                                 data-name="{{ professional.first_name }} {{ professional.last_name }}"
+                                 data-business="{{ professional.business_name or '' }}"
+                                 data-location="{{ (professional.location or '') | lower }}">
+                                <div class="card-body py-3 px-3">
+
+                                    <!-- Row: avatar | info | button -->
+                                    <div class="d-flex align-items-start gap-3">
+
+                                        <!-- Avatar -->
+                                        <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
+                                             alt="Artisan"
+                                             class="rounded-circle flex-shrink-0"
+                                             style="width:52px; height:52px; object-fit:cover;">
+
+                                        <!-- Info (grows to fill space) -->
+                                        <div class="flex-grow-1 min-width-0">
+                                            <div class="d-flex flex-wrap align-items-center gap-1 mb-1">
+                                                <span class="fw-bold">
+                                                    {% if professional.show_first_name is none or professional.show_first_name %}{{ professional.first_name }}{% endif %}
+                                                    {% if professional.show_last_name is none or professional.show_last_name %}{{ professional.last_name }}{% endif %}
+                                                </span>
+                                                {% if (professional.show_business_name is none or professional.show_business_name) and professional.business_name %}
+                                                    <small class="text-muted">({{ professional.business_name }})</small>
+                                                {% endif %}
+                                                {% if professional.account_status == 'verified' %}
+                                                    <span class="badge bg-success" style="font-size:0.65rem;">
+                                                        <i class="fa-solid fa-circle-check me-1"></i>Verified
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Star rating -->
+                                            <div class="mb-1">
+                                                {% set rating = professional.average_rating|float %}
+                                                {% if rating > 0 %}
+                                                    {% for i in range(1, 6) %}
+                                                        {% if i <= rating %}
+                                                            <i class="fa-solid fa-star text-warning" style="font-size:0.75rem;"></i>
+                                                        {% elif i - 0.5 <= rating %}
+                                                            <i class="fa-solid fa-star-half-stroke text-warning" style="font-size:0.75rem;"></i>
+                                                        {% else %}
+                                                            <i class="fa-regular fa-star text-warning" style="font-size:0.75rem;"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <small class="text-muted ms-1">({{ "%.1f"|format(rating) }})</small>
+                                                {% else %}
+                                                    <small class="text-muted">No ratings yet</small>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Service badges -->
+                                            <div class="mb-1 d-flex flex-wrap gap-1">
+                                                {% if trades %}
+                                                    {% for trade in trades %}
+                                                        <span class="badge bg-secondary" style="font-size:0.65rem;">{{ trade }}</span>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <small class="text-muted">No services listed</small>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Bio (truncated on mobile) -->
+                                            <small class="text-muted">{{ professional.bio or 'Available for new work.' }}</small>
+                                        </div>
+
+                                        <!-- ONE action button — stays on the right on all screen sizes -->
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <a href="/professional/{{ professional.professional_id }}/profile/"
+                                               class="btn btn-sm rounded-pill px-3 text-white brand-bg text-nowrap">
+                                                <i class="fa-solid fa-handshake me-1"></i>
+                                                <span class="d-none d-sm-inline">View &amp; Hire</span>
+                                                <span class="d-sm-none">Hire</span>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-info">No professionals are available yet.</div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-3 text-center text-white brand-bg mt-auto">
         <p class="mb-0">Copyright &copy; kiraar 2026</p>
     </footer>
 
@@ -225,13 +319,11 @@
         var cometchatAppId = "{{ cometchat_app_id }}";
         var cometchatRegion = "{{ cometchat_region }}";
         var clientUserId = {{ session.get('user_id') or 0 }};
-        var clientUid = "user-" + clientUserId;
 
         if (clientUserId > 0) {
             CometChat.init(cometchatAppId, new CometChat.AppSettingsBuilder()
                 .subscribePresenceForAllUsers().setRegion(cometchatRegion).autoEstablishSocketConnection(true).build()
             ).then(function() {
-                // Get auth token the same way the profile page does
                 $.ajax({
                     url: '/cometchat/auth-token/',
                     type: 'POST',
@@ -239,18 +331,12 @@
                     data: { professional_id: 0 },
                     success: function(data) {
                         CometChat.login(data.authToken).then(function() {
-                            console.log('Client notifications active ✅');
-                            // Listen for messages from any professional
                             CometChat.addMessageListener('client_notif_' + Date.now(), new CometChat.MessageListener({
                                 onTextMessageReceived: function(msg) {
-                                    if (msg.getSender().getUid().startsWith('pro-')) {
-                                        showNotification(msg);
-                                    }
+                                    if (msg.getSender().getUid().startsWith('pro-')) showNotification(msg);
                                 },
                                 onMediaMessageReceived: function(msg) {
-                                    if (msg.getSender().getUid().startsWith('pro-')) {
-                                        showNotification(msg);
-                                    }
+                                    if (msg.getSender().getUid().startsWith('pro-')) showNotification(msg);
                                 }
                             }));
                         }).catch(console.warn);
@@ -263,28 +349,25 @@
                 var badge = document.getElementById('unreadBadge');
                 if (bell) bell.style.display = '';
                 if (badge) {
-                    var count = parseInt(badge.textContent || '0');
-                    badge.textContent = count + 1;
+                    badge.textContent = parseInt(badge.textContent || '0') + 1;
                     badge.style.display = '';
                 }
-                // Also show a browser notification if permitted
                 if ('Notification' in window && Notification.permission === 'granted') {
                     var sender = msg.getSender().getName() || 'Professional';
                     new Notification(sender, { body: msg.getText ? msg.getText() : 'Sent you a message', icon: '/static/images/logo4.png' });
                 }
             }
 
-            // Request notification permission
             if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission();
             }
         }
 
         function scrollToMessages() {
-            // Placeholder - could scroll to a messages section
             var bell = document.getElementById('notificationBell');
             if (bell) bell.style.display = 'none';
         }
+
         // Auto-dismiss flash alerts after 4 seconds
         setTimeout(function() {
             document.querySelectorAll('.kiraar-flash').forEach(function(el) {
@@ -293,73 +376,95 @@
             });
         }, 4000);
 
-        // Switch role button: show spinner animation before redirecting
+        // Switch role button spinner
         var switchBtn = document.getElementById('switchRoleBtn');
         if (switchBtn) {
             switchBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 switchBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Switching...';
                 switchBtn.classList.add('disabled');
-                setTimeout(function() {
-                    window.location.href = '/switch-role/';
-                }, 400);
+                setTimeout(function() { window.location.href = '/switch-role/'; }, 400);
             });
         }
 
-        // ===== Multi-select Service Filter =====
-
-        // Track which services are currently selected
+        // ===== Shared filter state =====
+        // One set of active services shared by both the desktop sidebar and mobile offcanvas
         let activeServices = new Set();
 
+        // The single source of truth for the search text
+        var searchText = '';
+        var locationSearch = '';
+
+        // Keep all 3 search inputs in sync with each other
+        function syncSearch(sourceInput) {
+            searchText = sourceInput.value;
+            ['searchInputDesktop', 'searchInputMobile', 'searchInputTop'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && el !== sourceInput) el.value = searchText;
+            });
+            filterProfessionals();
+        }
+
+        function syncLocation(sourceInput) {
+            locationSearch = sourceInput.value;
+            ['locationSearchInput', 'locationSearchInputMobile'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && el !== sourceInput) el.value = locationSearch;
+            });
+            filterProfessionals();
+        }
+
+        // Desktop sidebar filter toggle
         function toggleFilter(btn, service) {
+            _applyToggle(service, '.filter-btn');
+            filterProfessionals();
+        }
+
+        // Mobile offcanvas filter toggle
+        function toggleFilterMobile(btn, service) {
+            _applyToggle(service, '.filter-btn-m');
+            filterProfessionals();
+        }
+
+        function _applyToggle(service, selector) {
             if (service === 'all') {
-                // Reset: clear all selections, activate "All"
                 activeServices.clear();
-                document.querySelectorAll('.filter-btn').forEach(function(b) {
+                document.querySelectorAll(selector).forEach(function(b) {
                     b.classList.remove('brand-bg', 'text-white');
                     b.classList.add('btn-outline-secondary');
                 });
-                btn.classList.remove('btn-outline-secondary');
-                btn.classList.add('brand-bg', 'text-white');
-                filterProfessionals();
-                return;
-            }
-
-            // Deactivate the "All" button if it's active
-            var allBtn = document.querySelector('.filter-btn[data-service="all"]');
-            allBtn.classList.remove('brand-bg', 'text-white');
-            allBtn.classList.add('btn-outline-secondary');
-
-            // Toggle this service in the set
-            if (activeServices.has(service)) {
-                activeServices.delete(service);
-                btn.classList.remove('brand-bg', 'text-white');
-                btn.classList.add('btn-outline-secondary');
+                // Activate the "All" button
+                var allBtn = document.querySelector(selector + '[data-service="all"]');
+                if (allBtn) { allBtn.classList.remove('btn-outline-secondary'); allBtn.classList.add('brand-bg', 'text-white'); }
             } else {
-                activeServices.add(service);
-                btn.classList.remove('btn-outline-secondary');
-                btn.classList.add('brand-bg', 'text-white');
-            }
+                var allBtn = document.querySelector(selector + '[data-service="all"]');
+                if (allBtn) { allBtn.classList.remove('brand-bg', 'text-white'); allBtn.classList.add('btn-outline-secondary'); }
 
-            // If nothing selected, reactivate "All"
-            if (activeServices.size === 0) {
-                allBtn.classList.remove('btn-outline-secondary');
-                allBtn.classList.add('brand-bg', 'text-white');
-            }
+                if (activeServices.has(service)) {
+                    activeServices.delete(service);
+                    document.querySelectorAll(selector + '[data-service="' + service + '"]').forEach(function(b) {
+                        b.classList.remove('brand-bg', 'text-white');
+                        b.classList.add('btn-outline-secondary');
+                    });
+                } else {
+                    activeServices.add(service);
+                    document.querySelectorAll(selector + '[data-service="' + service + '"]').forEach(function(b) {
+                        b.classList.remove('btn-outline-secondary');
+                        b.classList.add('brand-bg', 'text-white');
+                    });
+                }
 
+                if (activeServices.size === 0) {
+                    if (allBtn) { allBtn.classList.remove('btn-outline-secondary'); allBtn.classList.add('brand-bg', 'text-white'); }
+                }
+            }
             updateSelectedFilters();
-            filterProfessionals();
         }
 
         function updateSelectedFilters() {
             var container = document.getElementById('selectedFiltersContainer');
             var list = document.getElementById('selectedFiltersList');
-
-            if (activeServices.size === 0) {
-                container.style.display = 'none';
-                return;
-            }
-
+            if (activeServices.size === 0) { container.style.display = 'none'; return; }
             container.style.display = '';
             list.innerHTML = '';
             activeServices.forEach(function(service) {
@@ -367,91 +472,84 @@
                 badge.className = 'badge d-inline-flex align-items-center gap-1 px-3 py-2';
                 badge.style.backgroundColor = '#611f47';
                 badge.style.color = '#fff';
-                badge.style.fontSize = '14px';
-                badge.innerHTML = service + ' <i class="fa-solid fa-xmark" style="cursor:pointer;font-size:14px;"></i>';
-                badge.querySelector('i').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    // Find and click the corresponding filter button
-                    var btn = document.querySelector('.filter-btn[data-service="' + service + '"]');
-                    if (btn) toggleFilter(btn, service);
+                badge.style.fontSize = '13px';
+                badge.innerHTML = service + ' <i class="fa-solid fa-xmark" style="cursor:pointer;"></i>';
+                badge.querySelector('i').addEventListener('click', function() {
+                    activeServices.delete(service);
+                    // Reset both button sets
+                    ['.filter-btn', '.filter-btn-m'].forEach(function(sel) {
+                        var b = document.querySelector(sel + '[data-service="' + service + '"]');
+                        if (b) { b.classList.remove('brand-bg', 'text-white'); b.classList.add('btn-outline-secondary'); }
+                        if (activeServices.size === 0) {
+                            var allB = document.querySelector(sel + '[data-service="all"]');
+                            if (allB) { allB.classList.remove('btn-outline-secondary'); allB.classList.add('brand-bg', 'text-white'); }
+                        }
+                    });
+                    updateSelectedFilters();
+                    filterProfessionals();
                 });
                 list.appendChild(badge);
             });
         }
 
-        // ── Auto-detect client location and display it as text ────────────
-        // Uses the browser's built-in GPS, then a single free reverse-geocode
-        // call to turn the coordinates into a city/state name. No map needed.
+        // Auto-detect location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    var lat = position.coords.latitude;
-                    var lon = position.coords.longitude;
-                    // Reverse geocode: convert coordinates → city name (one call, no API key needed)
-                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude)
                         .then(function(r) { return r.json(); })
                         .then(function(data) {
-                            var city  = data.address.city || data.address.town || data.address.village || '';
+                            var city = data.address.city || data.address.town || data.address.village || '';
                             var state = data.address.state || '';
                             var label = city ? city + (state ? ', ' + state : '') : (state || 'Nigeria');
-                            document.getElementById('locationText').textContent = label;
+                            ['locationText', 'locationTextMobile'].forEach(function(id) {
+                                var el = document.getElementById(id);
+                                if (el) el.textContent = label;
+                            });
                         })
                         .catch(function() {
-                            document.getElementById('locationText').textContent = 'Nigeria';
+                            ['locationText', 'locationTextMobile'].forEach(function(id) {
+                                var el = document.getElementById(id);
+                                if (el) el.textContent = 'Nigeria';
+                            });
                         });
                 },
                 function() {
-                    // User denied location or browser blocked it
-                    document.getElementById('locationText').textContent = 'Location unavailable';
+                    ['locationText', 'locationTextMobile'].forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el) el.textContent = 'Location unavailable';
+                    });
                 }
             );
-        } else {
-            document.getElementById('locationText').textContent = 'Location not supported';
         }
 
         function filterProfessionals() {
-            var searchText = document.getElementById('searchInput').value.toLowerCase().trim();
-            var locationSearch = document.getElementById('locationSearchInput').value.toLowerCase().trim();
-            var cards = document.querySelectorAll('.professional-card');
-
-            cards.forEach(function(card) {
+            var st = searchText.toLowerCase().trim();
+            var ls = locationSearch.toLowerCase().trim();
+            document.querySelectorAll('.professional-card').forEach(function(card) {
                 var cardServices = (card.getAttribute('data-services') || '').toLowerCase();
                 var cardName     = (card.getAttribute('data-name') || '').toLowerCase();
                 var cardBusiness = (card.getAttribute('data-business') || '').toLowerCase();
                 var cardLocation = (card.getAttribute('data-location') || '').toLowerCase();
 
-                // Match the main search box (name, business name, or services)
-                var matchesSearch = !searchText ||
-                    cardName.includes(searchText) ||
-                    cardBusiness.includes(searchText) ||
-                    cardServices.includes(searchText);
-                
-                // Match the location search box
-                var matchesLocation = !locationSearch || cardLocation.includes(locationSearch);
-
-                // Match service filter buttons
-                var matchesService = activeServices.size === 0;
+                var matchesSearch   = !st || cardName.includes(st) || cardBusiness.includes(st) || cardServices.includes(st);
+                var matchesLocation = !ls || cardLocation.includes(ls);
+                var matchesService  = activeServices.size === 0;
                 if (!matchesService) {
-                    activeServices.forEach(function(service) {
-                        if (cardServices.includes(service.toLowerCase())) matchesService = true;
-                    });
+                    activeServices.forEach(function(s) { if (cardServices.includes(s.toLowerCase())) matchesService = true; });
                 }
-
                 card.style.display = (matchesSearch && matchesLocation && matchesService) ? '' : 'none';
             });
         }
 
-        // Auto-apply initial search or category filter passed from homepage
+        // Auto-apply initial category filter from homepage
         document.addEventListener('DOMContentLoaded', function() {
             var initialCategory = {{ category_query|tojson }};
             if (initialCategory) {
-                var targetBtn = document.querySelector('.filter-btn[data-service="' + initialCategory + '"]');
-                if (targetBtn) {
-                    toggleFilter(targetBtn, initialCategory);
-                }
-            } else {
-                filterProfessionals();
+                _applyToggle(initialCategory, '.filter-btn');
+                _applyToggle(initialCategory, '.filter-btn-m');
             }
+            filterProfessionals();
         });
     </script>
 

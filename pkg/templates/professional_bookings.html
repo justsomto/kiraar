@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,8 +42,8 @@
                             <div id="client-price-alert-{{ booking.booking_id }}" class="d-none mt-1 mb-2" style="font-size:0.8rem;">
                                 <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i><strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong> has changed the price</small>
                             </div>
-                            <div class="row align-items-center">
-                                <div class="col-md-5">
+                            <div class="row align-items-start g-2">
+                                <div class="col-12 col-md-5">
                                     <h6 class="fw-bold mb-1">
                                         <i class="fa-solid fa-user me-1 text-muted"></i>
                                         {{ booking.user.first_name }} {{ booking.user.last_name }}
@@ -53,7 +53,7 @@
                                         {{ booking.scheduled_date.strftime('%A, %b %d, %Y') if booking.scheduled_date else 'Date TBD' }}
                                     </p>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-6 col-md-2">
                                     <span class="status-badge status-{{ booking.job_status }}">
                                         {{ booking.job_status|capitalize }}
                                     </span>
@@ -70,8 +70,8 @@
                                     </small>
                                     {% endif %}
                                 </div>
-                                <div class="col-md-2 text-md-center my-2 my-md-0">
-                                    <strong id="pro-booking-price-{{ booking.booking_id }}">₦{{ "%.2f"|format(booking.booking_price) }}</strong>
+                                <div class="col-6 col-md-2 text-md-center">
+                                    <strong id="pro-booking-price-{{ booking.booking_id }}">â‚¦{{ "%.2f"|format(booking.booking_price) }}</strong>
                                     {% if booking.payment_status == 'unpaid' %}
                                     <div class="mt-2">
                                         <button class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm" style="transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="openEditPriceModal({{ booking.booking_id }}, {{ booking.booking_price }})">
@@ -80,15 +80,37 @@
                                     </div>
                                     {% endif %}
                                 </div>
-                                <div class="col-md-3 text-md-end mt-2 mt-md-0 d-flex flex-wrap justify-content-md-end justify-content-start gap-2 align-items-center">
-                                    {% if booking.payment_status == 'paid' and not booking.is_refunded %}
-                                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="refundClient({{ booking.booking_id }})">
-                                            <i class="fa-solid fa-rotate-left me-1"></i> Refund
-                                        </button>
-                                    {% endif %}
-                                    <a href="/professional/chat/{{ booking.booking_id }}/" class="chat-toggle-btn">
-                                        <i class="fa-solid fa-comment me-1"></i> Chat
-                                    </a>
+                                <!-- Action buttons: one primary + 3-dots dropdown -->
+                                <div class="col-md-3 text-md-end mt-2 mt-md-0">
+                                    <div class="d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+
+                                        {% if booking.payment_status == 'unpaid' %}
+                                            <!-- PRIMARY: Edit Price before client pays -->
+                                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="openEditPriceModal({{ booking.booking_id }}, {{ booking.booking_price }})">
+                                                <i class="fa-solid fa-pen-to-square me-1"></i> Edit Price
+                                            </button>
+                                        {% elif booking.payment_status == 'paid' and not booking.is_refunded %}
+                                            <!-- PRIMARY: Refund -->
+                                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="refundClient({{ booking.booking_id }})">
+                                                <i class="fa-solid fa-rotate-left me-1"></i> Refund
+                                            </button>
+                                        {% endif %}
+
+                                        <!-- 3-dots dropdown for secondary actions -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item" href="/professional/chat/{{ booking.booking_id }}/">
+                                                        <i class="fa-solid fa-comment me-2"></i> Chat with Client
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                             {% if booking.address %}
@@ -122,7 +144,7 @@
             <p class="mb-3 text-muted">Update the agreed upon price before the client pays.</p>
             <input type="hidden" id="editPriceBookingId" value="">
             <div class="input-group mb-3">
-              <span class="input-group-text">₦</span>
+              <span class="input-group-text">â‚¦</span>
               <input type="number" id="editPriceValue" class="form-control" placeholder="New Price" min="0" step="0.01">
             </div>
           </div>
@@ -141,7 +163,7 @@
     <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
 
     <script>
-        // ── CometChat config ──────────────────────────────────────────────
+        // â”€â”€ CometChat config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         var APP_ID = "{{ cometchat_app_id }}";
         var REGION = "{{ cometchat_region }}";
         var PRO_UID = "pro-{{ professional.professional_id }}";
@@ -149,7 +171,7 @@
         var proAuthToken = null;
         var chatListeners = {};  // booking_id -> listenerID
 
-        // ── Init CometChat and listen for client price changes ───────────
+        // â”€â”€ Init CometChat and listen for client price changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         $(document).ready(function() {
             {% for booking in bookings %}
             {% if booking.price_updated and booking.price_updated_by == 'client' %}
@@ -186,7 +208,7 @@
                                             var priceEl = document.getElementById('pro-booking-price-' + bookingId);
                                             if (priceEl) {
                                                 var formatted = parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                                                priceEl.textContent = '₦' + formatted;
+                                                priceEl.textContent = 'â‚¦' + formatted;
                                             }
                                             // Show hint
                                             var alertEl = document.getElementById('client-price-alert-' + bookingId);
@@ -237,8 +259,8 @@
                             toast: true,
                             position: 'top-end',
                             icon: 'success',
-                            title: '✓ You have changed the price',
-                            text: 'Price updated to ₦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
+                            title: 'âœ“ You have changed the price',
+                            text: 'Price updated to â‚¦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
                             showConfirmButton: false,
                             timer: 3000
                         }).then(() => {
@@ -281,3 +303,4 @@
 
 </body>
 </html>
+

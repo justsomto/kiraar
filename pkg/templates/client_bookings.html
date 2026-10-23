@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,8 +52,8 @@
                             <div id="price-alert-{{ booking.booking_id }}" class="d-none mt-1 mb-2" style="font-size:0.8rem;">
                                 <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i><strong>{{ booking.professional.first_name }} {{ booking.professional.last_name }}</strong> has changed the price</small>
                             </div>
-                            <div class="row align-items-center">
-                                <div class="col-md-4">
+                            <div class="row align-items-start g-2">
+                                <div class="col-12 col-md-4">
                                     <h6 class="fw-bold mb-1">
                                         <i class="fa-solid fa-user-tie me-1 text-muted"></i>
                                         {{ booking.professional.first_name }} {{ booking.professional.last_name }}
@@ -63,7 +63,7 @@
                                         {{ booking.scheduled_date.strftime('%A, %b %d, %Y') if booking.scheduled_date else 'Date TBD' }}
                                     </p>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-6 col-md-3">
                                     <span class="status-badge status-{{ booking.job_status }}">
                                         {{ booking.job_status|capitalize }}
                                     </span>
@@ -75,44 +75,70 @@
                                         </span>
                                     {% endif %}
                                 </div>
-                                <div class="col-md-2 text-md-center my-2 my-md-0">
-                                    <strong id="booking-price-{{ booking.booking_id }}">₦{{ "%.2f"|format(booking.booking_price) }}</strong>
+                                <div class="col-6 col-md-2 text-md-center">
+                                    <strong id="booking-price-{{ booking.booking_id }}">â‚¦{{ "%.2f"|format(booking.booking_price) }}</strong>
                                 </div>
+                                <!-- Action buttons: one primary + 3-dots dropdown for secondary actions -->
                                 <div class="col-md-3 text-md-end mt-2 mt-md-0">
-                                    {% if booking.payment_status == 'unpaid' %}
-                                        <button class="pay-btn" id="pay-btn-{{ booking.booking_id }}" onclick="payWithPaystack({{ booking.booking_id }}, {{ booking.booking_price }}, '{{ user.email }}')">
-                                            <i class="fa-solid fa-credit-card me-1"></i> Pay Now
-                                        </button>
-                                    {% else %}
-                                        {% if booking.is_refunded %}
-                                            <span class="text-secondary small fw-bold"><i class="fa-solid fa-rotate-left me-1"></i> Refunded</span>
+                                    <div class="d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+
+                                        {% if booking.payment_status == 'unpaid' %}
+                                            <!-- PRIMARY: Pay Now -->
+                                            <button class="pay-btn btn btn-sm rounded-pill px-3" id="pay-btn-{{ booking.booking_id }}" onclick="payWithPaystack({{ booking.booking_id }}, {{ booking.booking_price }}, '{{ user.email }}')">
+                                                <i class="fa-solid fa-credit-card me-1"></i> Pay Now
+                                            </button>
+                                        {% elif booking.is_refunded %}
+                                            <span class="badge bg-secondary">Refunded</span>
                                         {% else %}
+                                            <!-- Paid status label -->
                                             <span class="text-success small fw-bold"><i class="fa-solid fa-check-circle me-1"></i> Paid</span>
-                                            {% if booking.job_status == 'completed' %}
-                                                {% if not booking.review %}
-                                                    <button class="btn btn-sm btn-outline-warning rounded-pill mt-2" onclick="openReviewModal({{ booking.booking_id }})">
-                                                        <i class="fa-solid fa-star"></i> Leave Review
-                                                    </button>
-                                                {% else %}
-                                                    <div class="mt-2 text-warning small fw-bold">
-                                                        {% for i in range(booking.review.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+
+                                            {% if booking.job_status == 'completed' and not booking.is_paid_out %}
+                                                <!-- PRIMARY for completed: Release Payment -->
+                                                <button class="btn btn-sm btn-success rounded-pill px-3" onclick="releasePayment({{ booking.booking_id }}, this)">
+                                                    <i class="fa-solid fa-money-bill-wave me-1"></i> Release
+                                                </button>
+                                                {% if booking.completion_date %}
+                                                    <div class="small text-muted w-100 mt-1" data-completion="{{ booking.completion_date.isoformat() }}" id="auto-release-note-{{ booking.booking_id }}">
+                                                        <i class="fa-solid fa-clock me-1"></i>Auto-releases if not confirmed
                                                     </div>
                                                 {% endif %}
-                                                {% if not booking.is_paid_out %}
-                                                    <button class="btn btn-sm btn-success rounded-pill mt-2 ms-2" onclick="releasePayment({{ booking.booking_id }}, this)">
-                                                        <i class="fa-solid fa-money-bill-wave me-1"></i> Release Payment
-                                                    </button>
-                                                    {% if booking.completion_date %}
-                                                        <div class="small text-muted mt-1" data-completion="{{ booking.completion_date.isoformat() }}" id="auto-release-note-{{ booking.booking_id }}">
-                                                            <i class="fa-solid fa-clock me-1"></i>Auto-releases automatically if not confirmed
-                                                        </div>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <span class="badge bg-success ms-2">Released</span>
-                                                {% endif %}
+                                            {% elif booking.is_paid_out %}
+                                                <span class="badge bg-success">Released</span>
                                             {% endif %}
                                         {% endif %}
-                                    {% endif %}
+
+                                        <!-- 3-dots dropdown for secondary actions -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <!-- Leave Review (if completed and no review yet) -->
+                                                {% if booking.job_status == 'completed' and not booking.review and booking.payment_status != 'unpaid' %}
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="openReviewModal({{ booking.booking_id }}); return false;">
+                                                        <i class="fa-solid fa-star me-2 text-warning"></i> Leave Review
+                                                    </a>
+                                                </li>
+                                                {% endif %}
+                                                {% if booking.review %}
+                                                <li>
+                                                    <span class="dropdown-item text-muted">
+                                                        {% for i in range(booking.review.rating) %}<i class="fa-solid fa-star text-warning" style="font-size:0.8rem;"></i>{% endfor %}
+                                                        Your Review
+                                                    </span>
+                                                </li>
+                                                {% endif %}
+                                                <li>
+                                                    <a class="dropdown-item" href="/client/chat/{{ booking.booking_id }}/">
+                                                        <i class="fa-solid fa-comment me-2"></i> Message Professional
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                             {% if booking.address %}
@@ -172,7 +198,7 @@
     <script src="https://js.paystack.co/v1/inline.js"></script>
     
     <script>
-        // ── Check for pending price updates on page load and listen for real-time updates ──
+        // â”€â”€ Check for pending price updates on page load and listen for real-time updates â”€â”€
         $(document).ready(function() {
             {% for booking in bookings %}
             {% if booking.price_updated and booking.price_updated_by == 'professional' %}
@@ -187,7 +213,7 @@
             {% endif %}
             {% endfor %}
 
-            // ── Init CometChat and listen for real-time price update notifications ──
+            // â”€â”€ Init CometChat and listen for real-time price update notifications â”€â”€
             var appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion("{{ cometchat_region }}").build();
             CometChat.init("{{ cometchat_app_id }}", appSetting).then(() => {
                 $.ajax({
@@ -213,7 +239,7 @@
                                                         var priceEl = document.getElementById('booking-price-' + bookingId);
                                                         if (priceEl) {
                                                             var formatted = parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                                                            priceEl.textContent = '₦' + formatted;
+                                                            priceEl.textContent = 'â‚¦' + formatted;
                                                         }
                                                         // Show the subtle inline hint
                                                         var alertEl = document.getElementById('price-alert-' + bookingId);
@@ -307,7 +333,7 @@
             handler.openIframe();
         }
 
-        // ── Review Logic ──────────────────────────────────────────────────
+        // â”€â”€ Review Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function openReviewModal(bookingId) {
             document.getElementById('reviewBookingId').value = bookingId;
             document.getElementById('reviewRating').value = 0;
@@ -363,7 +389,7 @@
             });
         }
         
-        // ── Show the auto-release deadline (completion_date + 2 days) ──────
+        // â”€â”€ Show the auto-release deadline (completion_date + 2 days) â”€â”€â”€â”€â”€â”€
         document.querySelectorAll('[id^="auto-release-note-"]').forEach(function(el) {
             var completedAt = new Date(el.dataset.completion);
             var deadline = new Date(completedAt.getTime() + 2 * 24 * 60 * 60 * 1000);
@@ -371,7 +397,7 @@
             var msLeft = deadline - now;
 
             if (msLeft <= 0) {
-                el.innerHTML = '<i class="fa-solid fa-clock me-1"></i>Auto-release is due — should process shortly';
+                el.innerHTML = '<i class="fa-solid fa-clock me-1"></i>Auto-release is due â€” should process shortly';
             } else {
                 var hoursLeft = Math.ceil(msLeft / (1000 * 60 * 60));
                 var dateStr = deadline.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -388,7 +414,7 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        showFlashMessage('Payout initiated — professional will receive funds shortly.', 'success');
+                        showFlashMessage('Payout initiated â€” professional will receive funds shortly.', 'success');
                         // mark UI
                         var badge = document.getElementById('payment-status-badge-' + bookingId);
                         if (badge) badge.innerText = 'Paid';
@@ -407,3 +433,5 @@
     </script>
 </body>
 </html>
+
+
