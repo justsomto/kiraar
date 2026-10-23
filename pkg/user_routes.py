@@ -8,6 +8,7 @@ import json
 import requests
 import uuid
 import smtplib
+import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import urlencode
@@ -122,38 +123,40 @@ def save_secure_image(file_obj):
     return new_filename
 
 
-# 2. EMAIL SENDER HELPER
+# 2. EMAIL SENDER HELPER (ASYNCHRONOUS BACKGROUND WORKER)
+def _async_send_email(app_obj, to_email, subject, html_body):
+    """Sends the email in a separate background thread so page loads stay lightning fast."""
+    with app_obj.app_context():
+        try:
+            sender = app_obj.config.get('MAIL_DEFAULT_SENDER')
+            password = app_obj.config.get('MAIL_PASSWORD')
+            server_address = app_obj.config.get('MAIL_SERVER')
+            port = app_obj.config.get('MAIL_PORT')
+            
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = sender
+            msg['To'] = to_email
+            
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
+            
+            server = smtplib.SMTP(server_address, port, timeout=10)
+            server.starttls()
+            server.login(sender, password)
+            server.sendmail(sender, to_email, msg.as_string())
+            server.quit()
+        except Exception as e:
+            app_obj.logger.error(f"Async email error for {to_email}: {e}")
+
 def send_email_via_smtp(to_email, subject, html_body):
-    # Step 1: Grab our Gmail credentials from config.py
-    sender = current_app.config.get('MAIL_DEFAULT_SENDER')
-    password = current_app.config.get('MAIL_PASSWORD')
-    server_address = current_app.config.get('MAIL_SERVER')
-    port = current_app.config.get('MAIL_PORT')
-    
-    # Step 2: Build the Email Message object (MIMEMultipart helps format it correctly)
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = to_email
-    
-    # Step 3: Attach our beautiful HTML template to the email
-    html_part = MIMEText(html_body, 'html')
-    msg.attach(html_part)
-    
-    # Step 4: Actually send the email using Python's built-in smtplib
+    """Fires the email in a background thread and returns instantly (0ms delay for user)."""
     try:
-        # Connect to Gmail
-        server = smtplib.SMTP(server_address, port)
-        # Secure the connection
-        server.starttls()
-        # Login using your App Password
-        server.login(sender, password)
-        # Send the message
-        server.sendmail(sender, to_email, msg.as_string())
-        # Close connection
-        server.quit()
+        app_obj = current_app._get_current_object()
+        t = threading.Thread(target=_async_send_email, args=(app_obj, to_email, subject, html_body), daemon=True)
+        t.start()
     except Exception as e:
-        print(f"Oops! Failed to send email: {e}")
+        print(f"Failed to start async email thread: {e}")
 
 def send_welcome_email(to_email, first_name):
     # Render the welcome HTML template with the user's name
