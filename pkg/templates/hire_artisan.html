@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hire &amp; Chat with {{ professional.first_name }} - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+    <style>
+        .hire-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 15px 40px;
+        }
+        @media (max-width: 991px) {
+            .hire-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chat-container-box {
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            height: 650px;
+            overflow: hidden;
+            border: 1px solid #e5e5e5;
+        }
+        .chat-top-header {
+            background: linear-gradient(135deg, #611f47, #9b3d71);
+            color: white;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-body-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fbfbfb;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .hire-booking-card {
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e5e5e5;
+            overflow: hidden;
+        }
+        .hire-booking-header {
+            background: linear-gradient(135deg, #611f47, #9b3d71);
+            color: white;
+            padding: 14px 18px;
+        }
+    </style>
+</head>
+<body class="inner-page">
+
+    <!-- Navbar with Single Dropdown -->
+    <nav class="navbar navbar-light bg-white border-bottom py-2">
+        <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/static/images/logo4.png" alt="Kiraar" style="max-height:36px;">
+            </a>
+
+            <!-- Dropdown on Top Right -->
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-pill dropdown-toggle border px-3 d-flex align-items-center gap-2 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-circle-user text-secondary"></i>
+                    <span class="fw-semibold text-truncate" style="max-width: 140px;">{{ session.get('user_name', 'Account') }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2" style="min-width: 220px;">
+                    <li class="px-2 py-1 mb-1 border-bottom">
+                        <span class="small fw-bold text-dark d-block text-truncate">{{ session.get('user_name', 'User') }}</span>
+                        <span class="small text-muted d-block" style="font-size:0.75rem;">Client Menu</span>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/results/">
+                            <i class="fa-solid fa-magnifying-glass me-2 text-primary"></i> Find Professionals
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/{{ professional.professional_id }}/profile/">
+                            <i class="fa-solid fa-user me-2 text-secondary"></i> View {{ professional.first_name }}'s Profile
+                        </a>
+                    </li>
+                    {% if session.get('user_id') %}
+                    <li>
+                        <a class="dropdown-item py-2" href="/client/bookings/">
+                            <i class="fa-solid fa-calendar-check me-2 text-success"></i> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/client/edit/">
+                            <i class="fa-solid fa-gear me-2 text-secondary"></i> Account Settings
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item py-2 text-danger" href="/logout/">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hire & Chat Main Grid Layout -->
+    <div class="hire-grid">
+
+        <!-- Left: CometChat Live Discussion Panel -->
+        <div class="chat-container-box">
+            <div class="chat-top-header">
+                <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
+                     alt="Photo"
+                     class="rounded-circle border"
+                     style="width: 44px; height: 44px; object-fit: cover;">
+                <div class="flex-grow-1 min-width-0">
+                    <div class="fw-bold text-truncate">{{ professional.first_name }} {{ professional.last_name }}</div>
+                    <div class="small opacity-75" id="chatStatus">
+                        {% if session.get('user_id') %}Connecting live...{% else %}Guest Mode{% endif %}
+                    </div>
+                </div>
+                <a href="/professional/{{ professional.professional_id }}/profile/" class="btn btn-sm btn-outline-light rounded-pill px-3" style="font-size: 0.75rem;">
+                    <i class="fa-solid fa-user me-1"></i> Profile
+                </a>
+            </div>
+
+            <div class="chat-body-messages" id="chatMessages">
+                {% if session.get('user_id') %}
+                <div class="chat-placeholder text-center my-auto p-4" id="chatPlaceholder">
+                    <i class="fa-solid fa-comments fa-2x mb-2 text-muted"></i>
+                    <p class="text-muted small">Loading conversation...</p>
+                </div>
+                {% else %}
+                <div class="text-center my-auto p-4">
+                    <i class="fa-solid fa-comments fa-3x mb-2 text-muted"></i>
+                    <h6 class="fw-bold">Sign in to start messaging</h6>
+                    <p class="text-muted small mb-3">Discuss requirements, schedule dates, and confirm pricing with {{ professional.first_name }}.</p>
+                    <a href="/login/" class="btn btn-sm rounded-pill px-4 text-white brand-bg">Log In to Chat</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Chat Input Area -->
+            {% if session.get('user_id') %}
+            <div class="p-2 border-top bg-white d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-light border rounded-circle" onclick="document.getElementById('fileInput').click()" title="Attach file" style="width: 36px; height: 36px; padding: 0;">
+                    <i class="fa-solid fa-paperclip text-muted"></i>
+                </button>
+                <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" onchange="sendFile(this)" class="d-none">
+                <input type="text" id="messageInput" class="form-control form-control-sm rounded-pill px-3" placeholder="Type a message or discuss price..." onkeydown="if(event.key==='Enter') sendText()">
+                <button class="btn btn-sm btn-light border rounded-circle" id="recordBtn" onclick="toggleRecording()" title="Hold to record voice note" style="width: 36px; height: 36px; padding: 0;">
+                    <i class="fa-solid fa-microphone text-muted"></i>
+                </button>
+                <button class="btn btn-sm rounded-circle text-white brand-bg" onclick="sendText()" title="Send" style="width: 36px; height: 36px; padding: 0;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Booking Form & Escrow Pay Panel -->
+        <div class="hire-booking-card">
+            <div class="hire-booking-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-calendar-check fa-lg"></i>
+                    <div>
+                        <div class="fw-bold">{% if latest_unpaid_booking %}Manage Booking{% else %}Hire {{ professional.first_name }}{% endif %}</div>
+                        <div class="small opacity-75">{% if latest_unpaid_booking %}Update price or pay via Escrow{% else %}Book a service appointment{% endif %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3">
+                {% if latest_unpaid_booking %}
+                <!-- Existing Unpaid Booking Details -->
+                <div class="alert alert-info py-2 px-3 small mb-3">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    <strong>Booking Active (#{{ latest_unpaid_booking.booking_id }})</strong>
+                    <div class="mt-1">Both you and {{ professional.first_name }} can update the agreed price here until you pay into escrow.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Appointment Date</label>
+                    <input type="text" class="form-control form-control-sm" value="{{ latest_unpaid_booking.scheduled_date.strftime('%A, %b %d, %Y') if latest_unpaid_booking.scheduled_date else 'TBD' }}" readonly disabled style="background:#f9f9f9;">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Service Address</label>
+                    <input type="text" class="form-control form-control-sm" value="{{ latest_unpaid_booking.address or 'Not provided' }}" readonly disabled style="background:#f9f9f9;">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold mb-1">Agreed Price (₦)</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text" style="background:#f0e6ec; color:#611f47; font-weight:600;">₦</span>
+                        <input type="number" id="clientEditPrice" class="form-control" value="{{ latest_unpaid_booking.booking_price }}" step="0.01" min="0">
+                        <button class="btn btn-sm text-white brand-bg" onclick="submitClientPriceUpdate({{ latest_unpaid_booking.booking_id }})">
+                            <i class="fa-solid fa-check me-1"></i> Update
+                        </button>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-sm rounded-pill fw-bold py-2" id="chatPayBtn2" onclick="payWithPaystack({{ latest_unpaid_booking.booking_id }}, {{ latest_unpaid_booking.booking_price }})">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Pay ₦{{ "%.0f"|format(latest_unpaid_booking.booking_price) }} Escrow
+                    </button>
+                    <a href="/client/bookings/" class="btn btn-outline-secondary btn-sm rounded-pill py-2">
+                        <i class="fa-solid fa-list me-1"></i> View All Bookings
+                    </a>
+                </div>
+
+                {% else %}
+                <!-- New Booking Request Form -->
+                <div class="alert alert-warning py-2 px-3 small mb-3">
+                    <i class="fa-solid fa-lightbulb me-1"></i>
+                    <strong>Tip:</strong> Discuss work scope and agree on pricing in the chat before submitting a booking.
+                </div>
+
+                {% if session.get('user_id') %}
+                <form action="/client/book/{{ professional.professional_id }}/" method="POST" id="bookingForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-1">Select Service</label>
+                        <select name="service_category_id" class="form-select form-select-sm" required>
+                            {% if service_names %}
+                                {% for name in service_names %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="General">General Service</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-1">Preferred Date</label>
+                        <input type="date" name="scheduled_date" id="bookingDate" class="form-control form-control-sm" required min="{{ datetime.datetime.now().strftime('%Y-%m-%d') }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-1">Offer Price (₦)</label>
+                        <input type="number" name="booking_price" id="bookingPrice" class="form-control form-control-sm" step="0.01" min="0" placeholder="e.g. 15000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-1">Your Address / Job Location</label>
+                        <input type="text" name="address" id="bookingAddress" class="form-control form-control-sm" placeholder="City, street address" required>
+                    </div>
+                    <button type="submit" class="btn btn-sm rounded-pill w-100 py-2 text-white brand-bg fw-bold">
+                        <i class="fa-solid fa-calendar-plus me-1"></i> Send Booking Request
+                    </button>
+                </form>
+                {% else %}
+                <div class="p-3 bg-light rounded text-center border">
+                    <p class="small text-muted mb-3">Sign in to book an appointment with <strong>{{ professional.first_name }}</strong>.</p>
+                    <a href="/login/" class="btn btn-sm rounded-pill w-100 text-white brand-bg mb-2">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Log In to Book
+                    </a>
+                    <a href="/signup-client/" class="btn btn-outline-secondary btn-sm rounded-pill w-100">
+                        Create an Account
+                    </a>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="py-3 text-center text-white brand-bg mt-auto">
+        <p class="mb-0">Copyright &copy; kiraar 2026</p>
+    </footer>
+
+    <script src="/static/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+    <script>
+        var APP_ID   = "{{ cometchat_app_id }}";
+        var REGION   = "{{ cometchat_region }}";
+        var PRO_UID  = "pro-{{ professional.professional_id }}";
+        var myUID      = null;
+        var CURRENT_BOOKING_ID = {{ latest_unpaid_booking.booking_id if latest_unpaid_booking else 'null' }};
+
+        // ── CometChat Init ──────────────────────────────────────────────
+        var appSettings = new CometChat.AppSettingsBuilder()
+            .subscribePresenceForAllUsers()
+            .setRegion(REGION)
+            .autoEstablishSocketConnection(true)
+            .build();
+
+        {% if session.get('user_id') %}
+        CometChat.init(APP_ID, appSettings).then(function() {
+            $.ajax({
+                url: '/cometchat/auth-token/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                data: { professional_id: '{{ professional.professional_id }}' },
+                success: function(data) {
+                    myUID = data.uid;
+                    CometChat.login(data.authToken).then(function(user) {
+                        document.getElementById('chatStatus').textContent = 'Online';
+                        loadOldMessages();
+                        listenForNewMessages();
+                    }).catch(function(err) {
+                        console.error('CometChat login failed', err);
+                    });
+                },
+                error: function(xhr) {
+                    console.error('Auth token request failed', xhr.status);
+                }
+            });
+        }).catch(console.error);
+        {% endif %}
+
+        function loadOldMessages() {
+            var placeholder = document.getElementById('chatPlaceholder');
+            if (placeholder) {
+                placeholder.innerHTML = '<i class="fa-solid fa-comments fa-2x mb-2 text-muted"></i><p class="text-muted small">No messages yet. Say hello! 👋</p>';
+            }
+            var request = new CometChat.MessagesRequestBuilder()
+                .setUID(PRO_UID)
+                .setLimit(50)
+                .build();
+            request.fetchPrevious().then(function(messages) {
+                messages.forEach(function(msg) { renderMessage(msg); });
+                scrollToBottom();
+            }).catch(console.warn);
+        }
+
+        function listenForNewMessages() {
+            var listenerID = "kiraar_chat_" + Date.now();
+            CometChat.addMessageListener(listenerID, new CometChat.MessageListener({
+                onTextMessageReceived: function(msg) {
+                    if (msg.getSender().getUid() === PRO_UID) {
+                        renderMessage(msg);
+                        scrollToBottom();
+                    }
+                },
+                onMediaMessageReceived: function(msg) {
+                    if (msg.getSender().getUid() === PRO_UID) {
+                        renderMessage(msg);
+                        scrollToBottom();
+                    }
+                }
+            }));
+        }
+
+        function renderMessage(msg) {
+            if (!msg || !msg.getSender) return;
+            var isSent = (msg.getSender().getUid() === myUID);
+            var bubble = document.createElement('div');
+            bubble.className = 'msg-bubble ' + (isSent ? 'msg-sent' : 'msg-received');
+            var content = '';
+            var type = msg.getType ? msg.getType() : 'text';
+            var url = '';
+            if (msg.getData) {
+                var data = msg.getData();
+                if (data.url) url = data.url;
+                else if (data.attachments && data.attachments.length > 0) url = data.attachments[0].url || data.attachments[0].fileUrl;
+            }
+            if (type === 'text') {
+                content = '<div>' + escapeHtml(msg.getText()) + '</div>';
+            } else if (type === 'image') {
+                content = '<img src="' + url + '" class="msg-image rounded" style="max-width:180px;" onclick="window.open(this.src)">';
+            } else {
+                content = '<a class="msg-file text-decoration-none" href="' + url + '" target="_blank"><i class="fa-solid fa-file me-1"></i>Attachment</a>';
+            }
+            var time = new Date(msg.getSentAt() * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            content += '<div class="msg-time small opacity-75 mt-1">' + time + '</div>';
+            bubble.innerHTML = content;
+
+            var placeholder = document.getElementById('chatPlaceholder');
+            if (placeholder) placeholder.style.display = 'none';
+
+            document.getElementById('chatMessages').appendChild(bubble);
+        }
+
+        function sendText() {
+            var input = document.getElementById('messageInput');
+            var text = input.value.trim();
+            if (!text) return;
+            var textMessage = new CometChat.TextMessage(PRO_UID, text, CometChat.RECEIVER_TYPE.USER);
+            input.value = '';
+            CometChat.sendMessage(textMessage).then(function(msg) {
+                renderMessage(msg);
+                scrollToBottom();
+            }).catch(console.error);
+        }
+
+        function sendFile(input) {
+            if (!input.files || !input.files[0]) return;
+            var file = input.files[0];
+            var mediaMessage = new CometChat.MediaMessage(PRO_UID, file, CometChat.MESSAGE_TYPE.FILE, CometChat.RECEIVER_TYPE.USER);
+            CometChat.sendMediaMessage(mediaMessage).then(function(msg) {
+                renderMessage(msg);
+                scrollToBottom();
+            }).catch(console.error);
+        }
+
+        function scrollToBottom() {
+            var el = document.getElementById('chatMessages');
+            if (el) el.scrollTop = el.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function submitClientPriceUpdate(bookingId) {
+            var price = document.getElementById('clientEditPrice').value;
+            if (!price || parseFloat(price) <= 0) {
+                alert('Please enter a valid price.');
+                return;
+            }
+            fetch('/booking/' + bookingId + '/edit-price/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+                body: JSON.stringify({ price: price })
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                if (data.status === 'success') {
+                    alert('Price updated! The professional will see the update.');
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to update price.');
+                }
+            }).catch(console.error);
+        }
+
+        function payWithPaystack(bookingId, amount) {
+            var handler = PaystackPop.setup({
+                key: '{{ paystack_public_key }}',
+                email: '{{ client_email }}',
+                amount: Math.round(amount * 100),
+                currency: 'NGN',
+                ref: 'KIR_' + bookingId + '_' + Date.now(),
+                callback: function(response) {
+                    fetch('/client/verify-payment/' + bookingId, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+                        body: JSON.stringify({ reference: response.reference })
+                    }).then(function(r) { return r.json(); }).then(function(data) {
+                        if (data.status === 'success') {
+                            alert('Payment successful! Funds are held safely in Escrow.');
+                            window.location.href = '/client/bookings/';
+                        } else {
+                            alert(data.message || 'Verification failed.');
+                        }
+                    });
+                }
+            });
+            handler.openIframe();
+        }
+    </script>
+</body>
+</html>

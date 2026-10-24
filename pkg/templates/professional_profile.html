@@ -3,292 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ professional.first_name }} {{ professional.last_name }} - Kiraar</title>
+    <title>{{ professional.first_name }} {{ professional.last_name }} - Profile - Kiraar</title>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/static/main.css">
 </head>
-<body>
+<body class="inner-page">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-light bg-white shadow-sm">
-        <div class="container py-2 d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid" style="height:36px;"></a>
-            <div>
-                {% if 'user_id' in session %}
-                <a href="/client/bookings/" class="btn {% if unpaid_bookings_count > 0 %}unpaid-alert-btn{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3 position-relative me-2">
-                    <i class="fa-solid fa-calendar-check me-1"></i> My Bookings
-                    {% if unpaid_bookings_count > 0 %}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" style="font-size:0.6rem; border: 1px solid white;">
-                        {{ unpaid_bookings_count }}
-                    </span>
+    <!-- Unified Navbar with Single Dropdown (Matches results & settings) -->
+    <nav class="navbar navbar-light bg-white border-bottom py-2">
+        <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/static/images/logo4.png" alt="Kiraar" style="max-height:36px;">
+            </a>
+
+            <!-- Dropdown on Top Right -->
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-pill dropdown-toggle border px-3 d-flex align-items-center gap-2 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-circle-user text-secondary"></i>
+                    <span class="fw-semibold text-truncate" style="max-width: 140px;">{{ session.get('user_name', 'Account') }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2" style="min-width: 220px;">
+                    <li class="px-2 py-1 mb-1 border-bottom">
+                        <span class="small fw-bold text-dark d-block text-truncate">{{ session.get('user_name', 'User') }}</span>
+                        <span class="small text-muted d-block" style="font-size:0.75rem;">Client Menu</span>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/results/">
+                            <i class="fa-solid fa-magnifying-glass me-2 text-primary"></i> Find Professionals
+                        </a>
+                    </li>
+                    {% if session.get('user_id') %}
+                    <li>
+                        <a class="dropdown-item py-2" href="/client/bookings/">
+                            <i class="fa-solid fa-calendar-check me-2 text-success"></i> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/client/edit/">
+                            <i class="fa-solid fa-gear me-2 text-secondary"></i> Account Settings
+                        </a>
+                    </li>
+                    {% if session.get('has_dual_account') %}
+                    <li>
+                        <a class="dropdown-item py-2 text-primary" href="/switch-role/">
+                            <i class="fa-solid fa-right-left me-2"></i> Switch to Pro
+                        </a>
+                    </li>
                     {% endif %}
-                </a>
-                {% endif %}
-                <a href="/results/" class="btn btn-outline-secondary btn-sm rounded-pill">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Results
-                </a>
+                    {% elif session.get('professional_id') %}
+                    <li>
+                        <a class="dropdown-item py-2" href="/find-jobs/">
+                            <i class="fa-solid fa-chart-line me-2 text-primary"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/bookings/">
+                            <i class="fa-solid fa-calendar-check me-2 text-success"></i> Bookings
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item py-2 text-danger" href="/logout/">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
             </div>
+        </div>
     </nav>
 
-    <div class="profile-grid">
+    <!-- Main Profile Content: Profile Info, Products, Reviews Only -->
+    <div class="container py-4" style="max-width: 900px;">
 
-        <!-- Profile Card -->
-        <div class="profile-card">
-            <div class="profile-header">
-                 <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
-                     class="profile-avatar" alt="Profile Photo">
-                <h4 class="mt-3 mb-0 fw-bold">
-                    {% if professional.show_first_name is none or professional.show_first_name %}{{ professional.first_name }}{% endif %}
-                    {% if professional.show_last_name is none or professional.show_last_name %}{{ professional.last_name }}{% endif %}
-                </h4>
-                {% if (professional.show_business_name is none or professional.show_business_name) and professional.business_name %}
-                    <p class="mb-0 mt-1 opacity-75 small">{{ professional.business_name }}</p>
-                {% endif %}
-                {% if professional.account_status == 'verified' %}
-                <span class="badge bg-success mt-2"><i class="fa-solid fa-circle-check me-1"></i>Verified</span>
-                {% endif %}
-            </div>
-            <div class="p-4">
-                <p class="text-muted mb-3">{{ professional.bio or 'This professional has not added a bio yet.' }}</p>
-                <div class="mb-2">
-                    <strong>Rating:</strong>
-                    {% set rating = professional.average_rating|float %}
-                    {% if rating > 0 %}
-                        {% for i in range(1, 6) %}
-                            {% if i <= rating %}
-                                <i class="fa-solid fa-star text-warning"></i>
-                            {% elif i - 0.5 <= rating %}
-                                <i class="fa-solid fa-star-half-stroke text-warning"></i>
+        <!-- Artisan Header Card -->
+        <div class="card border rounded-3 p-4 mb-4 shadow-sm bg-white">
+            <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
+                <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
+                     alt="Artisan Photo"
+                     class="rounded-circle border"
+                     style="width: 100px; height: 100px; object-fit: cover;">
+                <div class="flex-grow-1 text-center text-sm-start">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
+                        <h4 class="fw-bold mb-0 text-dark">
+                            {% if professional.show_first_name is none or professional.show_first_name %}{{ professional.first_name }}{% endif %}
+                            {% if professional.show_last_name is none or professional.show_last_name %}{{ professional.last_name }}{% endif %}
+                        </h4>
+                        {% if (professional.show_business_name is none or professional.show_business_name) and professional.business_name %}
+                            <span class="text-muted small">({{ professional.business_name }})</span>
+                        {% endif %}
+                        {% if professional.account_status == 'verified' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                <i class="fa-solid fa-circle-check me-1"></i>Verified
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-3 text-muted small mb-2">
+                        <span>
+                            {% set rating = professional.average_rating|float %}
+                            {% if rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= rating %}
+                                        <i class="fa-solid fa-star text-warning"></i>
+                                    {% elif i - 0.5 <= rating %}
+                                        <i class="fa-solid fa-star-half-stroke text-warning"></i>
+                                    {% else %}
+                                        <i class="fa-regular fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <strong class="text-dark ms-1">{{ "%.1f"|format(rating) }}</strong> ({{ reviews|length }} reviews)
                             {% else %}
-                                <i class="fa-regular fa-star text-warning"></i>
+                                <span>No ratings yet</span>
                             {% endif %}
-                        {% endfor %}
-                        <span class="ms-1">({{ "%.1f"|format(rating) }})</span>
-                    {% else %}
-                        <span class="text-muted small">No ratings yet</span>
-                    {% endif %}
-                    <a href="#reviewsSection" class="btn-kiraar-sm" style="margin-left:.5rem;" onclick="document.getElementById('reviewsSection').scrollIntoView({behavior: 'smooth', block: 'start'})">View Reviews</a>
-                </div>
-                <hr>
-                <div class="mb-2"><i class="fa-solid fa-location-dot me-2 text-danger"></i><strong>Location:</strong> {{ professional.location or 'Not provided' }}</div>
-                <div class="mb-2"><i class="fa-solid fa-briefcase me-2" style="color:#611f47;"></i><strong>Business Type:</strong> {{ professional.business_type or 'Independent' }}</div>
-                <div class="mb-3"><i class="fa-solid fa-circle-check me-2 text-info"></i><strong>Status:</strong> <span class="text-success">Active & Available</span></div>
-                {% if service_names %}
-                <div class="mb-3">
-                    <strong><i class="fa-solid fa-tools me-2" style="color:#611f47;"></i>Services:</strong>
-                    <div class="mt-2 d-flex flex-wrap gap-1">
-                        {% for name in service_names %}
-                            <span class="badge rounded-pill" style="background:#f0e6ec;color:#611f47;border:1px solid #611f47;font-size:0.78rem;font-weight:500;padding:5px 12px;">{{ name }}</span>
-                        {% endfor %}
+                        </span>
+
+                        {% if professional.location %}
+                        <span><i class="fa-solid fa-location-dot me-1 text-danger"></i>{{ professional.location }}</span>
+                        {% endif %}
+                        <span><i class="fa-solid fa-briefcase me-1 brand-text"></i>{{ professional.business_type or 'Independent' }}</span>
+                        <span class="text-success"><i class="fa-solid fa-circle me-1" style="font-size:0.5rem;"></i>Active & Available</span>
                     </div>
-                </div>
-                {% endif %}
 
-                
-                {% if products %}
-                <hr>
-                <div class="mt-3 text-center">
-                    <button class="btn w-100 fw-bold" style="background:#f0e6ec; color:#611f47; border: 1px solid #611f47; border-radius: 24px;" onclick="document.getElementById('productsSection').scrollIntoView({behavior: 'smooth', block: 'start'})">
-                        <i class="fa-solid fa-cart-shopping me-2"></i> View Products ({{ products|length }})
-                    </button>
-                    <small class="text-muted mt-1 d-block">This professional has items for sale.</small>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Chat Panel -->
-        <div class="chat-panel" id="chatPanel">
-            <div class="chat-header">
-                <img src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}" alt="Photo">
-                <div>
-                    <div class="fw-bold">
-                        {% if professional.show_first_name is none or professional.show_first_name %}{{ professional.first_name }}{% endif %}
-                        {% if professional.show_last_name is none or professional.show_last_name %}{{ professional.last_name }}{% endif %}
+                    <!-- Services Pills -->
+                    <div class="d-flex flex-wrap justify-content-center justify-content-sm-start gap-1 mb-3">
+                        {% if service_names %}
+                            {% for name in service_names %}
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-1">{{ name }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="badge bg-light text-muted border rounded-pill px-3 py-1">General Services</span>
+                        {% endif %}
                     </div>
-                    <div class="small opacity-75" id="chatStatus">{% if session.get('user_id') %}Connecting...{% else %}Guest Mode{% endif %}</div>
-                </div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                {% if session.get('user_id') %}
-                <div class="chat-placeholder" id="chatPlaceholder">
-                    <i class="fa-solid fa-comments fa-2x mb-2"></i>
-                    <p>Loading chat...</p>
-                </div>
-                {% else %}
-                <div class="chat-placeholder text-center p-4">
-                    <i class="fa-solid fa-comments fa-2x mb-2 text-muted"></i>
-                    <p class="text-muted mb-0">Sign in to start a real-time chat with {{ professional.first_name }}.</p>
-                </div>
-                {% endif %}
-            </div>
 
-            <!-- Chat Input Area -->
-            {% if session.get('user_id') %}
-            <div class="chat-input-area">
-                <button class="chat-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
-                    <i class="fa-solid fa-paperclip"></i>
-                </button>
-                <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" onchange="sendFile(this)">
-                <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendText()">
-                <button class="chat-btn btn-record" id="recordBtn" onclick="toggleRecording()" title="Hold to record voice note">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-                <button class="chat-btn btn-send" onclick="sendText()" title="Send">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-            {% else %}
-            <div class="chat-input-area justify-content-center p-3 text-center bg-light">
-                <a href="/login/" class="btn btn-sm text-white rounded-pill px-4" style="background:#611f47;">
-                    <i class="fa-solid fa-right-to-bracket me-1"></i> Log in to Chat
-                </a>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Booking / Manage Booking Panel -->
-        <div class="booking-panel">
-            <div class="chat-header d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-calendar-check fa-lg"></i>
+                    <!-- Primary Action: Chat and Hire Button -->
                     <div>
-                        <div class="fw-bold">{% if latest_unpaid_booking %}Manage Booking{% else %}Book {{ professional.first_name }}{% endif %}</div>
-                        <div class="small opacity-75">{% if latest_unpaid_booking %}Update the price or pay for your booking{% else %}Request a service appointment{% endif %}</div>
+                        <a href="/professional/{{ professional.professional_id }}/hire/" class="btn btn-sm rounded-pill px-4 text-white brand-bg shadow-sm">
+                            <i class="fa-solid fa-comments me-1"></i> Chat &amp; Hire {{ professional.first_name }}
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="p-3">
-                {% if latest_unpaid_booking %}
-                <!-- ── Existing Unpaid Booking – price editor only ── -->
-                <div class="alert alert-info py-2 px-3 small mb-3">
-                    <i class="fa-solid fa-circle-info me-1"></i>
-                    <strong>You have an existing booking (#{{ latest_unpaid_booking.booking_id }})</strong>
-                    <div class="mt-1">Both you and the professional can update the price below until you agree. Pay once the price is final.</div>
-                </div>
 
-                <div id="priceUpdateAlert" class="alert py-2 px-3 small mb-3" style="display:none; border-left: 4px solid #dc3545; background:#fff5f5;">
-                    <i class="fa-solid fa-pen me-1" style="color:#dc3545;"></i>
-                    <strong style="color:#dc3545;">Price Updated!</strong>
-                    <span id="priceUpdateMessage">The professional has changed the price.</span>
-                    <div class="mt-2 d-flex gap-2">
-                        <small class="text-muted" id="priceUpdateHint">The professional changed the price.</small>
-                        <button class="btn btn-sm" onclick="acknowledgePriceUpdate()" style="font-size:0.75rem; background:#611f47; color:white; border:none; border-radius:20px;">
-                            <i class="fa-solid fa-check me-1"></i> Got it
-                        </button>
-                    </div>
-                </div>
-
-                {% if latest_unpaid_booking.price_updated and latest_unpaid_booking.price_updated_by == 'professional' %}
-                <div class="alert py-2 px-3 small mb-3" style="border-left: 4px solid #dc3545; background:#fff5f5;">
-                    <i class="fa-solid fa-circle-exclamation me-1" style="color:#dc3545;"></i>
-                    <strong style="color:#dc3545;">Price Changed by Professional</strong>
-                    <div class="mt-1">
-                        <span id="serverPriceUpdateMsg">The professional has updated the price to <strong>₦{{ "%.2f"|format(latest_unpaid_booking.booking_price) }}</strong></span>
-                    </div>
-                    <div class="mt-2 d-flex align-items-center gap-2">
-                        <small class="text-muted">The field below has been updated.</small>
-                        <button class="btn btn-sm" onclick="dismissClientPriceAlert({{ latest_unpaid_booking.booking_id }}, {{ latest_unpaid_booking.booking_price }}, this)" style="font-size:0.75rem; background:#611f47; color:white; border:none; border-radius:20px;">
-                            <i class="fa-solid fa-check me-1"></i> Got it
-                        </button>
-                    </div>
-                </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var pf = document.getElementById('clientEditPrice');
-                        if (pf) {
-                            pf.value = '{{ latest_unpaid_booking.booking_price }}';
-                            pf.style.border = '2px solid #dc3545';
-                            pf.style.background = '#fff5f5';
-                        }
-                    });
-                </script>
-                {% endif %}
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Booking Date</label>
-                    <input type="text" class="form-control" value="{{ latest_unpaid_booking.scheduled_date.strftime('%A, %b %d, %Y') if latest_unpaid_booking.scheduled_date else 'TBD' }}" readonly disabled style="background:#f9f9f9;">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Service Address</label>
-                    <input type="text" class="form-control" value="{{ latest_unpaid_booking.address or 'Not provided' }}" readonly disabled style="background:#f9f9f9;">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Price (&#8358;)</label>
-                    <div class="input-group">
-                        <span class="input-group-text" style="background:#f0e6ec;color:#611f47;font-weight:600;">₦</span>
-                        <input type="number" id="clientEditPrice" class="form-control" value="{{ latest_unpaid_booking.booking_price }}" step="0.01" min="0" style="border-color: #ddd;">
-                        <button class="btn" style="background:#611f47;color:white;border-color:#611f47;font-weight:600;" onclick="submitClientPriceUpdate({{ latest_unpaid_booking.booking_id }})">
-                            <i class="fa-solid fa-check me-1"></i> Update
-                        </button>
-                    </div>
-                    <div id="clientPriceHint" class="mt-1" style="display:none;">
-                        <small style="color:#198754;"><i class="fa-solid fa-circle-check me-1"></i>You have changed the price</small>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="/client/bookings/" class="btn btn-outline-primary w-100">
-                        <i class="fa-solid fa-list me-1"></i> View All Bookings
-                    </a>
-                    <button class="btn btn-success w-100" id="chatPayBtn2" onclick="payWithPaystack({{ latest_unpaid_booking.booking_id }}, {{ latest_unpaid_booking.booking_price }})" style="font-weight:bold;">
-                        <i class="fa-solid fa-credit-card me-1"></i> Pay &#8358;{{ "%.0f"|format(latest_unpaid_booking.booking_price) }}
-                    </button>
-                </div>
-                {% else %}
-                <!-- New Booking Form (no existing booking) -->
-                <div class="alert alert-warning py-2 px-3 small mb-3">
-                    <i class="fa-solid fa-circle-info me-1"></i>
-                    <strong>Tip:</strong> Always agree on a price with the professional before forwarding a booking request.
-                </div>
-                {% if session.get('user_id') %}
-                <form action="/client/book/{{ professional.professional_id }}/" method="POST" id="bookingForm">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Preferred Date</label>
-                        <input type="date" name="scheduled_date" id="bookingDate" class="form-control" required min="{{ datetime.datetime.now().strftime('%Y-%m-%d') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Offer Price (&#8358;)</label>
-                        <input type="number" name="booking_price" id="bookingPrice" class="form-control" step="0.01" min="0" placeholder="e.g. 15000">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Your Address</label>
-                        <input type="text" name="address" id="bookingAddress" class="form-control" placeholder="Your location for the job" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Send Booking Request</button>
-                </form>
-                {% else %}
-                <div class="p-3 bg-light rounded text-center border">
-                    <p class="small text-muted mb-3">Want to hire <strong>{{ professional.first_name }}</strong>? Sign in to send a booking request.</p>
-                    <a href="/login/" class="btn btn-primary w-100 mb-2" style="background:#611f47; border-color:#611f47; font-weight:600;">
-                        <i class="fa-solid fa-right-to-bracket me-1"></i> Log in to Book
-                    </a>
-                    <a href="/signup-client/" class="btn btn-outline-secondary w-100 btn-sm">
-                        Create an Account
-                    </a>
-                </div>
-                {% endif %}
-                {% endif %}
-            </div>
+            <!-- Bio -->
+            <hr class="my-3">
+            <h6 class="fw-bold brand-text mb-2"><i class="fa-solid fa-circle-user me-2"></i>About This Professional</h6>
+            <p class="text-muted small mb-0" style="line-height: 1.6;">
+                {{ professional.bio or 'This professional has not added a detailed biography yet, but is verified and actively accepting work requests on Kiraar.' }}
+            </p>
         </div>
 
-        <!-- Portfolio / Catalog Section (Full Width below the grid) -->
-        {% if products %}
-        <div id="productsSection" class="mt-4 w-100" style="grid-column: 1 / -1; padding-top: 20px;">
-            <h4 class="fw-bold mb-3"><i class="fa-solid fa-images me-2" style="color:#611f47;"></i>Products & Past Jobs</h4>
-            <div class="alert py-2 px-3 small mb-3 border-0 shadow-sm" style="background-color: #fff; border-left: 4px solid #611f47 !important; color: #555; max-width: 800px;">
-                <i class="fa-solid fa-lightbulb me-1" style="color:#611f47;"></i>
-                <strong>How to buy:</strong> Click <strong>Inquire</strong> on any item to message the professional. Once you agree on a price in the chat, they will update the booking form above so you can pay securely!
-            </div>
+        <!-- Products / Portfolio Showcase Section -->
+        <div class="card border rounded-3 p-4 mb-4 shadow-sm bg-white" id="productsSection">
+            <h5 class="fw-bold brand-text mb-3">
+                <i class="fa-solid fa-images me-2"></i> Products &amp; Past Jobs
+            </h5>
+            {% if products %}
             <div class="row g-3">
                 {% for p in products %}
-                <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                <div class="col-6 col-md-4">
+                    <div class="card h-100 border rounded-3 overflow-hidden shadow-sm">
                         {% if p.product_image %}
-                        <img src="/static/uploads/{{ p.product_image }}" class="card-img-top" alt="Product Image" style="height: 180px; object-fit: cover;">
+                        <img src="/static/uploads/{{ p.product_image }}" class="card-img-top" alt="Product Image" style="height: 160px; object-fit: cover;">
                         {% else %}
-                        <div class="bg-secondary d-flex align-items-center justify-content-center text-white" style="height: 180px;">
+                        <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 160px;">
                             <i class="fa-solid fa-image fa-3x"></i>
                         </div>
                         {% endif %}
@@ -298,527 +177,63 @@
                             {% if p.description %}
                             <p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ p.description }}</p>
                             {% endif %}
-                            <button class="btn btn-sm mt-auto w-100 fw-bold" style="background:#f0e6ec; color:#611f47; border:1px solid #611f47;" onclick="inquireProduct('{{ p.product_name | escape }}')">
+                            <a href="/professional/{{ professional.professional_id }}/hire/" class="btn btn-sm mt-auto w-100 rounded-pill btn-outline-secondary">
                                 <i class="fa-solid fa-comment-dots me-1"></i> Inquire
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="fa-regular fa-folder-open fa-2x mb-2 text-secondary"></i>
+                <p class="small mb-0">No portfolio products or work photos uploaded yet.</p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
 
         <!-- Client Reviews Section -->
-        <div id="reviewsSection" class="mt-5 w-100" style="grid-column: 1 / -1; padding-top: 20px;">
-            <h4 class="fw-bold mb-3"><i class="fa-solid fa-comments me-2" style="color:#611f47;"></i>Client Reviews</h4>
+        <div class="card border rounded-3 p-4 mb-4 shadow-sm bg-white" id="reviewsSection">
+            <h5 class="fw-bold brand-text mb-3">
+                <i class="fa-solid fa-comments me-2"></i> Client Reviews
+            </h5>
             {% if reviews %}
                 <div class="row g-3">
                 {% for r in reviews %}
                     <div class="col-12 col-md-6">
-                        <div class="card border-0 shadow-sm" style="border-radius: 10px;">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="mb-0 fw-bold">{{ r.user.first_name }} {{ r.user.last_name|first }}.</h6>
-                                    <small class="text-muted">{{ r.created_at.strftime('%b %d, %Y') }}</small>
-                                </div>
-                                <div class="mb-2">
-                                    {% for i in range(1, 6) %}
-                                        {% if i <= r.rating %}
-                                            <i class="fa-solid fa-star text-warning small"></i>
-                                        {% else %}
-                                            <i class="fa-regular fa-star text-warning small"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <p class="text-muted small mb-0" style="font-style: italic;">"{{ r.review_text or 'No written feedback provided.' }}"</p>
+                        <div class="card border rounded-3 p-3 bg-light h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="small text-dark">{{ r.user.first_name }} {{ r.user.last_name|first }}.</strong>
+                                <small class="text-muted">{{ r.created_at.strftime('%b %d, %Y') }}</small>
                             </div>
+                            <div class="mb-2">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= r.rating %}
+                                        <i class="fa-solid fa-star text-warning small"></i>
+                                    {% else %}
+                                        <i class="fa-regular fa-star text-warning small"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="text-muted small mb-0">"{{ r.review_text or 'Great service delivered!' }}"</p>
                         </div>
                     </div>
                 {% endfor %}
                 </div>
             {% else %}
-                <div class="alert alert-secondary border-0" style="background-color: #f8f9fa;">
-                    <i class="fa-solid fa-info-circle me-1"></i> No reviews yet. Book this professional and be the first to leave one!
+                <div class="alert alert-secondary border-0 mb-0 py-3" style="background-color: #f8f9fa;">
+                    <i class="fa-solid fa-info-circle me-1"></i> No reviews yet. Hire this professional to be the first to leave feedback!
                 </div>
             {% endif %}
         </div>
 
     </div>
 
-    <script src="/static/jquery.js"></script>
+    <footer class="py-3 text-center text-white brand-bg mt-auto">
+        <p class="mb-0">Copyright &copy; kiraar 2026</p>
+    </footer>
+
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/@cometchat-pro/chat@3.0.13/CometChat.js"></script>
-    <script src="https://js.paystack.co/v1/inline.js"></script>
-
-    <script>
-        var APP_ID   = "{{ cometchat_app_id }}";
-        var REGION   = "{{ cometchat_region }}";
-        var PRO_UID  = "pro-{{ professional.professional_id }}";
-        var myUID      = null;
-        var CURRENT_BOOKING_ID = {{ latest_unpaid_booking.booking_id if latest_unpaid_booking else 'null' }};
-
-        // ── CometChat Init ──────────────────────────────────────────────
-        var appSettings = new CometChat.AppSettingsBuilder()
-            .subscribePresenceForAllUsers()
-            .setRegion(REGION)
-            .autoEstablishSocketConnection(true)
-            .build();
-
-        {% if session.get('user_id') %}
-        CometChat.init(APP_ID, appSettings).then(function() {
-            $.ajax({
-                url: '/cometchat/auth-token/',
-                type: 'POST',
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                data: { professional_id: '{{ professional.professional_id }}' },
-                success: function(data) {
-                    myUID = data.uid;
-                    CometChat.login(data.authToken).then(function(user) {
-                        document.getElementById('chatStatus').textContent = 'Online';
-                        loadOldMessages();
-                        listenForNewMessages();
-                        listenForPriceUpdates();
-                    }).catch(function(err) {
-                        console.error('CometChat login failed', err);
-                        showError('Chat login failed: ' + (err.message || JSON.stringify(err)));
-                    });
-                },
-                error: function(xhr) {
-                    console.error('Auth token request failed', xhr.status, xhr.responseText);
-                    showError('Could not get chat token. Are you logged in?');
-                }
-            });
-        }).catch(function(err) {
-            console.error('CometChat init failed', err);
-            showError('Chat init failed: ' + (err.message || JSON.stringify(err)));
-        });
-        {% else %}
-        var cs = document.getElementById('chatStatus');
-        if (cs) cs.textContent = 'Guest View';
-        {% endif %}
-
-        // ── Listen for price update system messages from professional ──
-        function listenForPriceUpdates() {
-            var listenerID = "price_update_listener_" + Date.now();
-            CometChat.addMessageListener(listenerID, new CometChat.MessageListener({
-                onTextMessageReceived: function(msg) {
-                    var text = msg.getText();
-                    if (text && text.startsWith('[PRICE_PRO_UPDATE]')) {
-                        var parts = text.replace('[PRICE_PRO_UPDATE] ', '').split('|');
-                        if (parts.length >= 3) {
-                            var bookingId = parts[0].replace('Booking #', '').trim();
-                            var newPrice = parts[2];
-                            if (CURRENT_BOOKING_ID && parseInt(bookingId) === CURRENT_BOOKING_ID) {
-                                var priceField = document.getElementById('clientEditPrice');
-                                if (priceField) {
-                                    priceField.value = newPrice.replace(/,/g, '');
-                                    priceField.style.border = '2px solid #dc3545';
-                                    priceField.style.background = '#fff5f5';
-                                }
-                                updatePayButtons(newPrice.replace(/,/g, ''));
-                            }
-                        }
-                    }
-                }
-            }));
-        }
-
-        function updatePayButtons(newPrice) {
-            var formatted = parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
-            var btn = document.getElementById('chatPayBtn2');
-            if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-credit-card me-1"></i> Pay ₦' + formatted;
-                btn.setAttribute('onclick', 'payWithPaystack(' + CURRENT_BOOKING_ID + ', ' + parseFloat(newPrice) + ')');
-            }
-        }
-
-        function loadOldMessages() {
-            var placeholder = document.getElementById('chatPlaceholder');
-            if (placeholder) {
-                placeholder.innerHTML = '<i class="fa-solid fa-comments fa-2x mb-2"></i><p>No messages yet. Say hi! &#128075;</p>';
-            }
-            var request = new CometChat.MessagesRequestBuilder()
-                .setUID(PRO_UID)
-                .setLimit(50)
-                .build();
-            request.fetchPrevious().then(function(messages) {
-                messages.forEach(function(msg) { renderMessage(msg); });
-                scrollToBottom();
-            }).catch(function(err) {
-                console.warn('Could not load messages', err);
-            });
-        }
-
-        function listenForNewMessages() {
-            var listenerID = "kiraar_listener_" + Date.now();
-            CometChat.addMessageListener(listenerID, new CometChat.MessageListener({
-                onTextMessageReceived: function(msg) {
-                    if (msg.getSender().getUid() === PRO_UID) {
-                        renderMessage(msg);
-                        scrollToBottom();
-                    }
-                },
-                onMediaMessageReceived: function(msg) {
-                    if (msg.getSender().getUid() === PRO_UID) {
-                        renderMessage(msg);
-                        scrollToBottom();
-                    }
-                }
-            }));
-        }
-
-        function renderMessage(msg) {
-            if (!msg || !msg.getSender) return;
-            var isSent = (msg.getSender().getUid() === myUID);
-            var bubble = document.createElement('div');
-            bubble.className = 'msg-bubble ' + (isSent ? 'msg-sent' : 'msg-received');
-            var content = '';
-            var type = msg.getType ? msg.getType() : 'text';
-            var url = '';
-            if (msg.getData) {
-                var data = msg.getData();
-                if (data.url) url = data.url;
-                else if (data.attachments && data.attachments.length > 0) url = data.attachments[0].url || data.attachments[0].fileUrl;
-            }
-            if (!url && msg.getAttachment) {
-                var att = typeof msg.getAttachment === 'function' ? msg.getAttachment() : msg.getAttachment;
-                if (att) url = att.url || (att.getFileUrl ? att.getFileUrl() : '');
-            }
-            if (type === 'text') {
-                content = '<div>' + escapeHtml(msg.getText()) + '</div>';
-            } else if (type === 'image') {
-                content = '<div class="msg-media-row"><img src="' + url + '" class="msg-image" onclick="window.open(this.src)"><button class="msg-action-btn" onclick="showMessageOptions(this)" title="More options"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>';
-            } else if (type === 'audio') {
-                content = '<div class="msg-media-row"><audio class="msg-audio" controls src="' + url + '"></audio><button class="msg-action-btn" onclick="showMessageOptions(this)" title="More options"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>';
-            } else if (type === 'video') {
-                content = '<div class="msg-media-row"><video class="msg-image" controls style="max-width:220px" src="' + url + '"></video><button class="msg-action-btn" onclick="showMessageOptions(this)" title="More options"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>';
-            } else {
-                content = '<div class="msg-media-row"><a class="msg-file" href="' + url + '" target="_blank"><i class="fa-solid fa-file me-1"></i>File</a><button class="msg-action-btn" onclick="showMessageOptions(this)" title="More options"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>';
-            }
-            var time = new Date(msg.getSentAt() * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            content += '<div class="msg-time">' + time + '</div>';
-            bubble.innerHTML = content;
-            var chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) chatMessages.appendChild(bubble);
-        }
-
-        function showMessageOptions(btn) {
-            // Placeholder for future actions (e.g. delete, forward, download)
-            console.log('Message options clicked');
-        }
-
-        function sendText() {
-            var input = document.getElementById('messageInput');
-            if (!input) return;
-            var text = input.value.trim();
-            if (!text) return;
-            input.value = '';
-            var msg = new CometChat.TextMessage(PRO_UID, text, CometChat.RECEIVER_TYPE.USER);
-            CometChat.sendMessage(msg).then(function(sent) {
-                renderMessage(sent);
-                scrollToBottom();
-            }).catch(function(err) {
-                console.warn('Send failed', err);
-            });
-        }
-
-        function sendFile(input) {
-            if (!input || !input.files || !input.files[0]) return;
-            var file = input.files[0];
-            var type;
-            if (file.type.startsWith('image/'))       type = CometChat.MESSAGE_TYPE.IMAGE;
-            else if (file.type.startsWith('video/'))  type = CometChat.MESSAGE_TYPE.VIDEO;
-            else if (file.type.startsWith('audio/'))  type = CometChat.MESSAGE_TYPE.AUDIO;
-            else                                       type = CometChat.MESSAGE_TYPE.FILE;
-            var msg = new CometChat.MediaMessage(PRO_UID, file, type, CometChat.RECEIVER_TYPE.USER);
-            CometChat.sendMediaMessage(msg).then(function(sent) {
-                renderMessage(sent);
-                scrollToBottom();
-            }).catch(function(err) {
-                console.warn('File send failed', err);
-            });
-            input.value = '';
-        }
-
-        var mediaRecorder = null;
-        var audioChunks   = [];
-        var timerInterval = null;
-        var timerSeconds  = 0;
-        var isRecording   = false;
-
-        function toggleRecording() {
-            if (!isRecording) { startRecording(); }
-            else { stopRecording(); }
-        }
-
-        function startRecording() {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-                isRecording   = true;
-                audioChunks   = [];
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
-                mediaRecorder.onstop = function() {
-                    var blob = new Blob(audioChunks, { type: 'audio/webm' });
-                    var file = new File([blob], 'voice-note.webm', { type: 'audio/webm' });
-                    sendVoiceNote(file);
-                    stream.getTracks().forEach(function(t) { t.stop(); });
-                };
-                var timerEl = document.getElementById('recordingTimer');
-                if (timerEl) timerEl.style.display = 'block';
-                var recordBtn = document.getElementById('recordBtn');
-                if (recordBtn) recordBtn.classList.add('recording');
-                timerSeconds = 0;
-                timerInterval = setInterval(function() {
-                    timerSeconds++;
-                    var tc = document.getElementById('timerCount');
-                    if (tc) tc.textContent = timerSeconds + 's';
-                }, 1000);
-            }).catch(function() {
-                alert('Microphone access was denied. Please allow it in your browser settings.');
-            });
-        }
-
-        function stopRecording() {
-            isRecording = false;
-            if (mediaRecorder) mediaRecorder.stop();
-            clearInterval(timerInterval);
-            var timerEl = document.getElementById('recordingTimer');
-            if (timerEl) timerEl.style.display = 'none';
-            var recordBtn = document.getElementById('recordBtn');
-            if (recordBtn) recordBtn.classList.remove('recording');
-        }
-
-        function sendVoiceNote(file) {
-            var msg = new CometChat.MediaMessage(PRO_UID, file, CometChat.MESSAGE_TYPE.AUDIO, CometChat.RECEIVER_TYPE.USER);
-            CometChat.sendMediaMessage(msg).then(function(sent) {
-                renderMessage(sent);
-                scrollToBottom();
-            }).catch(function(err) {
-                console.warn('Voice note send failed', err);
-            });
-        }
-
-        var STORAGE_KEY = 'kiraar_booking_form_' + {{ professional.professional_id }};
-
-        function saveFormFields() {
-            var dateField = document.getElementById('bookingDate');
-            var priceField = document.getElementById('bookingPrice');
-            var addrField = document.getElementById('bookingAddress');
-            if (!dateField || !priceField || !addrField) return;
-            var data = {
-                scheduled_date: dateField.value,
-                booking_price: priceField.value,
-                address: addrField.value
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-
-        function restoreFormFields() {
-            var saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    var data = JSON.parse(saved);
-                    var dateField = document.getElementById('bookingDate');
-                    var priceField = document.getElementById('bookingPrice');
-                    var addrField = document.getElementById('bookingAddress');
-                    if (data.scheduled_date && dateField) dateField.value = data.scheduled_date;
-                    if (data.booking_price && priceField) priceField.value = data.booking_price;
-                    if (data.address && addrField) addrField.value = data.address;
-                } catch(e) {}
-            }
-        }
-
-        function clearFormFields() {
-            localStorage.removeItem(STORAGE_KEY);
-            var dateField = document.getElementById('bookingDate');
-            var priceField = document.getElementById('bookingPrice');
-            var addrField = document.getElementById('bookingAddress');
-            if (dateField) dateField.value = '';
-            if (priceField) priceField.value = '';
-            if (addrField) addrField.value = '';
-        }
-
-        // Add event listeners with null-checks
-        var bookingDateEl = document.getElementById('bookingDate');
-        var bookingPriceEl = document.getElementById('bookingPrice');
-        var bookingAddrEl = document.getElementById('bookingAddress');
-        if (bookingDateEl) bookingDateEl.addEventListener('change', saveFormFields);
-        if (bookingPriceEl) bookingPriceEl.addEventListener('input', saveFormFields);
-        if (bookingAddrEl) bookingAddrEl.addEventListener('input', saveFormFields);
-
-        {% if not latest_unpaid_booking %}
-            {% set paid_bookings = namespace(count=0) %}
-            {% for b in professional.bookings %}
-                {% if b.user_id == session.get('user_id') and b.payment_status == 'paid' %}
-                    {% set paid_bookings.count = paid_bookings.count + 1 %}
-                {% endif %}
-            {% endfor %}
-            {% if paid_bookings.count > 0 %}
-                clearFormFields();
-            {% else %}
-                restoreFormFields();
-            {% endif %}
-        {% else %}
-            restoreFormFields();
-        {% endif %}
-
-        function onPaymentComplete() {
-            clearFormFields();
-        }
-
-        function scrollToBottom() {
-            var el = document.getElementById('chatMessages');
-            if (el) el.scrollTop = el.scrollHeight;
-        }
-
-        function showError(msg) {
-            var placeholder = document.getElementById('chatPlaceholder');
-            if (placeholder) {
-                placeholder.innerHTML = '<i class="fa-solid fa-triangle-exclamation fa-2x mb-2 text-warning"></i><p class="text-danger">' + msg + '</p>';
-            }
-        }
-
-        function escapeHtml(text) {
-            var div = document.createElement('div');
-            div.appendChild(document.createTextNode(text));
-            return div.innerHTML;
-        }
-
-        // ── Price Update Alert Handlers ─────────────────────────────────
-        function acknowledgePriceUpdate() {
-            var alert = document.getElementById('priceUpdateAlert');
-            if (alert) alert.style.display = 'none';
-        }
-
-        function dismissClientPriceAlert(bookingId, newPrice, btn) {
-            $.ajax({
-                url: '/booking/' + bookingId + '/acknowledge-price-update/',
-                type: 'POST',
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                success: function() {
-                    if (btn) {
-                        var alert = btn.closest('.alert');
-                        if (alert) alert.style.display = 'none';
-                    }
-                    var priceField = document.getElementById('clientEditPrice');
-                    if (priceField) {
-                        priceField.style.border = '';
-                        priceField.style.background = '';
-                    }
-                }
-            });
-        }
-
-        // ── Client updates price from their profile page (existing booking) ──
-        function submitClientPriceUpdate(bookingId) {
-            var priceField = document.getElementById('clientEditPrice');
-            if (!priceField) return;
-            var newPrice = priceField.value;
-            if (!newPrice || newPrice < 0) {
-                alert('Please enter a valid price.');
-                return;
-            }
-            $.ajax({
-                url: '/booking/' + bookingId + '/edit-price/',
-                type: 'POST',
-                contentType: 'application/json',
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                data: JSON.stringify({ new_price: newPrice }),
-                success: function(data) {
-                    if (data.status === 'success') {
-                        var hint = document.getElementById('clientPriceHint');
-                        if (hint) hint.style.display = 'block';
-                        updatePayButtons(newPrice);
-                        setTimeout(function() {
-                            if (hint) hint.style.display = 'none';
-                        }, 5000);
-                    } else {
-                        alert(data.message || 'Failed to update price.');
-                    }
-                },
-                error: function(xhr) {
-                    var err = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred.';
-                    alert(err);
-                }
-            });
-        }
-
-        // ── Paystack Payment ──────────────────────────────────────────────
-        function payWithPaystack(bookingId, amount) {
-            var handler = PaystackPop.setup({
-                key: '{{ paystack_public_key }}',
-                email: '{{ client_email }}',
-                amount: amount * 100,
-                currency: 'NGN',
-                ref: 'KIRAAR_' + bookingId + '_' + Math.floor((Math.random() * 1000000000) + 1),
-                callback: function(response) {
-                    var reference = response.reference;
-                    var btn = document.getElementById('chatPayBtn2');
-                    if (btn) {
-                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Verifying...';
-                        btn.disabled = true;
-                    }
-                    $.ajax({
-                        url: '/client/verify-payment/' + bookingId,
-                        type: 'POST',
-                        contentType: 'application/json',
-                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                        data: JSON.stringify({ reference: reference }),
-                        success: function(data) {
-                            if (data.status === 'success') {
-                                alert('Payment successful!');
-                                location.reload();
-                            } else {
-                                alert(data.message || 'Payment verification failed.');
-                                if (btn) {
-                                    btn.innerHTML = '<i class="fa-solid fa-credit-card me-1"></i> Pay ₦' + amount;
-                                    btn.disabled = false;
-                                }
-                            }
-                        },
-                        error: function() {
-                            alert('Verification failed. Please contact support.');
-                            if (btn) {
-                                btn.innerHTML = '<i class="fa-solid fa-credit-card me-1"></i> Pay ₦' + amount;
-                                btn.disabled = false;
-                            }
-                        }
-                    });
-                },
-                onClose: function() {
-                    console.log('Payment window closed.');
-                }
-            });
-            handler.openIframe();
-        }
-
-        // ── Handle Product Inquiries ───────────────────────────────────────
-        function inquireProduct(productName) {
-            // First, make sure they are logged into chat
-            if (!myUID) {
-                alert("Please wait a moment for the chat to connect, or log in if you haven't already.");
-                return;
-            }
-            
-            // Craft a polite inquiry message
-            var inquiryMsg = "Hi! I am interested in purchasing your product: *" + productName + "*. Is it still available?";
-            
-            // Put it in the chat box
-            var input = document.getElementById('messageInput');
-            if (input) {
-                input.value = inquiryMsg;
-                // Automatically send it to save the user a click!
-                sendText();
-                
-                // Scroll up slightly so they see the chat panel if they are on mobile
-                var chatPanel = document.getElementById('chatPanel');
-                if (chatPanel) {
-                    chatPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-        }
-    </script>
 </body>
 </html>

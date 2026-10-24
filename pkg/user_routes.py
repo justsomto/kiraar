@@ -1227,6 +1227,47 @@ def professional_profile(professional_id):
     )
 
 
+@app.route('/professional/<int:professional_id>/hire/')
+def professional_hire(professional_id):
+    professional = Professional.query.get(professional_id)
+    if not professional:
+        flash('Professional not found.', 'error')
+        return redirect(url_for('results'))
+
+    service_names = []
+    for ps in ProfessionalService.query.filter_by(professional_id=professional_id).all():
+        cat = ServiceCategory.query.get(ps.service_category_id)
+        if cat:
+            service_names.append(cat.service_category_name)
+
+    cometchat_app_id = app.config.get('COMETCHAT_APP_ID', '')
+    cometchat_region = app.config.get('COMETCHAT_REGION', '')
+    paystack_public_key = app.config.get('PAYSTACK_PUBLIC_KEY', '')
+
+    client_email = ''
+    latest_unpaid_booking = None
+    if 'user_id' in session:
+        current_user = User.query.get(session['user_id'])
+        client_email = current_user.email if current_user else ''
+        latest_unpaid_booking = Booking.query.filter_by(
+            user_id=session['user_id'], 
+            professional_id=professional_id, 
+            payment_status='unpaid'
+        ).order_by(Booking.booking_id.desc()).first()
+
+    return render_template(
+        'hire_artisan.html',
+        professional=professional,
+        service_names=service_names,
+        cometchat_app_id=cometchat_app_id,
+        cometchat_region=cometchat_region,
+        paystack_public_key=paystack_public_key,
+        latest_unpaid_booking=latest_unpaid_booking,
+        datetime=datetime,
+        client_email=client_email
+    )
+
+
 # ── CometChat Auth Token (keeps Auth Key secret on the server) ─────────────
 @app.route('/cometchat/auth-token/', methods=['POST'])
 def cometchat_auth_token():
