@@ -8,19 +8,140 @@
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/static/main.css">
 </head>
-<body>
+<body class="pro-chat-body">
 
-    <nav class="navbar navbar-light bg-white py-1 border-bottom" style="height:60px;">
-        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="/"><img src="/static/images/logo4.png" alt="Kiraar" style="height:32px;"></a>
-            <a href="/find-jobs/" class="btn btn-outline-secondary btn-sm rounded-pill">
-                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+    <!-- Unified Navbar with Single Pro Dropdown -->
+    <nav class="navbar navbar-light bg-white border-bottom py-2 shadow-sm" style="min-height:56px;">
+        <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/static/images/logo4.png" alt="Kiraar" style="max-height:34px;">
             </a>
+
+            <!-- Single Clean Dropdown (Matching find_jobs & settings) -->
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-pill dropdown-toggle border px-3 d-flex align-items-center gap-2 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-circle-user text-secondary"></i>
+                    <span class="fw-semibold text-truncate" style="max-width: 140px;">{{ session.get('user_name', 'Professional') }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2" style="min-width: 220px;">
+                    <li class="px-2 py-1 mb-1 border-bottom">
+                        <span class="small fw-bold text-dark d-block text-truncate">{{ session.get('user_name', 'Professional') }}</span>
+                        <span class="small text-muted d-block" style="font-size:0.75rem;">Verified Pro</span>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/find-jobs/">
+                            <i class="fa-solid fa-briefcase me-2 text-primary"></i> Jobs Feed
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/bookings/">
+                            <i class="fa-solid fa-calendar-check me-2 text-success"></i> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/inbox/">
+                            <i class="fa-solid fa-inbox me-2 text-info"></i> Inbox
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/edit/">
+                            <i class="fa-solid fa-gear me-2 text-secondary"></i> Settings & Profile
+                        </a>
+                    </li>
+                    {% if session.get('has_dual_account') %}
+                    <li>
+                        <a class="dropdown-item py-2 text-warning" href="/switch-role/">
+                            <i class="fa-solid fa-right-left me-2"></i> Switch to Client
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item py-2 text-danger" href="/logout/">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
+    <!-- Mobile Offcanvas for Booking Details & Price Edit -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="bookingDetailsOffcanvas" aria-labelledby="bookingDetailsOffcanvasLabel">
+        <div class="offcanvas-header text-white" style="background: linear-gradient(135deg, #611f47, #9b3d71);">
+            <h5 class="offcanvas-title fw-bold" id="bookingDetailsOffcanvasLabel">
+                <i class="fa-solid fa-circle-info me-2"></i> Booking #{{ booking.booking_id }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="text-center pb-3 border-bottom mb-3">
+                <img src="/static/images/testimonial1.jpg" alt="Client" class="rounded-circle border mb-2" style="width:64px;height:64px;object-fit:cover;">
+                <h6 class="fw-bold mb-0">{{ client.first_name }} {{ client.last_name }}</h6>
+                <small class="text-success"><span class="badge bg-success" style="width:8px;height:8px;display:inline-block;border-radius:50%;margin-right:4px;"></span>Client</small>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value">
+                    {% if booking.job_status == 'pending' %}
+                        <span class="text-warning">Pending</span>
+                    {% elif booking.job_status == 'in-progress' %}
+                        <span class="text-primary">In Progress</span>
+                    {% elif booking.job_status == 'completed' %}
+                        <span class="text-success">Completed</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">{{ booking.scheduled_date.strftime('%b %d, %Y') if booking.scheduled_date else 'TBD' }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Price</span>
+                <span class="detail-value proChatPriceDisplay">₦{{ "%.2f"|format(booking.booking_price) }}</span>
+            </div>
+            {% if booking.payment_status == 'unpaid' %}
+            <div class="detail-row" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
+                <div style="width:100%;">
+                    <label class="detail-label mb-1 d-block">Edit Price</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text" style="background:#f0e6ec;color:#611f47;font-weight:600;">₦</span>
+                        <input type="number" id="proChatNewPriceMobile" class="form-control" value="{{ booking.booking_price }}" step="0.01" min="0">
+                        <button class="btn btn-sm" style="background:#611f47;color:white;" onclick="submitProChatPrice({{ booking.booking_id }}, 'proChatNewPriceMobile')">
+                            <i class="fa-solid fa-check me-1"></i> Update
+                        </button>
+                    </div>
+                    <div class="proChatPriceHint mt-1" style="display:none;">
+                        <small style="color:#198754;"><i class="fa-solid fa-circle-check me-1"></i>You have changed the price</small>
+                    </div>
+                    <div class="clientChangedPriceHint mt-1" style="display:none;">
+                        <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i>{{ client.first_name }} has changed the price</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if booking.address %}
+            <div class="detail-row">
+                <span class="detail-label">Address</span>
+                <span class="detail-value">{{ booking.address }}</span>
+            </div>
+            {% endif %}
+            {% if prof_service_names %}
+            <div class="detail-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                <span class="detail-label">Services</span>
+                <div class="d-flex flex-wrap gap-1">
+                    {% for name in prof_service_names %}
+                        <span class="badge rounded-pill" style="background:#f0e6ec;color:#611f47;border:1px solid #611f47;font-size:0.72rem;font-weight:500;">{{ name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="chat-wrapper">
-        <!-- ── LEFT: Client Details Sidebar ── -->
+        <!-- ── LEFT: Client Details Sidebar (Desktop) ── -->
         <div class="chat-client-sidebar">
             <div class="sidebar-header">
                 <img src="/static/images/testimonial1.jpg" alt="Client">
@@ -52,7 +173,7 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Price</span>
-                    <span class="detail-value" id="proChatPriceDisplay">₦{{ "%.2f"|format(booking.booking_price) }}</span>
+                    <span class="detail-value proChatPriceDisplay" id="proChatPriceDisplay">₦{{ "%.2f"|format(booking.booking_price) }}</span>
                 </div>
                 {% if booking.payment_status == 'unpaid' %}
                 <div class="detail-row" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
@@ -61,16 +182,16 @@
                         <div class="input-group input-group-sm">
                             <span class="input-group-text" style="background:#f0e6ec;color:#611f47;font-weight:600;">₦</span>
                             <input type="number" id="proChatNewPrice" class="form-control" value="{{ booking.booking_price }}" step="0.01" min="0" style="border-color: #ddd;">
-                            <button class="btn btn-sm" style="background:#611f47;color:white;border-color:#611f47;font-weight:600;" onclick="submitProChatPrice({{ booking.booking_id }})">
+                            <button class="btn btn-sm" style="background:#611f47;color:white;border-color:#611f47;font-weight:600;" onclick="submitProChatPrice({{ booking.booking_id }}, 'proChatNewPrice')">
                                 <i class="fa-solid fa-check me-1"></i> Update
                             </button>
                         </div>
                         <!-- Hint: professional changed the price (self) -->
-                        <div id="proChatPriceHint" class="mt-1" style="display:none;">
+                        <div id="proChatPriceHint" class="proChatPriceHint mt-1" style="display:none;">
                             <small style="color:#198754;"><i class="fa-solid fa-circle-check me-1"></i>You have changed the price</small>
                         </div>
                         <!-- Hint: client changed the price -->
-                        <div id="clientChangedPriceHint" class="mt-1" style="display:none;">
+                        <div id="clientChangedPriceHint" class="clientChangedPriceHint mt-1" style="display:none;">
                             <small style="color:#dc3545;"><i class="fa-solid fa-pen me-1"></i>{{ client.first_name }} has changed the price</small>
                         </div>
                     </div>
@@ -99,17 +220,23 @@
         <div class="chat-main-panel">
             <div class="chat-main-header">
                 <div class="chat-main-header-left">
-                    <a href="/find-jobs/" class="back-btn-home me-2 d-md-none"><i class="fa-solid fa-arrow-left"></i></a>
+                    <a href="/professional/bookings/" class="back-btn-home me-2 text-white"><i class="fa-solid fa-arrow-left"></i></a>
                     <img src="/static/images/testimonial1.jpg" alt="Photo">
                     <div>
                         <div class="fw-bold">{{ client.first_name }} {{ client.last_name }}</div>
                         <div class="small opacity-75" id="chatStatus">Connecting...</div>
                     </div>
                 </div>
-                <small class="opacity-75">
-                    <i class="fa-solid fa-calendar-check me-1"></i>
-                    Booking #{{ booking.booking_id }}
-                </small>
+                <div class="d-flex align-items-center gap-2">
+                    <small class="opacity-75 d-none d-sm-inline">
+                        <i class="fa-solid fa-calendar-check me-1"></i>
+                        Booking #{{ booking.booking_id }}
+                    </small>
+                    <!-- On mobile, button to toggle booking details offcanvas -->
+                    <button class="btn btn-sm btn-light rounded-pill d-md-none text-dark fw-semibold" type="button" data-bs-toggle="offcanvas" data-bs-target="#bookingDetailsOffcanvas" aria-controls="bookingDetailsOffcanvas">
+                        <i class="fa-solid fa-circle-info me-1 text-primary"></i> Details
+                    </button>
+                </div>
             </div>
 
             <div class="chat-messages" id="chatMessages">
@@ -157,7 +284,7 @@
                 type: 'POST',
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function(data) {
-CometChat.login(data.authToken).then(function() {
+                    CometChat.login(data.authToken).then(function() {
                         document.getElementById('chatStatus').textContent = 'Online';
                         loadMessages();
                         listenForMessages();
@@ -296,16 +423,16 @@ CometChat.login(data.authToken).then(function() {
                         var parts = text.replace('[PRICE_CLIENT_UPDATE] ', '').split('|');
                         if (parts.length >= 3) {
                             var newPrice = parts[2];
-                            // Update price display
-                            document.getElementById('proChatPriceDisplay').textContent = '₦' + parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                            // Update input field
-                            document.getElementById('proChatNewPrice').value = newPrice.replace(/,/g, '');
-                            // Show "client changed the price" hint
-                            var clientHint = document.getElementById('clientChangedPriceHint');
-                            if (clientHint) clientHint.style.display = 'block';
-                            // Auto-hide after 5 seconds
+                            var formatted = '₦' + parseFloat(newPrice.replace(/,/g, '')).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                            document.querySelectorAll('.proChatPriceDisplay').forEach(function(el) { el.textContent = formatted; });
+                            var in1 = document.getElementById('proChatNewPrice');
+                            var in2 = document.getElementById('proChatNewPriceMobile');
+                            if (in1) in1.value = newPrice.replace(/,/g, '');
+                            if (in2) in2.value = newPrice.replace(/,/g, '');
+                            
+                            document.querySelectorAll('.clientChangedPriceHint').forEach(function(el) { el.style.display = 'block'; });
                             setTimeout(function() {
-                                if (clientHint) clientHint.style.display = 'none';
+                                document.querySelectorAll('.clientChangedPriceHint').forEach(function(el) { el.style.display = 'none'; });
                             }, 5000);
                         }
                     }
@@ -314,9 +441,10 @@ CometChat.login(data.authToken).then(function() {
         }
 
         // ── Price Update from Professional Chat ──────────────────────────
-        function submitProChatPrice(bookingId) {
-            var newPrice = document.getElementById('proChatNewPrice').value;
-            if (!newPrice || newPrice < 0) {
+        function submitProChatPrice(bookingId, inputId) {
+            var input = document.getElementById(inputId || 'proChatNewPrice');
+            var newPrice = input ? input.value : '';
+            if (!newPrice || parseFloat(newPrice) < 0) {
                 alert('Please enter a valid price.');
                 return;
             }
@@ -328,14 +456,16 @@ CometChat.login(data.authToken).then(function() {
                 data: JSON.stringify({ new_price: newPrice }),
                 success: function(data) {
                     if (data.status === 'success') {
-                        // Update the price display
-                        document.getElementById('proChatPriceDisplay').textContent = '₦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                        // Show the hint
-                        var hint = document.getElementById('proChatPriceHint');
-                        hint.style.display = 'block';
-                        // Hide the hint after 5 seconds
+                        var formatted = '₦' + parseFloat(newPrice).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        document.querySelectorAll('.proChatPriceDisplay').forEach(function(el) { el.textContent = formatted; });
+                        var in1 = document.getElementById('proChatNewPrice');
+                        var in2 = document.getElementById('proChatNewPriceMobile');
+                        if (in1) in1.value = newPrice;
+                        if (in2) in2.value = newPrice;
+
+                        document.querySelectorAll('.proChatPriceHint').forEach(function(el) { el.style.display = 'block'; });
                         setTimeout(function() {
-                            hint.style.display = 'none';
+                            document.querySelectorAll('.proChatPriceHint').forEach(function(el) { el.style.display = 'none'; });
                         }, 5000);
                     } else {
                         alert(data.message || 'Failed to update price.');

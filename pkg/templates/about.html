@@ -9,19 +9,19 @@
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/static/main.css">
-    <title>Kiraar</title>
+    <title>About Us - Kiraar</title>
 </head>
 <body>
 <div class="container-fluid">
     <header>
     <div class="row align-items-center bg-body-tertiary">
         
-        <div class="col-4 col-md-4 d-flex justify-content-center align-items-center ps-3">
+        <div class="col-4 col-md-4 d-flex justify-content-start align-items-center ps-3">
             <a href="/">
                 <img src="/static/images/logo4.png" alt="logo-img" class="img-fluid" style="max-height: 40px;">
             </a>
         </div>
-        <div class="col-8 col-md-8  d-flex justify-content-end">
+        <div class="col-8 col-md-8 d-flex justify-content-end">
             <nav class="navbar navbar-expand-lg w-100">
                 <div class="container-fluid justify-content-end">
                     
@@ -29,10 +29,20 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     
-                    <div class="collapse navbar-collapse justify-content-end nav-buttons " id="navbarNavAltMarkup" >
-                        <div class="navbar-nav ">
-                            <a class="nav-link mx-3" href="/signup/">Sign Up</a>
-                            <a class="nav-link mx-3" href="/login/">Login</a>
+                    <div class="collapse navbar-collapse justify-content-end nav-buttons" id="navbarNavAltMarkup">
+                        <div class="navbar-nav align-items-center">
+                            {% if session.get('user_id') %}
+                                <a class="nav-link mx-2" href="/results/">Find Professionals</a>
+                                <a class="nav-link mx-2" href="/client/bookings/">My Bookings</a>
+                                <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
+                            {% elif session.get('professional_id') %}
+                                <a class="nav-link mx-2" href="/find-jobs/">Dashboard</a>
+                                <a class="nav-link mx-2" href="/professional/bookings/">Bookings</a>
+                                <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
+                            {% else %}
+                                <a class="nav-link mx-3" href="/signup/">Sign Up</a>
+                                <a class="nav-link mx-3" href="/login/">Login</a>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -44,7 +54,7 @@
     </header>
 
     <div class="row">
-        <div class="col-md-6 mt-5 ">
+        <div class="col-md-6 mt-5">
             <h1>100,000+</h1>
             <h1>Users Later.</h1>
             <p>
@@ -186,7 +196,7 @@
                 </section>
             </div>
         </div>
-    </div> <!-- Fixed the structural closing div here -->
+    </div>
 
     <footer>
         <div class="row footer">
@@ -206,14 +216,14 @@
                     <li><a href="/escrow-policy/">Escrow &amp; Refund Policy</a></li>
                 </ul>
             </div>
-            <div class="col-md-6 d-flex justify-content-end align-items-center ">
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
                 <a href="/">
-                    <img src="/static/images/logo4.png" alt="logo" class="img-fluid" style="max-height: 40px; background-color: #ffffff;" >
+                    <img src="/static/images/logo4.png" alt="logo" class="img-fluid" style="max-height: 40px; background-color: #ffffff;">
                 </a>
             </div>
         </div>
         <div class="row under-footer">
-            <div class="col-md-6 d-flex justify-content-center  align-items-center">
+            <div class="col-md-6 d-flex justify-content-center align-items-center">
                 Copyright &copy; kiraar 2026
             </div>
             <div class="col-md-6 d-flex justify-content-center align-items-center">
