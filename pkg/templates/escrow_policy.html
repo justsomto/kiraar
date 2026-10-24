@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Somto">
-    <meta name="description" content="Escrow and Refund Policy of Kiraar - How client funds are safely held, how artisans get paid, and our dispute guarantees in Nigeria.">
+    <meta name="description" content="Kiraar Escrow &amp; Refund Policy - Learn how our secure escrow protection safeguards payments between clients and artisans in Nigeria.">
     <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
@@ -12,271 +12,317 @@
     <title>Escrow &amp; Refund Policy - Kiraar</title>
 </head>
 <body>
-    <div class="container-fluid overflow-hidden p-0">
-        
-        <!-- Header / Navigation -->
-        <header class="bg-white border-bottom shadow-sm">
-            <div class="container py-2">
-                <div class="row align-items-center">
-                    <div class="col-4 col-md-3">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid" style="max-height: 40px;">
+    <!-- Header / Navigation (Matching index page) -->
+    <header class="sticky-top bg-white border-bottom shadow-sm" style="z-index: 1030;">
+        <nav class="navbar navbar-expand-lg py-2">
+            <div class="container-fluid px-3 px-md-4">
+                <!-- Brand Logo -->
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 42px;" class="img-fluid">
+                </a>
+
+                <!-- Mobile Hamburger Button (triggers offcanvas drawer from left) -->
+                <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#kiraarNavbarOffcanvas" aria-controls="kiraarNavbarOffcanvas" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Offcanvas Menu (Drawer on Mobile, Top Bar on Desktop) -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="kiraarNavbarOffcanvas" aria-labelledby="kiraarNavbarLabel">
+                    <!-- Drawer Header (only visible on mobile) -->
+                    <div class="offcanvas-header border-bottom">
+                        <a href="/" class="d-flex align-items-center text-decoration-none">
+                            <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 36px;">
                         </a>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="col-8 col-md-9 d-flex justify-content-end">
-                        <nav class="navbar navbar-expand-lg">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                                <div class="navbar-nav align-items-center">
-                                    {% if session.get('user_id') %}
-                                        <a class="nav-link mx-2" href="/results/">Find Professionals</a>
-                                        <a class="nav-link mx-2" href="/client/bookings/">My Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% elif session.get('professional_id') %}
-                                        <a class="nav-link mx-2" href="/find-jobs/">Dashboard</a>
-                                        <a class="nav-link mx-2" href="/professional/bookings/">Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% else %}
-                                        <a class="nav-link mx-2" href="/signup/">Sign Up</a>
-                                        <a class="nav-link mx-2" href="/login/">Login</a>
-                                    {% endif %}
+
+                    <!-- Drawer Body -->
+                    <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
+                        <!-- Left Navigation Links (Upwork Style) -->
+                        <ul class="navbar-nav me-auto mb-3 mb-lg-0 py-2 py-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/results/">
+                                    <i class="fa-solid fa-magnifying-glass me-2 text-muted d-lg-none"></i>Find Artisans
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/about/">
+                                    <i class="fa-solid fa-circle-info me-2 text-muted d-lg-none"></i>How It Works
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/contact/">
+                                    <i class="fa-solid fa-headset me-2 text-muted d-lg-none"></i>Support
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right Auth / Profile Controls -->
+                        <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-3 pt-lg-0 border-top border-lg-0">
+                            {% if session.get('user_id') %}
+                                <!-- Logged-in Client Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-circle-user me-1 text-primary"></i> {{ session.get('user_name', 'Client') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/client/bookings/"><i class="fa-solid fa-calendar-check me-2 text-muted"></i>My Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/client/edit/"><i class="fa-solid fa-user-pen me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Pro</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
                                 </div>
-                            </div>
-                        </nav>
+                            {% elif session.get('professional_id') %}
+                                <!-- Logged-in Professional Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-briefcase me-1 text-success"></i> {{ session.get('professional_name', 'Professional') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-chart-line me-2 text-muted"></i>Pro Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/bookings/"><i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Client Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/edit/"><i class="fa-solid fa-id-card me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Client</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <!-- Guest (Not Logged In) -->
+                                <a href="/login/" class="btn btn-outline-dark btn-sm rounded-pill px-3 py-2 text-center">Log In</a>
+                                <a href="/signup/" class="btn btn-sm rounded-pill px-3 py-2 text-white text-center" style="background:#611f47;">Sign Up</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </nav>
+    </header>
 
-        <!-- Hero Title -->
-        <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
-                            <i class="fa-solid fa-shield-halved me-1 text-success"></i> Central Bank of Nigeria (CBN) Licensed Escrow Partner: Paystack
-                        </span>
-                        <h1 class="display-5 fw-bold mb-3">Escrow &amp; Refund Policy</h1>
-                        <p class="lead mb-0 opacity-75">Guaranteed safety for clients &bull; Guaranteed payment for artisans</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <main class="container py-5">
+    <!-- Hero Title -->
+    <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
+        <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-
-                    <!-- What is Escrow Banner -->
-                    <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
-                        <h5 class="fw-bold" style="color: #611f47;"><i class="fa-solid fa-vault me-2"></i>How Kiraar Escrow Protects You</h5>
-                        <p class="mb-0 text-secondary lh-lg">
-                            In Nigeria, one of the biggest risks when hiring local artisans is paying upfront and getting substandard work — or for artisans, finishing hard work and struggling to get paid. <strong>Kiraar solves this through our secure Paystack Escrow system</strong>. Client money is never handed directly to the artisan until the job is satisfactorily delivered.
-                        </p>
-                    </div>
-
-                    <!-- Visual Flow Diagram -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold text-center mb-4" style="color: #611f47;">The 4-Step Escrow Process</h3>
-                        <div class="row g-4 text-center">
-                            <div class="col-md-3">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <div class="display-6 fw-bold mb-2 text-primary">1</div>
-                                    <h6 class="fw-bold mb-1">Book &amp; Agree</h6>
-                                    <p class="small text-muted mb-0">Client and artisan agree on price and scope of work via the in-app chat.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <div class="display-6 fw-bold mb-2 text-warning">2</div>
-                                    <h6 class="fw-bold mb-1">Pay into Escrow</h6>
-                                    <p class="small text-muted mb-0">Client pays securely via Paystack. Funds are locked in escrow safely.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <div class="display-6 fw-bold mb-2 text-info">3</div>
-                                    <h6 class="fw-bold mb-1">Work Delivered</h6>
-                                    <p class="small text-muted mb-0">The vetted artisan visits your premises and completes the scheduled job.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <div class="display-6 fw-bold mb-2 text-success">4</div>
-                                    <h6 class="fw-bold mb-1">Release &amp; Payout</h6>
-                                    <p class="small text-muted mb-0">Client confirms job, and the artisan receives 90% payout in their Nigerian bank account.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section: 48-Hour Auto-Release -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">1. The 48-Hour (2-Day) Auto-Release Rule</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            To ensure hardworking Nigerian artisans are not kept waiting indefinitely for their earned income:
-                        </p>
-                        <ul class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Manual Release:</strong> Clients are encouraged to click "Release Payment" on their bookings page immediately once the artisan finishes and the work is verified.</li>
-                            <li class="mb-2"><strong>Automated Release:</strong> If a job is marked completed and the client neither releases payment nor files a complaint within <strong>48 hours (2 days)</strong>, Kiraar's automated escrow scheduler automatically releases the payout to the artisan's registered bank account.</li>
-                            <li><strong>Grace Period:</strong> Clients receive email notifications alerting them that their booking was marked completed, giving them ample time to inspect the work and raise any concerns.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section: Fee Structure -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">2. Platform Fee &amp; Artisan Payout Structure</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Kiraar maintains an open and transparent fee model without hidden deductions:
-                        </p>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="p-4 border rounded-3 bg-light text-center h-100">
-                                    <h2 class="fw-bold mb-1 text-success">90%</h2>
-                                    <h6 class="fw-bold mb-2">Artisan Payout</h6>
-                                    <p class="small text-muted mb-0">Sent straight to the artisan's verified Nigerian commercial bank account (GTBank, Zenith, Access, First Bank, Kuda, etc.) via automated Paystack transfer.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-4 border rounded-3 bg-light text-center h-100">
-                                    <h2 class="fw-bold mb-1" style="color: #611f47;">10%</h2>
-                                    <h6 class="fw-bold mb-2">Platform Facilitation Fee</h6>
-                                    <p class="small text-muted mb-0">Powers artisan identity verification (NIN checks), Paystack banking fees, 24/7 customer support, and secure hosting infrastructure.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section: Refund Policy -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">3. Refund Eligibility &amp; Guidelines</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Clients are fully protected and entitled to refunds under the following verified circumstances:
-                        </p>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Scenario</th>
-                                        <th>Refund Type</th>
-                                        <th>Timeline</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="small text-secondary">
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Artisan No-Show</td>
-                                        <td><span class="badge bg-success">100% Full Refund</span></td>
-                                        <td>Processed within 24 hours of confirmation</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Cancellation Before Work Commences</td>
-                                        <td><span class="badge bg-success">100% Full Refund</span></td>
-                                        <td>Instant reversal to original payment source</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Incomplete or Substandard Work</td>
-                                        <td><span class="badge bg-warning text-dark">Partial or Full Refund</span></td>
-                                        <td>Subject to dispute review within 48 hours</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Mutual Cancellation on On-Site Scope Mismatch</td>
-                                        <td><span class="badge bg-success">100% Full Refund</span></td>
-                                        <td>Processed immediately upon mutual agreement</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Section: How to Lodge a Dispute -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">4. How to Dispute a Job Before Funds Are Released</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            If you are not satisfied with an artisan's service delivery:
-                        </p>
-                        <ol class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Act Promptly:</strong> File your complaint from your Client Bookings page within <strong>48 hours</strong> of the job being marked completed.</li>
-                            <li class="mb-2"><strong>Immediate Freeze:</strong> Filing a complaint automatically halts all payout transfers, preventing funds from leaving escrow.</li>
-                            <li class="mb-2"><strong>Provide Evidence:</strong> Submit clear photos or descriptions of the issue in the complaint portal.</li>
-                            <li><strong>Resolution:</strong> Our operations desk investigates within 24 to 48 hours to either arrange for the artisan to rectify the issue or issue your refund.</li>
-                        </ol>
-                    </div>
-
-                    <!-- Section: Warning Against Off-Platform Payments -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white border-start border-4 border-danger">
-                        <h4 class="fw-bold text-danger mb-2"><i class="fa-solid fa-triangle-exclamation me-2"></i>Warning Against Direct Cash Payments</h4>
-                        <p class="text-secondary lh-lg mb-0">
-                            If an artisan asks you to pay them directly in cash, via their personal account number, or outside the Kiraar platform, <strong>do not agree</strong>. Direct off-platform payments immediately void all Kiraar escrow protections, customer guarantees, and refund eligibility. Always report any provider soliciting off-platform cash to <a href="mailto:franklinsomto7@gmail.com" class="fw-semibold text-decoration-none text-danger">franklinsomto7@gmail.com</a>.
-                        </p>
-                    </div>
-
-                    <!-- Contact Card -->
-                    <div class="card border-0 rounded-4 text-center p-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
-                        <h3 class="fw-bold mb-2">Need Assistance with a Booking or Payment?</h3>
-                        <p class="mb-4 opacity-75">Our escrow and customer support desk is available to assist you 7 days a week.</p>
-                        <div>
-                            <a href="mailto:franklinsomto7@gmail.com" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark me-2">
-                                <i class="fa-solid fa-envelope me-1"></i> Contact Support
-                            </a>
-                            <a href="/terms/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
-                                <i class="fa-solid fa-file-contract me-1"></i> View Terms of Service
-                            </a>
-                        </div>
-                    </div>
-
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-shield-halved me-1 text-success"></i> 100% Escrow Protection &amp; Satisfaction Guarantee
+                    </span>
+                    <h1 class="display-5 fw-bold mb-3">Escrow &amp; Refund Policy</h1>
+                    <p class="lead mb-0 opacity-75">Guaranteed safety for clients &bull; Guaranteed payment for artisans</p>
                 </div>
             </div>
-        </main>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-dark text-white pt-5">
-            <div class="container pb-4">
-                <div class="row g-4">
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Get Help</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/results/" class="text-white-50 text-decoration-none">Find a Professional</a></li>
-                            <li class="mb-2"><a href="mailto:franklinsomto7@gmail.com" class="text-white-50 text-decoration-none">Contact Support</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Escrow &amp; Refund Policy</a></li>
-                            <li class="mb-2"><a href="/login/" class="text-white-50 text-decoration-none">Sign In</a></li>
-                        </ul>
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- What is Escrow Banner -->
+                <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
+                    <h5 class="fw-bold" style="color: #611f47;"><i class="fa-solid fa-vault me-2"></i>How Kiraar Escrow Protects You</h5>
+                    <p class="mb-0 text-secondary lh-lg">
+                        In Nigeria, one of the biggest risks when hiring local artisans is paying upfront and getting substandard work — or for artisans, finishing hard work and struggling to get paid. <strong>Kiraar solves this through our secure Escrow Protection system</strong>. Client money is never handed directly to the artisan until the job is satisfactorily delivered.
+                    </p>
+                </div>
+
+                <!-- Visual Flow Diagram -->
+                <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold text-center mb-4" style="color: #611f47;">The 4-Step Escrow Process</h3>
+                    <div class="row g-4 text-center">
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <div class="display-6 fw-bold mb-2 text-primary">1</div>
+                                <h6 class="fw-bold mb-1">Book &amp; Agree</h6>
+                                <p class="small text-muted mb-0">Client and artisan agree on price and scope of work via the in-app chat.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <div class="display-6 fw-bold mb-2 text-warning">2</div>
+                                <h6 class="fw-bold mb-1">Pay into Escrow</h6>
+                                <p class="small text-muted mb-0">Client pays securely online. Funds are held safely in escrow.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <div class="display-6 fw-bold mb-2 text-info">3</div>
+                                <h6 class="fw-bold mb-1">Work Delivered</h6>
+                                <p class="small text-muted mb-0">The vetted artisan visits your premises and completes the scheduled job.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <div class="display-6 fw-bold mb-2 text-success">4</div>
+                                <h6 class="fw-bold mb-1">Release &amp; Payout</h6>
+                                <p class="small text-muted mb-0">Client confirms job, and the artisan receives 90% payout in their Nigerian bank account.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Company</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/about/" class="text-white-50 text-decoration-none">About Kiraar</a></li>
-                            <li class="mb-2"><a href="/terms/" class="text-white-50 text-decoration-none">Terms &amp; Conditions</a></li>
-                            <li class="mb-2"><a href="/privacy/" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Trust &amp; Escrow</a></li>
-                        </ul>
+                </div>
+
+                <!-- Section: 48-Hour Auto-Release -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">1. The 48-Hour (2-Day) Auto-Release Rule</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        To ensure hardworking Nigerian artisans are not kept waiting indefinitely for their earned income:
+                    </p>
+                    <ul class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2"><strong>Manual Release:</strong> Clients are encouraged to click "Release Payment" on their bookings page immediately once the artisan finishes and the work is verified.</li>
+                        <li class="mb-2"><strong>Automated Release:</strong> If a job is marked completed and the client neither releases payment nor files a complaint within <strong>48 hours (2 days)</strong>, Kiraar's automated escrow scheduler automatically releases the payout to the artisan's registered bank account.</li>
+                        <li><strong>Grace Period:</strong> Clients receive email notifications alerting them that their booking was marked completed, giving them ample time to inspect the work and raise any concerns.</li>
+                    </ul>
+                </div>
+
+                <!-- Section: Fee Structure -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">2. Platform Fee &amp; Artisan Payout Structure</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        Kiraar maintains an open and transparent fee model without hidden deductions:
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded-3 bg-light text-center h-100">
+                                <h2 class="fw-bold mb-1 text-success">90%</h2>
+                                <h6 class="fw-bold mb-2">Artisan Payout</h6>
+                                <p class="small text-muted mb-0">Sent straight to the artisan's verified Nigerian commercial bank account (GTBank, Zenith, Access, First Bank, Kuda, etc.) via automated secure bank transfer.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded-3 bg-light text-center h-100">
+                                <h2 class="fw-bold mb-1" style="color: #611f47;">10%</h2>
+                                <h6 class="fw-bold mb-2">Platform Facilitation Fee</h6>
+                                <p class="small text-muted mb-0">Powers artisan identity verification (NIN checks), banking transaction fees, 24/7 customer support, and secure hosting infrastructure.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 d-flex flex-column justify-content-between align-items-md-end">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid p-2 bg-white rounded" style="max-height: 44px;">
+                </div>
+
+                <!-- Section: Refund Policy -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">3. Refund Eligibility &amp; Guidelines</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        Clients are fully protected and entitled to refunds under the following verified circumstances:
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Scenario</th>
+                                    <th>Refund Type</th>
+                                    <th>Timeline</th>
+                                </tr>
+                            </thead>
+                            <tbody class="small text-secondary">
+                                <tr>
+                                    <td class="fw-semibold text-dark">Artisan No-Show</td>
+                                    <td><span class="badge bg-success">100% Full Refund</span></td>
+                                    <td>Processed within 24 hours of confirmation</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Cancellation Before Work Commences</td>
+                                    <td><span class="badge bg-success">100% Full Refund</span></td>
+                                    <td>Instant reversal to original payment source</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Incomplete or Substandard Work</td>
+                                    <td><span class="badge bg-warning text-dark">Partial or Full Refund</span></td>
+                                    <td>Subject to dispute review within 48 hours</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Mutual Cancellation on On-Site Scope Mismatch</td>
+                                    <td><span class="badge bg-success">100% Full Refund</span></td>
+                                    <td>Processed immediately upon mutual agreement</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section: How to Lodge a Dispute -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">4. How to Dispute a Job Before Funds Are Released</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        If you are not satisfied with an artisan's service delivery:
+                    </p>
+                    <ol class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2"><strong>Act Promptly:</strong> File your complaint from your Client Bookings page within <strong>48 hours</strong> of the job being marked completed.</li>
+                        <li class="mb-2"><strong>Immediate Freeze:</strong> Filing a complaint automatically halts all payout transfers, preventing funds from leaving escrow.</li>
+                        <li class="mb-2"><strong>Provide Evidence:</strong> Submit clear photos or descriptions of the issue in the complaint portal.</li>
+                        <li><strong>Resolution:</strong> Our operations desk investigates within 24 to 48 hours to either arrange for the artisan to rectify the issue or issue your refund.</li>
+                    </ol>
+                </div>
+
+                <!-- Section: Warning Against Off-Platform Payments -->
+                <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white border-start border-4 border-danger">
+                    <h4 class="fw-bold text-danger mb-2"><i class="fa-solid fa-triangle-exclamation me-2"></i>Warning Against Direct Cash Payments</h4>
+                    <p class="text-secondary lh-lg mb-0">
+                        If an artisan asks you to pay them directly in cash, via their personal account number, or outside the Kiraar platform, <strong>do not agree</strong>. Direct off-platform payments immediately void all Kiraar escrow protections, customer guarantees, and refund eligibility. Always report any provider soliciting off-platform cash to <a href="/contact/" class="fw-semibold text-decoration-none text-danger">our support team</a>.
+                    </p>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card border-0 rounded-4 text-center p-4 p-md-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
+                    <h3 class="fw-bold mb-2">Need Assistance with a Booking or Payment?</h3>
+                    <p class="mb-4 opacity-75">Our escrow and customer support desk is available to assist you 7 days a week.</p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 align-items-center">
+                        <a href="/contact/" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark">
+                            <i class="fa-solid fa-headset me-1"></i> Contact Support
                         </a>
-                        <p class="small text-white-50 mt-3 text-md-end mb-0">
-                            Connecting Nigerians with verified, reliable artisans nationwide.<br>
-                            Safe &bull; Secure &bull; Protected by Paystack Escrow.
-                        </p>
+                        <a href="/terms/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+                            <i class="fa-solid fa-file-contract me-1"></i> View Terms of Service
+                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="border-top border-secondary py-3">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
-                    <div>Copyright &copy; Kiraar Technologies 2026. All rights reserved.</div>
-                    <div class="mt-2 mt-md-0">
-                        <i class="fa-brands fa-facebook mx-2 text-white"></i>
-                        <i class="fa-brands fa-instagram mx-2 text-white"></i>
-                        <i class="fa-brands fa-x-twitter mx-2 text-white"></i>
-                        <i class="fa-brands fa-linkedin mx-2 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </footer>
 
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Grid Section (Matches index page exactly) -->
+    <footer class="row footer pt-5 pb-4 px-3 px-md-5 m-0">
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-4"><h3>Get Help</h3></li>
+                <li class="mb-2"><a href="/results/" class="text-decoration-none">See All Services</a></li>
+                <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact Support</a></li>
+                <li class="mb-2"><a href="/login/" class="text-decoration-none">Log In</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-3"><h3>Company</h3></li>
+                <li class="mb-2"><a href="/about/" class="text-decoration-none">About Us</a></li>
+                <li class="mb-2"><a href="/privacy/" class="text-decoration-none">Privacy Policy</a></li>
+                <li class="mb-2"><a href="/terms/" class="text-decoration-none">Terms and Conditions</a></li>
+                <li class="mb-2"><a href="/escrow-policy/" class="text-decoration-none">Escrow &amp; Refund Policy</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center mb-4">
+            <a href="/">
+                <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded" style="max-height: 45px; background-color: #ffffff;">
+            </a>
+        </div>
+    </footer>
+
+    <!-- Legal Bar / Under Footer -->
+    <div class="row under-footer border-top border-secondary py-4 text-center fs-6 m-0">
+        <div class="col-md-6 mb-3 mb-md-0 d-flex justify-content-center align-items-center">
+            Copyright &copy; kiraar 2026
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <span class="me-2">Follow us! We're friendly:</span>
+            <i class="fa-brands fa-facebook mx-3"></i>
+            <i class="fa-brands fa-square-instagram mx-3"></i>
+            <i class="fa-brands fa-x-twitter mx-3"></i>
+            <i class="fa-brands fa-linkedin mx-3"></i>
+        </div>
     </div>
 
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>

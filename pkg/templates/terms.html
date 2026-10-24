@@ -4,311 +4,318 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Somto">
-    <meta name="description" content="Terms and Conditions of Kiraar - Nigeria's trusted on-demand artisan and professional service platform.">
+    <meta name="description" content="Kiraar Terms and Conditions - Legal agreement, escrow policy, professional conduct, and user responsibilities on Nigeria's trusted artisan marketplace.">
     <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/static/main.css">
-    <title>Terms and Conditions - Kiraar</title>
+    <title>Terms &amp; Conditions - Kiraar</title>
 </head>
 <body>
-    <div class="container-fluid overflow-hidden p-0">
-        
-        <!-- Header / Navigation -->
-        <header class="bg-white border-bottom shadow-sm">
-            <div class="container py-2">
-                <div class="row align-items-center">
-                    <div class="col-4 col-md-3">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid" style="max-height: 40px;">
+    <!-- Header / Navigation (Matching index page) -->
+    <header class="sticky-top bg-white border-bottom shadow-sm" style="z-index: 1030;">
+        <nav class="navbar navbar-expand-lg py-2">
+            <div class="container-fluid px-3 px-md-4">
+                <!-- Brand Logo -->
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 42px;" class="img-fluid">
+                </a>
+
+                <!-- Mobile Hamburger Button (triggers offcanvas drawer from left) -->
+                <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#kiraarNavbarOffcanvas" aria-controls="kiraarNavbarOffcanvas" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Offcanvas Menu (Drawer on Mobile, Top Bar on Desktop) -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="kiraarNavbarOffcanvas" aria-labelledby="kiraarNavbarLabel">
+                    <!-- Drawer Header (only visible on mobile) -->
+                    <div class="offcanvas-header border-bottom">
+                        <a href="/" class="d-flex align-items-center text-decoration-none">
+                            <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 36px;">
                         </a>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="col-8 col-md-9 d-flex justify-content-end">
-                        <nav class="navbar navbar-expand-lg">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                                <div class="navbar-nav align-items-center">
-                                    {% if session.get('user_id') %}
-                                        <a class="nav-link mx-2" href="/results/">Find Professionals</a>
-                                        <a class="nav-link mx-2" href="/client/bookings/">My Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% elif session.get('professional_id') %}
-                                        <a class="nav-link mx-2" href="/find-jobs/">Dashboard</a>
-                                        <a class="nav-link mx-2" href="/professional/bookings/">Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% else %}
-                                        <a class="nav-link mx-2" href="/signup/">Sign Up</a>
-                                        <a class="nav-link mx-2" href="/login/">Login</a>
-                                    {% endif %}
+
+                    <!-- Drawer Body -->
+                    <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
+                        <!-- Left Navigation Links (Upwork Style) -->
+                        <ul class="navbar-nav me-auto mb-3 mb-lg-0 py-2 py-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/results/">
+                                    <i class="fa-solid fa-magnifying-glass me-2 text-muted d-lg-none"></i>Find Artisans
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/about/">
+                                    <i class="fa-solid fa-circle-info me-2 text-muted d-lg-none"></i>How It Works
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/contact/">
+                                    <i class="fa-solid fa-headset me-2 text-muted d-lg-none"></i>Support
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right Auth / Profile Controls -->
+                        <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-3 pt-lg-0 border-top border-lg-0">
+                            {% if session.get('user_id') %}
+                                <!-- Logged-in Client Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-circle-user me-1 text-primary"></i> {{ session.get('user_name', 'Client') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/client/bookings/"><i class="fa-solid fa-calendar-check me-2 text-muted"></i>My Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/client/edit/"><i class="fa-solid fa-user-pen me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Pro</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
                                 </div>
-                            </div>
-                        </nav>
+                            {% elif session.get('professional_id') %}
+                                <!-- Logged-in Professional Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-briefcase me-1 text-success"></i> {{ session.get('professional_name', 'Professional') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-chart-line me-2 text-muted"></i>Pro Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/bookings/"><i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Client Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/edit/"><i class="fa-solid fa-id-card me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Client</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <!-- Guest (Not Logged In) -->
+                                <a href="/login/" class="btn btn-outline-dark btn-sm rounded-pill px-3 py-2 text-center">Log In</a>
+                                <a href="/signup/" class="btn btn-sm rounded-pill px-3 py-2 text-white text-center" style="background:#611f47;">Sign Up</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </nav>
+    </header>
 
-        <!-- Hero Title -->
-        <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
-                            <i class="fa-solid fa-scale-balanced me-1 text-primary"></i> Legal Agreement &bull; Federal Republic of Nigeria
-                        </span>
-                        <h1 class="display-5 fw-bold mb-3">Terms &amp; Conditions of Service</h1>
-                        <p class="lead mb-0 opacity-75">Effective Date: January 1, 2026 &bull; Last Revised: September 2026</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <main class="container py-5">
+    <!-- Hero Title -->
+    <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
+        <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-
-                    <!-- Important Notice Banner -->
-                    <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
-                        <h5 class="fw-bold" style="color: #611f47;"><i class="fa-solid fa-circle-info me-2"></i>Welcome to Kiraar</h5>
-                        <p class="mb-0 text-secondary lh-lg">
-                            These Terms of Service ("Terms") constitute a legally binding agreement between you (whether as a <strong>Client</strong> seeking artisan services or as a registered <strong>Professional / Artisan</strong> providing services) and <strong>Kiraar Technologies</strong> ("Kiraar", "we", "us", or "our"), governing your access to and use of the Kiraar website, mobile applications, and escrow payment systems in Nigeria.
-                        </p>
-                    </div>
-
-                    <!-- Section 1 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">1. Acceptance of Terms &amp; Eligibility</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            By accessing, browsing, registering on, or using Kiraar, you acknowledge that you have read, understood, and agreed to be bound by these Terms and our <a href="/privacy/" class="fw-semibold text-decoration-none" style="color: #611f47;">Privacy Policy</a>. If you do not agree to these Terms, you must discontinue your use of Kiraar immediately.
-                        </p>
-                        <p class="text-secondary lh-lg mb-0">
-                            <strong>Age Requirement:</strong> You must be at least <strong>18 years of age</strong> and legally capable of entering into binding contracts under Nigerian law to register an account or book services on Kiraar.
-                        </p>
-                    </div>
-
-                    <!-- Section 2 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">2. Description of the Kiraar Platform</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Kiraar is an on-demand technology marketplace that facilitates connections between individuals or businesses seeking trade, home maintenance, and artisan services ("<strong>Clients</strong>") and vetted, qualified independent service providers ("<strong>Professionals</strong>" or "<strong>Artisans</strong>").
-                        </p>
-                        <div class="p-3 bg-light rounded-3 border-start border-4 border-warning mb-3">
-                            <p class="small text-muted mb-0">
-                                <strong>Independent Contractor Relationship:</strong> Kiraar is a technology platform and marketplace facilitator. Professionals are independent third-party contractors and are <strong>not employees, agents, partners, or joint venturers</strong> of Kiraar. Each professional controls their own tools, methods, work schedule, and service delivery.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Section 3 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">3. Account Registration, Dual Accounts &amp; Verification</h3>
-                        <ul class="text-secondary lh-lg ps-3 mb-3">
-                            <li class="mb-2"><strong>Accurate Information:</strong> You agree to provide true, accurate, and complete information during registration and keep your profile updated.</li>
-                            <li class="mb-2"><strong>Professional Vetting:</strong> Professionals must submit verifiable government identification (such as National Identification Number — NIN, Voters Card, Driver's License, or International Passport), trade qualifications, and proof of address before account approval.</li>
-                            <li class="mb-2"><strong>Dual Accounts:</strong> Kiraar permits a user to operate both a Client account and a Professional account. In the event a Professional account is suspended due to performance, safety, or regulatory violations, Kiraar reserves the right to suspend the Professional profile while allowing client access, or terminate all accounts linked to the user.</li>
-                            <li><strong>Account Security:</strong> You are responsible for safeguarding your login credentials. Notify Kiraar immediately of any unauthorized access to your account.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 4 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">4. Booking, Pricing &amp; Price Adjustments</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            When a client initiates a booking, an initial estimate is established based on the professional's listed service rates.
-                        </p>
-                        <ul class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Mutual Price Negotiation:</strong> Both the Client and the Professional can mutually discuss and update the booking price directly on the platform before payment is executed (e.g., after on-site inspection or scope definition).</li>
-                            <li class="mb-2"><strong>Binding Amount:</strong> Once the client completes payment, the agreed booking price becomes final for the scope of work described. Any scope additions must be handled through an additional booking or revised agreement on Kiraar.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 5 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">5. Escrow Payment System &amp; Central Bank of Nigeria (CBN) Compliance</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            All financial transactions on Kiraar are processed in Nigerian Naira (₦) through licensed payment infrastructure partners (<strong>Paystack Payments Limited</strong>, duly authorized and licensed by the Central Bank of Nigeria).
-                        </p>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-shield-halved me-1 text-success"></i> Escrow Protection</h6>
-                                    <p class="small text-muted mb-0">When a client pays, the money does not go directly to the artisan. It is safely held in an encrypted escrow account until the service is completed.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 h-100 bg-light">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-clock-rotate-left me-1 text-primary"></i> 48-Hour Auto-Release Rule</h6>
-                                    <p class="small text-muted mb-0">Clients are requested to release payment upon satisfactory job delivery. If no dispute or complaint is raised within <strong>48 hours (2 days)</strong> following completion, funds auto-release to the artisan.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-3 border-start border-4 border-danger rounded-3 bg-light">
-                            <p class="small text-danger fw-semibold mb-0">
-                                <i class="fa-solid fa-triangle-exclamation me-1"></i> Strict Prohibition on Off-Platform Cash Payments:
-                            </p>
-                            <p class="small text-muted mb-0 mt-1">
-                                Paying artisans in cash or outside Kiraar strips you of all escrow protection, refund guarantees, and dispute assistance. Users attempting to circumvent the Kiraar payment gateway face immediate and permanent account suspension.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Section 6 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">6. Platform Facilitation Commission &amp; Payouts</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Kiraar charges a transparent platform facilitation commission to maintain identity vetting, customer support, hosting, and secure escrow infrastructure:
-                        </p>
-                        <ul class="text-secondary lh-lg ps-3 mb-3">
-                            <li class="mb-2"><strong>Platform Commission:</strong> Kiraar retains a <strong>10% facilitation fee</strong> from each completed booking price.</li>
-                            <li class="mb-2"><strong>Artisan Payout (90%):</strong> The artisan receives <strong>90% of the agreed booking price</strong> paid directly into their verified Nigerian commercial bank account via Paystack transfer.</li>
-                            <li><strong>Taxes:</strong> Users are responsible for complying with applicable personal or corporate tax obligations under the Nigeria Finance Act and Federal Inland Revenue Service (FIRS) guidelines.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 7 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">7. Consumer Protection &amp; Cancellations</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            In accordance with the <strong>Federal Competition and Consumer Protection Act (FCCPA 2018)</strong>, Kiraar upholds high standards of transparency, consumer rights, and fair trading practices:
-                        </p>
-                        <ul class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Cancellation Before Work Starts:</strong> Clients may cancel an unpaid booking without penalty. If paid, full refunds are processed if the artisan has not yet commenced travel or incurred custom material costs.</li>
-                            <li class="mb-2"><strong>Artisan No-Show:</strong> If a professional fails to arrive at the agreed scheduled time without prior notification, the client is entitled to a 100% refund from escrow.</li>
-                            <li><strong>Defective or Incomplete Work:</strong> Clients must lodge a complaint through the platform before the 48-hour escrow window closes.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 8 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">8. Customer Complaints &amp; Fair Dispute Resolution</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Kiraar maintains an internal Dispute Resolution Desk to handle grievances impartially:
-                        </p>
-                        <ol class="text-secondary lh-lg ps-3 mb-3">
-                            <li class="mb-2"><strong>Filing a Complaint:</strong> Clients can file a complaint directly from their bookings dashboard specifying the booking ID, reason, and description of the issue.</li>
-                            <li class="mb-2"><strong>Escrow Freeze:</strong> Once a complaint is lodged, automatic payment release is immediately frozen pending investigation.</li>
-                            <li class="mb-2"><strong>Investigation:</strong> Our compliance team contacts both parties, reviews chat logs and photo evidence, and works toward an amicable resolution (remedial work, partial settlement, or full refund).</li>
-                            <li><strong>Confidentiality:</strong> To protect client safety, complaint reports are investigated by Kiraar administration and are not used to disclose client personal information to artisans.</li>
-                        </ol>
-                    </div>
-
-                    <!-- Section 9 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">9. Prohibited Conduct &amp; Safety Guidelines</h3>
-                        <p class="text-secondary lh-lg mb-2">Users must never engage in any of the following activities:</p>
-                        <div class="row g-2 mb-3">
-                            <div class="col-sm-6">
-                                <div class="p-2 border rounded bg-light small text-secondary">
-                                    <i class="fa-solid fa-ban text-danger me-1"></i> Fraud, impersonation, or fake reviews
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 border rounded bg-light small text-secondary">
-                                    <i class="fa-solid fa-ban text-danger me-1"></i> Harassment, discrimination, or abusive language
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 border rounded bg-light small text-secondary">
-                                    <i class="fa-solid fa-ban text-danger me-1"></i> Soliciting off-platform cash transactions
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 border rounded bg-light small text-secondary">
-                                    <i class="fa-solid fa-ban text-danger me-1"></i> Unsafe, unlicensed, or illegal service practices
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 10 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">10. Limitation of Liability</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            To the maximum extent permitted by applicable Nigerian law:
-                        </p>
-                        <p class="text-secondary lh-lg mb-0">
-                            Kiraar acts solely as an intermediary technology platform. We do not manufacture tools, employ artisans directly, or provide trade services ourselves. While we perform verification and identity screening, Kiraar shall not be held liable for indirect, incidental, punitive, or consequential damages resulting from on-site service delivery, property damage, or delays caused by third-party independent artisans, beyond the amount of platform fees collected for the specific transaction.
-                        </p>
-                    </div>
-
-                    <!-- Section 11 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">11. Governing Law &amp; Dispute Jurisdiction</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            These Terms and Conditions shall be governed by, construed, and enforced in accordance with the substantive <strong>Laws of the Federal Republic of Nigeria</strong>.
-                        </p>
-                        <p class="text-secondary lh-lg mb-0">
-                            Any dispute, controversy, or claim arising out of or relating to these Terms, which cannot be amicably resolved through Kiraar's internal dispute process, shall be subject to the exclusive jurisdiction of the state or federal courts situated in Nigeria.
-                        </p>
-                    </div>
-
-                    <!-- Contact Card -->
-                    <div class="card border-0 rounded-4 text-center p-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
-                        <h3 class="fw-bold mb-2">Have Questions About Our Terms?</h3>
-                        <p class="mb-4 opacity-75">Our legal and customer care team is available to clarify any aspect of our terms and policies.</p>
-                        <div>
-                            <a href="mailto:franklinsomto7@gmail.com" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark me-2">
-                                <i class="fa-solid fa-envelope me-1"></i> Contact Support
-                            </a>
-                            <a href="/escrow-policy/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
-                                <i class="fa-solid fa-shield-halved me-1"></i> View Escrow Policy
-                            </a>
-                        </div>
-                    </div>
-
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-file-contract me-1 text-primary"></i> Legal Agreement
+                    </span>
+                    <h1 class="display-5 fw-bold mb-3">Terms and Conditions</h1>
+                    <p class="lead mb-0 opacity-75">Governing access to and use of the Kiraar artisan marketplace in Nigeria.</p>
                 </div>
             </div>
-        </main>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-dark text-white pt-5">
-            <div class="container pb-4">
-                <div class="row g-4">
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Get Help</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/results/" class="text-white-50 text-decoration-none">Find a Professional</a></li>
-                            <li class="mb-2"><a href="mailto:franklinsomto7@gmail.com" class="text-white-50 text-decoration-none">Contact Support</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Escrow &amp; Refund Policy</a></li>
-                            <li class="mb-2"><a href="/login/" class="text-white-50 text-decoration-none">Sign In</a></li>
-                        </ul>
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-circle-exclamation me-2 fs-5" style="color: #611f47;"></i>
+                        <h6 class="fw-bold mb-0" style="color: #611f47;">Important Legal Notice</h6>
                     </div>
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Company</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/about/" class="text-white-50 text-decoration-none">About Kiraar</a></li>
-                            <li class="mb-2"><a href="/terms/" class="text-white-50 text-decoration-none">Terms &amp; Conditions</a></li>
-                            <li class="mb-2"><a href="/privacy/" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Trust &amp; Escrow</a></li>
-                        </ul>
+                    <p class="small text-secondary mb-0 lh-lg">
+                        Please read these Terms and Conditions carefully before creating an account, booking an artisan, or offering professional services on Kiraar. By registering or using any part of this platform, you agree to be bound by these Terms and our Escrow &amp; Refund Policy.
+                    </p>
+                </div>
+
+                <!-- Section 1 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">1. Definitions &amp; Platform Role</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        <strong>"Kiraar"</strong> (referred to as "we", "us", or "our") is an online technology marketplace operating in Nigeria that connects consumers ("Clients") seeking home, repair, and trade services with vetted independent contractors, handymen, and artisans ("Professionals" or "Artisans").
+                    </p>
+                    <p class="text-secondary lh-lg mb-0">
+                        <strong>Independent Contractor Relationship:</strong> Artisans registered on Kiraar are independent service providers, not employees, agents, or partners of Kiraar Technologies. Kiraar provides matching technology, scheduling tools, encrypted messaging, and escrow transaction settlement.
+                    </p>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">2. User Eligibility &amp; Account Registration</h3>
+                    <ul class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2"><strong>Age:</strong> You must be at least 18 years of age to register an account on Kiraar.</li>
+                        <li class="mb-2"><strong>Dual Accounts:</strong> Kiraar allows a single Nigerian phone number and email address to hold both a Client Profile and a Professional Profile, accessible via our role switcher without needing multiple accounts.</li>
+                        <li class="mb-2"><strong>Artisan Vetting:</strong> All professionals must undergo identity verification via National Identification Number (NIN) checks and skill vetting before their profiles are made active to receive bookings.</li>
+                        <li><strong>Account Security:</strong> You are responsible for safeguarding your login credentials. You must promptly notify Kiraar if you suspect unauthorized access.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">3. Booking and Service Appointments</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        When a Client books an Artisan through Kiraar, the two parties enter into a direct agreement regarding the scope, scheduled date, and price of the work.
+                    </p>
+                    <ul class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2"><strong>In-App Negotiation:</strong> Price negotiations and scheduling must be conducted via Kiraar's in-app chat or booking portal so a clear record exists in case of disputes.</li>
+                        <li class="mb-2"><strong>Price Adjustments:</strong> Either party may propose a revised booking price before payment is completed. Once a payment is funded into escrow, price changes require mutual written consent via the platform.</li>
+                        <li><strong>Access to Premises:</strong> Clients must provide safe, lawful, and reasonable access to the property where services are to be performed.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">4. Prohibition of Off-Platform Payments</h3>
+                    <div class="alert alert-danger rounded-3 mb-3">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                        <strong>Strict Policy:</strong> All payments for services arranged on Kiraar must be processed through Kiraar's escrow payment gateway. Direct cash or private bank transfers are strictly prohibited.
                     </div>
-                    <div class="col-md-6 d-flex flex-column justify-content-between align-items-md-end">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid p-2 bg-white rounded" style="max-height: 44px;">
+                    <p class="text-secondary lh-lg mb-0">
+                        Artisans soliciting direct cash payments and Clients offering off-platform compensation face immediate account suspension, forfeiture of escrow protection, and loss of verified status. Direct payments void all refund eligibility and insurance backing.
+                    </p>
+                </div>
+
+                <!-- Section 5 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">5. Escrow Payment System &amp; Central Bank of Nigeria (CBN) Compliance</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        All financial transactions on Kiraar are processed in Nigerian Naira (₦) through licensed, Central Bank of Nigeria (CBN)-regulated banking and payment infrastructure partners.
+                    </p>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-shield-halved me-1 text-success"></i> Escrow Protection</h6>
+                                <p class="small text-muted mb-0">When a client pays, the money does not go directly to the artisan. It is safely held in an encrypted escrow account until the service is completed.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-light">
+                                <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-clock-rotate-left me-1 text-primary"></i> 48-Hour Auto-Release Rule</h6>
+                                <p class="small text-muted mb-0">Clients are requested to release payment upon satisfactory job delivery. If no dispute or complaint is raised within <strong>48 hours (2 days)</strong> following completion, funds auto-release to the artisan.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-secondary lh-lg mb-0">
+                        Please review our full <a href="/escrow-policy/" class="fw-semibold text-decoration-none" style="color: #611f47;">Escrow &amp; Refund Policy</a> for dispute procedures, payout timelines, and refund criteria.
+                    </p>
+                </div>
+
+                <!-- Section 6 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">6. Fees &amp; Commission</h3>
+                    <ul class="text-secondary lh-lg ps-3 mb-3">
+                        <li class="mb-2"><strong>Platform Commission:</strong> Kiraar retains a <strong>10% facilitation fee</strong> from each completed booking price.</li>
+                        <li class="mb-2"><strong>Artisan Payout (90%):</strong> The artisan receives <strong>90% of the agreed booking price</strong> paid directly into their verified Nigerian commercial bank account via automated bank transfer.</li>
+                        <li><strong>Taxes:</strong> Users are responsible for complying with applicable personal or corporate tax obligations under the Nigeria Finance Act and Federal Inland Revenue Service (FIRS) guidelines.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 7 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">7. User Conduct &amp; Prohibited Activities</h3>
+                    <p class="text-secondary lh-lg mb-2">Users must not:</p>
+                    <ul class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2">Submit false, misleading, fraudulent, or counterfeit identification credentials.</li>
+                        <li class="mb-2">Harass, abuse, intimidate, or threaten another user or platform representative.</li>
+                        <li class="mb-2">Post defamatory, discriminatory, or offensive language in reviews, portfolio items, or public bio descriptions.</li>
+                        <li>Attempt to bypass security features, reverse engineer the platform, or execute unauthorized automated scraping.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 8 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">8. Dispute Resolution &amp; Complaints</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        If a dispute arises concerning service delivery, workmanship, property damage, or non-completion:
+                    </p>
+                    <ol class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2">The Client must file a formal complaint through the Kiraar Bookings dashboard within <strong>48 hours</strong> of completion.</li>
+                        <li class="mb-2">Kiraar's operations team freezes escrow payout while reviewing chat logs, photo evidence, and scheduled scopes.</li>
+                        <li>If the parties cannot reach mutual agreement, Kiraar will render a final binding resolution, which may include a full refund, partial refund, or order for remediation.</li>
+                    </ol>
+                </div>
+
+                <!-- Section 9 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">9. Limitation of Liability</h3>
+                    <p class="text-secondary lh-lg mb-0">
+                        To the maximum extent permitted by Nigerian law, Kiraar Technologies shall not be liable for any indirect, incidental, punitive, or consequential damages resulting from the actions, omissions, or workmanship of independent Artisans hired through the platform, except to the extent of funds held under our escrow guarantee.
+                    </p>
+                </div>
+
+                <!-- Section 10 -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">10. Governing Law &amp; Jurisdiction</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        These Terms and Conditions shall be governed by, construed, and enforced in accordance with the substantive <strong>Laws of the Federal Republic of Nigeria</strong>.
+                    </p>
+                    <p class="text-secondary lh-lg mb-0">
+                        Any dispute, controversy, or claim arising out of or relating to these Terms, which cannot be amicably resolved through Kiraar's internal dispute process, shall be subject to the exclusive jurisdiction of the state or federal courts situated in Nigeria.
+                    </p>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card border-0 rounded-4 text-center p-4 p-md-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
+                    <h3 class="fw-bold mb-2">Have Questions About Our Terms?</h3>
+                    <p class="mb-4 opacity-75">Our legal and customer care team is available to clarify any aspect of our terms and policies.</p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 align-items-center">
+                        <a href="/contact/" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark">
+                            <i class="fa-solid fa-headset me-1"></i> Contact Support
                         </a>
-                        <p class="small text-white-50 mt-3 text-md-end mb-0">
-                            Connecting Nigerians with verified, reliable artisans nationwide.<br>
-                            Safe &bull; Secure &bull; Protected by Paystack Escrow.
-                        </p>
+                        <a href="/escrow-policy/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+                            <i class="fa-solid fa-shield-halved me-1"></i> View Escrow Policy
+                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="border-top border-secondary py-3">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
-                    <div>Copyright &copy; Kiraar Technologies 2026. All rights reserved.</div>
-                    <div class="mt-2 mt-md-0">
-                        <i class="fa-brands fa-facebook mx-2 text-white"></i>
-                        <i class="fa-brands fa-instagram mx-2 text-white"></i>
-                        <i class="fa-brands fa-x-twitter mx-2 text-white"></i>
-                        <i class="fa-brands fa-linkedin mx-2 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </footer>
 
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Grid Section (Matches index page exactly) -->
+    <footer class="row footer pt-5 pb-4 px-3 px-md-5 m-0">
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-4"><h3>Get Help</h3></li>
+                <li class="mb-2"><a href="/results/" class="text-decoration-none">See All Services</a></li>
+                <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact Support</a></li>
+                <li class="mb-2"><a href="/login/" class="text-decoration-none">Log In</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-3"><h3>Company</h3></li>
+                <li class="mb-2"><a href="/about/" class="text-decoration-none">About Us</a></li>
+                <li class="mb-2"><a href="/privacy/" class="text-decoration-none">Privacy Policy</a></li>
+                <li class="mb-2"><a href="/terms/" class="text-decoration-none">Terms and Conditions</a></li>
+                <li class="mb-2"><a href="/escrow-policy/" class="text-decoration-none">Escrow &amp; Refund Policy</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center mb-4">
+            <a href="/">
+                <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded" style="max-height: 45px; background-color: #ffffff;">
+            </a>
+        </div>
+    </footer>
+
+    <!-- Legal Bar / Under Footer -->
+    <div class="row under-footer border-top border-secondary py-4 text-center fs-6 m-0">
+        <div class="col-md-6 mb-3 mb-md-0 d-flex justify-content-center align-items-center">
+            Copyright &copy; kiraar 2026
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <span class="me-2">Follow us! We're friendly:</span>
+            <i class="fa-brands fa-facebook mx-3"></i>
+            <i class="fa-brands fa-square-instagram mx-3"></i>
+            <i class="fa-brands fa-x-twitter mx-3"></i>
+            <i class="fa-brands fa-linkedin mx-3"></i>
+        </div>
     </div>
 
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>

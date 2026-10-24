@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Somto">
-    <meta name="description" content="Privacy Policy of Kiraar - Compliant with the Nigeria Data Protection Act (NDPA 2023) and NDPR.">
+    <meta name="description" content="Kiraar Privacy Policy - Learn how we collect, safeguard, and protect your personal and financial information under the Nigeria Data Protection Act (NDPA).">
     <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
@@ -12,331 +12,332 @@
     <title>Privacy Policy - Kiraar</title>
 </head>
 <body>
-    <div class="container-fluid overflow-hidden p-0">
-        
-        <!-- Header / Navigation -->
-        <header class="bg-white border-bottom shadow-sm">
-            <div class="container py-2">
-                <div class="row align-items-center">
-                    <div class="col-4 col-md-3">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid" style="max-height: 40px;">
+    <!-- Header / Navigation (Matching index page) -->
+    <header class="sticky-top bg-white border-bottom shadow-sm" style="z-index: 1030;">
+        <nav class="navbar navbar-expand-lg py-2">
+            <div class="container-fluid px-3 px-md-4">
+                <!-- Brand Logo -->
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 42px;" class="img-fluid">
+                </a>
+
+                <!-- Mobile Hamburger Button (triggers offcanvas drawer from left) -->
+                <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#kiraarNavbarOffcanvas" aria-controls="kiraarNavbarOffcanvas" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Offcanvas Menu (Drawer on Mobile, Top Bar on Desktop) -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="kiraarNavbarOffcanvas" aria-labelledby="kiraarNavbarLabel">
+                    <!-- Drawer Header (only visible on mobile) -->
+                    <div class="offcanvas-header border-bottom">
+                        <a href="/" class="d-flex align-items-center text-decoration-none">
+                            <img src="/static/images/logo4.png" alt="Kiraar" style="max-height: 36px;">
                         </a>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="col-8 col-md-9 d-flex justify-content-end">
-                        <nav class="navbar navbar-expand-lg">
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                                <div class="navbar-nav align-items-center">
-                                    {% if session.get('user_id') %}
-                                        <a class="nav-link mx-2" href="/results/">Find Professionals</a>
-                                        <a class="nav-link mx-2" href="/client/bookings/">My Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% elif session.get('professional_id') %}
-                                        <a class="nav-link mx-2" href="/find-jobs/">Dashboard</a>
-                                        <a class="nav-link mx-2" href="/professional/bookings/">Bookings</a>
-                                        <a class="btn btn-outline-danger btn-sm rounded-pill ms-2 px-3" href="/logout/">Logout</a>
-                                    {% else %}
-                                        <a class="nav-link mx-2" href="/signup/">Sign Up</a>
-                                        <a class="nav-link mx-2" href="/login/">Login</a>
-                                    {% endif %}
+
+                    <!-- Drawer Body -->
+                    <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
+                        <!-- Left Navigation Links (Upwork Style) -->
+                        <ul class="navbar-nav me-auto mb-3 mb-lg-0 py-2 py-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/results/">
+                                    <i class="fa-solid fa-magnifying-glass me-2 text-muted d-lg-none"></i>Find Artisans
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/about/">
+                                    <i class="fa-solid fa-circle-info me-2 text-muted d-lg-none"></i>How It Works
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-lg-3 py-2 fw-medium text-dark" href="/contact/">
+                                    <i class="fa-solid fa-headset me-2 text-muted d-lg-none"></i>Support
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right Auth / Profile Controls -->
+                        <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pt-3 pt-lg-0 border-top border-lg-0">
+                            {% if session.get('user_id') %}
+                                <!-- Logged-in Client Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-circle-user me-1 text-primary"></i> {{ session.get('user_name', 'Client') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/client/bookings/"><i class="fa-solid fa-calendar-check me-2 text-muted"></i>My Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/client/edit/"><i class="fa-solid fa-user-pen me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Pro</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
                                 </div>
-                            </div>
-                        </nav>
+                            {% elif session.get('professional_id') %}
+                                <!-- Logged-in Professional Profile Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle w-100 w-lg-auto px-3 py-2 d-flex align-items-center justify-content-between justify-content-lg-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span><i class="fa-solid fa-briefcase me-1 text-success"></i> {{ session.get('professional_name', 'Professional') }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+                                        <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-chart-line me-2 text-muted"></i>Pro Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/bookings/"><i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Client Bookings</a></li>
+                                        <li><a class="dropdown-item py-2" href="/professional/edit/"><i class="fa-solid fa-id-card me-2 text-muted"></i>Edit Profile</a></li>
+                                        {% if session.get('has_dual_account') %}
+                                        <li><a class="dropdown-item py-2 text-primary" href="/switch-role/"><i class="fa-solid fa-right-left me-2"></i>Switch to Client</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <!-- Guest (Not Logged In) -->
+                                <a href="/login/" class="btn btn-outline-dark btn-sm rounded-pill px-3 py-2 text-center">Log In</a>
+                                <a href="/signup/" class="btn btn-sm rounded-pill px-3 py-2 text-white text-center" style="background:#611f47;">Sign Up</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
+        </nav>
+    </header>
 
-        <!-- Hero Title -->
-        <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
-                            <i class="fa-solid fa-user-shield me-1 text-success"></i> Compliant with NDPA 2023 &amp; NDPR &bull; Nigeria Data Protection Commission (NDPC)
-                        </span>
-                        <h1 class="display-5 fw-bold mb-3">Privacy &amp; Data Protection Policy</h1>
-                        <p class="lead mb-0 opacity-75">Effective Date: January 1, 2026 &bull; Last Revised: September 2026</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <main class="container py-5">
+    <!-- Hero Title -->
+    <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #611f47 0%, #3e122d 100%);">
+        <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-
-                    <!-- Overview Banner -->
-                    <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
-                        <h5 class="fw-bold" style="color: #611f47;"><i class="fa-solid fa-lock me-2"></i>Our Commitment to Your Privacy</h5>
-                        <p class="mb-0 text-secondary lh-lg">
-                            At <strong>Kiraar Technologies</strong> ("Kiraar", "we", "us", or "our"), safeguarding your personal data is a foundational responsibility. This Privacy Policy describes how we collect, use, store, share, and protect your personal information in accordance with the <strong>Nigeria Data Protection Act (NDPA 2023)</strong> and the <strong>Nigeria Data Protection Regulation (NDPR)</strong>, overseen by the <strong>Nigeria Data Protection Commission (NDPC)</strong>.
-                        </p>
-                    </div>
-
-                    <!-- Section 1 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">1. Data Controller Information</h3>
-                        <p class="text-secondary lh-lg mb-2">
-                            Kiraar Technologies operates as the <strong>Data Controller</strong> responsible for your personal data when you interact with our platform, website, or services in Nigeria.
-                        </p>
-                        <p class="text-secondary lh-lg mb-0">
-                            For any inquiries regarding data protection, access requests, or compliance, our designated Data Protection Officer (DPO) can be contacted at: <a href="mailto:franklinsomto7@gmail.com" class="fw-semibold text-decoration-none" style="color: #611f47;">franklinsomto7@gmail.com</a>.
-                        </p>
-                    </div>
-
-                    <!-- Section 2 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">2. Lawful Basis for Processing Personal Data</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Under Section 25 of the Nigeria Data Protection Act 2023, we only collect and process personal data under the following lawful bases:
-                        </p>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-file-contract me-1 text-primary"></i> Contract Performance</h6>
-                                    <p class="small text-muted mb-0">Processing needed to create your account, connect you with artisans, manage bookings, and execute escrow payouts.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-check-double me-1 text-success"></i> Explicit Consent</h6>
-                                    <p class="small text-muted mb-0">Freely given, informed consent when registering, uploading verification documents, or opting into communications.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-scale-balanced me-1 text-warning"></i> Legal Obligation</h6>
-                                    <p class="small text-muted mb-0">Compliance with Nigerian financial, consumer protection (FCCPA), and anti-money laundering regulations.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;"><i class="fa-solid fa-shield me-1 text-danger"></i> Legitimate Interests</h6>
-                                    <p class="small text-muted mb-0">Fraud detection, identity verification, on-site safety, dispute investigation, and cybersecurity defense.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 3 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">3. The Categories of Personal Data We Collect</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Depending on whether you use Kiraar as a Client or an Artisan / Professional, we collect the following data:
-                        </p>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 28%;">Data Category</th>
-                                        <th>Specific Elements Collected</th>
-                                        <th style="width: 25%;">Applicable User</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="small text-secondary">
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Identity &amp; Profile Data</td>
-                                        <td>First name, last name, business trade name, profile photo, bio, and service specialization.</td>
-                                        <td>Clients &amp; Professionals</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Contact Information</td>
-                                        <td>Email address, active Nigerian telephone number, and physical service/delivery address.</td>
-                                        <td>Clients &amp; Professionals</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Vetting &amp; KYC Records</td>
-                                        <td>National Identification Number (NIN), Government ID (Voters Card, Driver's License, International Passport), and trade certificates.</td>
-                                        <td>Professionals / Artisans</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Financial &amp; Payout Data</td>
-                                        <td>Bank name, Nigerian account number, account name, and Paystack recipient code. (Card details are tokenized directly by Paystack under PCI-DSS — Kiraar never stores card numbers or CVV).</td>
-                                        <td>Clients (Payment tokens) &bull; Professionals (Bank payout info)</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Chat &amp; Communications</td>
-                                        <td>In-app messages, price updates, and photos sent via CometChat to coordinate bookings.</td>
-                                        <td>Clients &amp; Professionals</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-semibold text-dark">Technical Telemetry</td>
-                                        <td>IP address, browser profile, device operating system, login timestamps, and session cookies.</td>
-                                        <td>All Visitors</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Section 4 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">4. How We Utilize Your Information</h3>
-                        <ul class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Service Connection:</strong> Allowing clients to search, discover, book, and communicate directly with vetted local artisans.</li>
-                            <li class="mb-2"><strong>Escrow &amp; Bank Transfers:</strong> Safeguarding booking funds in escrow via Paystack and releasing 90% payouts to artisans upon completion.</li>
-                            <li class="mb-2"><strong>Identity &amp; Safety Checks:</strong> Verifying the credentials of artisans to protect home and commercial property owners across Nigeria.</li>
-                            <li class="mb-2"><strong>Dispute Resolution:</strong> Reviewing booking history and communication logs when handling customer complaints or refund requests.</li>
-                            <li class="mb-2"><strong>Transactional Alerts:</strong> Delivering booking confirmations, price adjustment notices, payment receipts, and payout alerts via email and SMS.</li>
-                            <li><strong>Security &amp; Fraud Prevention:</strong> Preventing multiple unauthorized accounts, detecting off-platform payment schemes, and protecting platform integrity.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 5 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">5. Sharing with Third-Party Service Processors</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            Kiraar does not sell, rent, or trade your personal data to advertisers. We share data only with vetted service providers operating under strict data processing agreements:
-                        </p>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;">Paystack Payments</h6>
-                                    <p class="small text-muted mb-0">CBN-licensed payment gateway for processing debit cards, bank transfers, escrow holding, and automated artisan payouts.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;">CometChat Infrastructure</h6>
-                                    <p class="small text-muted mb-0">Provides real-time, end-to-end secured chat infrastructure between clients and artisans per booking.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <h6 class="fw-bold mb-1" style="color: #611f47;">Law Enforcement &amp; Regulators</h6>
-                                    <p class="small text-muted mb-0">Shared only when strictly mandated by Nigerian court orders, the NDPC, FCCPC, or statutory security agencies.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 6 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">6. Your Data Rights Under the NDPA 2023</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            As a data subject in Nigeria, you are entitled to comprehensive rights under the Nigeria Data Protection Act:
-                        </p>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <span class="fw-bold text-dark d-block mb-1"><i class="fa-solid fa-eye me-1 text-primary"></i> Right to Access</span>
-                                    <p class="small text-muted mb-0">Request confirmation and a digital copy of all personal records Kiraar holds about you.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <span class="fw-bold text-dark d-block mb-1"><i class="fa-solid fa-pen-to-square me-1 text-success"></i> Right to Rectification</span>
-                                    <p class="small text-muted mb-0">Update, amend, or correct inaccurate or incomplete contact, business, or bank account details.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <span class="fw-bold text-dark d-block mb-1"><i class="fa-solid fa-trash-can me-1 text-danger"></i> Right to Erasure ("To Be Forgotten")</span>
-                                    <p class="small text-muted mb-0">Request permanent deletion of your account and personal records, subject to statutory tax and financial retention laws.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 border rounded-3 bg-light h-100">
-                                    <span class="fw-bold text-dark d-block mb-1"><i class="fa-solid fa-ban me-1 text-warning"></i> Right to Object &amp; Restrict</span>
-                                    <p class="small text-muted mb-0">Object to or restrict specific processing operations, including marketing and algorithmic matching.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="small text-muted mb-0">
-                            To exercise any of these rights, email our Data Protection Desk at <a href="mailto:franklinsomto7@gmail.com" class="fw-semibold text-decoration-none" style="color: #611f47;">franklinsomto7@gmail.com</a>. We will respond within <strong>30 days</strong> as required by Nigerian law.
-                        </p>
-                    </div>
-
-                    <!-- Section 7 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">7. Data Storage, Retention &amp; Security</h3>
-                        <p class="text-secondary lh-lg mb-3">
-                            We deploy robust technical and organizational measures to safeguard your information against unauthorized access, loss, or manipulation:
-                        </p>
-                        <ul class="text-secondary lh-lg ps-3 mb-0">
-                            <li class="mb-2"><strong>Security Controls:</strong> TLS/HTTPS encryption in transit, bcrypt-hashed passwords, CSRF session protection, and role-based administrative access limits.</li>
-                            <li class="mb-2"><strong>Retention Timelines:</strong> Active account data is retained for the lifespan of your account. Transaction and payout logs are retained for <strong>6 years</strong> to comply with Nigerian financial, tax, and audit regulations.</li>
-                            <li><strong>Breach Notification:</strong> In the unlikely event of a data breach posing risk to your rights, Kiraar will notify the <strong>Nigeria Data Protection Commission (NDPC)</strong> within 72 hours and inform impacted users promptly.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Section 8 -->
-                    <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white">
-                        <h3 class="fw-bold mb-3" style="color: #611f47;">8. Protection of Minors</h3>
-                        <p class="text-secondary lh-lg mb-0">
-                            Kiraar is strictly intended for individuals aged <strong>18 and above</strong>. We do not knowingly solicit or collect personal data from minors. If you believe a minor has created an account on Kiraar, please contact us immediately for prompt investigation and account deletion.
-                        </p>
-                    </div>
-
-                    <!-- Contact Card -->
-                    <div class="card border-0 rounded-4 text-center p-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
-                        <h3 class="fw-bold mb-2">Have Data Privacy Questions?</h3>
-                        <p class="mb-4 opacity-75">Our Data Protection Officer and Compliance team are available to assist you with any questions or requests.</p>
-                        <div>
-                            <a href="mailto:franklinsomto7@gmail.com" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark me-2">
-                                <i class="fa-solid fa-envelope me-1"></i> Contact Data Protection Officer
-                            </a>
-                            <a href="/terms/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
-                                <i class="fa-solid fa-file-contract me-1"></i> View Terms of Service
-                            </a>
-                        </div>
-                    </div>
-
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-lock me-1 text-primary"></i> Data Privacy &amp; Trust
+                    </span>
+                    <h1 class="display-5 fw-bold mb-3">Privacy Policy</h1>
+                    <p class="lead mb-0 opacity-75">Your data privacy and identity security are paramount to us.</p>
                 </div>
             </div>
-        </main>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-dark text-white pt-5">
-            <div class="container pb-4">
-                <div class="row g-4">
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Get Help</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/results/" class="text-white-50 text-decoration-none">Find a Professional</a></li>
-                            <li class="mb-2"><a href="mailto:franklinsomto7@gmail.com" class="text-white-50 text-decoration-none">Contact Support</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Escrow &amp; Refund Policy</a></li>
-                            <li class="mb-2"><a href="/login/" class="text-white-50 text-decoration-none">Sign In</a></li>
-                        </ul>
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- NDPA Notice Banner -->
+                <div class="alert alert-light border-start border-4 rounded-3 p-4 mb-5 shadow-sm" style="border-left-color: #611f47 !important; background-color: #fdf8fb;">
+                    <h5 class="fw-bold" style="color: #611f47;"><i class="fa-solid fa-scale-balanced me-2"></i>NDPA 2023 &amp; NDPR Compliance</h5>
+                    <p class="mb-0 text-secondary lh-lg">
+                        Kiraar Technologies ("Kiraar", "we", "us", or "our") operates strictly under the <strong>Nigeria Data Protection Act (NDPA) 2023</strong> and the <strong>Nigeria Data Protection Regulation (NDPR)</strong>. This Privacy Policy details how we collect, store, process, and safeguard your personal and financial information when you access or use our platform.
+                    </p>
+                </div>
+
+                <!-- Section: Information We Collect -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">1. Information We Collect</h3>
+                    <p class="text-secondary lh-lg mb-4">
+                        To connect reliable artisans with homeowners and businesses in Nigeria and facilitate secure escrow transactions, we collect the following categories of data:
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Data Types Collected</th>
+                                    <th>Applicability</th>
+                                </tr>
+                            </thead>
+                            <tbody class="small text-secondary">
+                                <tr>
+                                    <td class="fw-semibold text-dark">Identity Data</td>
+                                    <td>Full legal name, email address, phone number, physical address/LGA, profile photos, and state of residence.</td>
+                                    <td>All Users</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Artisan Verification Data</td>
+                                    <td>National Identification Number (NIN), government ID, trade credentials, certifications, guarantor information, and criminal background checks.</td>
+                                    <td>Artisans &amp; Professionals Only</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Financial &amp; Payout Data</td>
+                                    <td>Bank name, Nigerian account number, account name, and secure payout transfer codes. (Card details are tokenized under strict PCI-DSS standards by certified banking infrastructure - Kiraar never stores sensitive card numbers or CVV).</td>
+                                    <td>Clients (Payment tokens) &bull; Professionals (Bank payout info)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Communications &amp; Audio</td>
+                                    <td>In-app chat transcripts, images of repairs/jobs, file attachments, and recorded voice notes exchanged between clients and artisans.</td>
+                                    <td>All Users</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-dark">Technical &amp; Log Data</td>
+                                    <td>IP address, browser type, operating system, and session timestamps.</td>
+                                    <td>All Users</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-md-3">
-                        <h5 class="fw-bold mb-3 text-white">Company</h5>
-                        <ul class="list-unstyled small">
-                            <li class="mb-2"><a href="/about/" class="text-white-50 text-decoration-none">About Kiraar</a></li>
-                            <li class="mb-2"><a href="/terms/" class="text-white-50 text-decoration-none">Terms &amp; Conditions</a></li>
-                            <li class="mb-2"><a href="/privacy/" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-                            <li class="mb-2"><a href="/escrow-policy/" class="text-white-50 text-decoration-none">Trust &amp; Escrow</a></li>
-                        </ul>
+                </div>
+
+                <!-- Section: How We Use Your Data -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">2. How We Use Your Information</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        We process your information strictly for legitimate business and contractual purposes, including:
+                    </p>
+                    <ul class="text-secondary lh-lg ps-3 mb-0">
+                        <li class="mb-2"><strong>Service Connection:</strong> Allowing clients to search, discover, book, and communicate directly with vetted local artisans.</li>
+                        <li class="mb-2"><strong>Escrow &amp; Bank Transfers:</strong> Safeguarding booking funds in secure escrow and releasing 90% payouts to artisans upon verified job completion.</li>
+                        <li class="mb-2"><strong>Identity &amp; Safety Checks:</strong> Verifying the credentials of artisans to protect home and commercial property owners across Nigeria.</li>
+                        <li class="mb-2"><strong>Dispute Resolution:</strong> Reviewing booking history and communication logs when handling customer complaints or refund requests.</li>
+                        <li><strong>Platform Security:</strong> Preventing fraud, multi-accounting abuse, and unsolicited spam.</li>
+                    </ul>
+                </div>
+
+                <!-- Section: Third-Party Service Providers -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">3. Third-Party Service Providers &amp; Data Processors</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        Kiraar integrates with trusted enterprise infrastructure to deliver reliable services. These third parties are bound by strict non-disclosure and data protection agreements:
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold mb-1" style="color: #611f47;">Licensed Payment Infrastructure</h6>
+                                <p class="small text-muted mb-0">CBN-licensed banking infrastructure for processing debit cards, bank transfers, escrow holding, and automated artisan payouts.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold mb-1" style="color: #611f47;">CometChat</h6>
+                                <p class="small text-muted mb-0">Real-time encrypted text, voice note, and media messaging infrastructure connecting clients and artisans.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold mb-1" style="color: #611f47;">Identity Partners</h6>
+                                <p class="small text-muted mb-0">NIMC-authorized verification partners for validating National Identity Numbers (NIN) of registered artisans.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 d-flex flex-column justify-content-between align-items-md-end">
-                        <a href="/">
-                            <img src="/static/images/logo4.png" alt="Kiraar" class="img-fluid p-2 bg-white rounded" style="max-height: 44px;">
+                </div>
+
+                <!-- Section: Data Retention & Security -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">4. Data Retention &amp; Security Measures</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        We retain personal data for as long as your account remains active or as required by Nigerian financial regulatory and tax retention laws (generally 6 years for financial transaction records).
+                    </p>
+                    <p class="text-secondary lh-lg mb-0">
+                        Our security measures include 256-bit TLS/SSL encryption for data in transit, AES-256 encrypted database backups, restricted internal role-based access controls, and continuous vulnerability monitoring.
+                    </p>
+                </div>
+
+                <!-- Section: User Rights -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">5. Your Rights Under the NDPA</h3>
+                    <p class="text-secondary lh-lg mb-3">
+                        As a data subject in Nigeria, you have guaranteed statutory rights:
+                    </p>
+                    <div class="row g-3 text-secondary small">
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded-3 h-100">
+                                <strong class="text-dark d-block mb-1"><i class="fa-solid fa-eye me-1 text-primary"></i> Right to Access:</strong>
+                                Request a copy of the personal information Kiraar holds about you.
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded-3 h-100">
+                                <strong class="text-dark d-block mb-1"><i class="fa-solid fa-pen me-1 text-success"></i> Right to Rectification:</strong>
+                                Update or correct inaccurate personal or professional details at any time.
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded-3 h-100">
+                                <strong class="text-dark d-block mb-1"><i class="fa-solid fa-trash me-1 text-danger"></i> Right to Erasure ("Right to be Forgotten"):</strong>
+                                Request account deletion and removal of your personal profile.
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="p-3 bg-light rounded-3 h-100">
+                                <strong class="text-dark d-block mb-1"><i class="fa-solid fa-ban me-1 text-warning"></i> Right to Object:</strong>
+                                Object to the processing of your data for marketing or promotional campaigns.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Cookies -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">6. Cookies &amp; Session Management</h3>
+                    <p class="text-secondary lh-lg mb-0">
+                        Kiraar uses essential HTTP cookies and secure session tokens to keep you logged in, protect against Cross-Site Request Forgery (CSRF), and maintain your active cart/booking sessions. We do not use third-party invasive tracking cookies without your consent.
+                    </p>
+                </div>
+
+                <!-- Section: Contact Data Protection Officer -->
+                <div class="card border-0 shadow-sm rounded-4 mb-5 p-4 p-md-5 bg-white">
+                    <h3 class="fw-bold mb-3" style="color: #611f47;">7. Policy Updates</h3>
+                    <p class="text-secondary lh-lg mb-0">
+                        Kiraar reserves the right to modify this Privacy Policy as our services evolve or to reflect changes in Nigerian law. Any significant modifications will be communicated via email or posted prominently on our website.
+                    </p>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card border-0 rounded-4 text-center p-4 p-md-5 text-white shadow-sm" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
+                    <h3 class="fw-bold mb-2">Have Data Privacy Questions?</h3>
+                    <p class="mb-4 opacity-75">Our Data Protection Officer and Compliance team are available to assist you with any questions or requests.</p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 align-items-center">
+                        <a href="/contact/" class="btn btn-light rounded-pill px-4 py-2 fw-semibold text-dark">
+                            <i class="fa-solid fa-headset me-1"></i> Contact Data Protection Officer
                         </a>
-                        <p class="small text-white-50 mt-3 text-md-end mb-0">
-                            Connecting Nigerians with verified, reliable artisans nationwide.<br>
-                            Safe &bull; Secure &bull; Protected by Paystack Escrow.
-                        </p>
+                        <a href="/terms/" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+                            <i class="fa-solid fa-file-contract me-1"></i> View Terms of Service
+                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="border-top border-secondary py-3">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
-                    <div>Copyright &copy; Kiraar Technologies 2026. All rights reserved.</div>
-                    <div class="mt-2 mt-md-0">
-                        <i class="fa-brands fa-facebook mx-2 text-white"></i>
-                        <i class="fa-brands fa-instagram mx-2 text-white"></i>
-                        <i class="fa-brands fa-x-twitter mx-2 text-white"></i>
-                        <i class="fa-brands fa-linkedin mx-2 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </footer>
 
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Grid Section (Matches index page exactly) -->
+    <footer class="row footer pt-5 pb-4 px-3 px-md-5 m-0">
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-4"><h3>Get Help</h3></li>
+                <li class="mb-2"><a href="/results/" class="text-decoration-none">See All Services</a></li>
+                <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact Support</a></li>
+                <li class="mb-2"><a href="/login/" class="text-decoration-none">Log In</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-6 col-md-3 mb-4">
+            <ul class="p-0 list-unstyled">
+                <li class="mb-3"><h3>Company</h3></li>
+                <li class="mb-2"><a href="/about/" class="text-decoration-none">About Us</a></li>
+                <li class="mb-2"><a href="/privacy/" class="text-decoration-none">Privacy Policy</a></li>
+                <li class="mb-2"><a href="/terms/" class="text-decoration-none">Terms and Conditions</a></li>
+                <li class="mb-2"><a href="/escrow-policy/" class="text-decoration-none">Escrow &amp; Refund Policy</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center mb-4">
+            <a href="/">
+                <img src="/static/images/logo4.png" alt="logo" class="img-fluid p-2 rounded" style="max-height: 45px; background-color: #ffffff;">
+            </a>
+        </div>
+    </footer>
+
+    <!-- Legal Bar / Under Footer -->
+    <div class="row under-footer border-top border-secondary py-4 text-center fs-6 m-0">
+        <div class="col-md-6 mb-3 mb-md-0 d-flex justify-content-center align-items-center">
+            Copyright &copy; kiraar 2026
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <span class="me-2">Follow us! We're friendly:</span>
+            <i class="fa-brands fa-facebook mx-3"></i>
+            <i class="fa-brands fa-square-instagram mx-3"></i>
+            <i class="fa-brands fa-x-twitter mx-3"></i>
+            <i class="fa-brands fa-linkedin mx-3"></i>
+        </div>
     </div>
 
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
