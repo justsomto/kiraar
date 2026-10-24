@@ -634,6 +634,72 @@ def find_jobs():
         average_rating=average_rating
     )
 
+@app.route('/professional/dashboard/')
+def professional_dashboard():
+    if 'professional_id' not in session:
+        if 'user_id' in session:
+            flash('This dashboard is for professionals.', 'info')
+            return redirect(url_for('results'))
+        flash('Please log in to access your dashboard.', 'error')
+        return redirect(url_for('login'))
+
+    pro_check = Professional.query.get(session['professional_id'])
+    if not pro_check or pro_check.account_status == 'suspended':
+        flash('Your professional account has been suspended. Please contact Kiraar support.', 'error')
+        return redirect(url_for('login'))
+
+    professional = pro_check
+    delta = datetime.datetime.now() - (professional.date_joined.replace(tzinfo=None) if professional.date_joined else datetime.datetime.now())
+    years_on_kiraar = max(0, delta.days // 365)
+
+    prof_service_names = []
+    for ps in ProfessionalService.query.filter_by(professional_id=professional.professional_id).all():
+        cat = ServiceCategory.query.get(ps.service_category_id)
+        if cat:
+            prof_service_names.append(cat.service_category_name)
+
+    bookings = Booking.query.filter_by(professional_id=professional.professional_id).order_by(Booking.booking_id.desc()).all()
+    wallet_balance = 0.0
+    todays_earnings = 0.0
+    total_lifetime_earnings = 0.0
+    completed_jobs = 0
+    in_progress_jobs = 0
+    pending_jobs = 0
+
+    today = datetime.datetime.now().date()
+    for b in bookings:
+        if b.job_status == 'completed':
+            completed_jobs += 1
+            if b.payment_status == 'paid':
+                earnings_amt = float(b.booking_price or 0.0)
+                wallet_balance += earnings_amt
+                total_lifetime_earnings += earnings_amt
+                if b.completion_date and b.completion_date.date() == today:
+                    todays_earnings += earnings_amt
+        elif b.job_status == 'in-progress':
+            in_progress_jobs += 1
+        elif b.job_status == 'pending':
+            pending_jobs += 1
+
+    average_rating = float(professional.average_rating or 0.0)
+    reviews_count = Review.query.filter_by(professional_id=professional.professional_id).count()
+
+    return render_template(
+        'professional_dashboard.html',
+        professional=professional,
+        years_on_kiraar=years_on_kiraar,
+        prof_service_names=prof_service_names,
+        bookings=bookings,
+        wallet_balance=wallet_balance,
+        todays_earnings=todays_earnings,
+        total_lifetime_earnings=total_lifetime_earnings,
+        completed_jobs=completed_jobs,
+        in_progress_jobs=in_progress_jobs,
+        pending_jobs=pending_jobs,
+        average_rating=average_rating,
+        reviews_count=reviews_count
+    )
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

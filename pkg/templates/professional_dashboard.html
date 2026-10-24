@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Dashboard &amp; Analytics - Kiraar</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="inner-page">
+
+    <!-- Unified Navbar with Single Pro Dropdown -->
+    <nav class="navbar navbar-light bg-white border-bottom py-2 shadow-sm sticky-top">
+        <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/static/images/logo4.png" alt="Kiraar" style="max-height:36px;">
+            </a>
+
+            <!-- Single Clean Pro Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-pill dropdown-toggle border px-3 d-flex align-items-center gap-2 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-circle-user text-secondary"></i>
+                    <span class="fw-semibold text-truncate" style="max-width: 140px;">{{ session.get('user_name', professional.first_name if professional else 'Professional') }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2" style="min-width: 220px;">
+                    <li class="px-2 py-1 mb-1 border-bottom">
+                        <span class="small fw-bold text-dark d-block text-truncate">{{ professional.first_name }} {{ professional.last_name }}</span>
+                        <span class="small text-muted d-block" style="font-size:0.75rem;">Verified Pro</span>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/find-jobs/">
+                            <i class="fa-solid fa-briefcase me-2 text-primary"></i> Jobs Feed
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2 active bg-light text-dark fw-bold" href="/professional/dashboard/">
+                            <i class="fa-solid fa-chart-line me-2 text-info"></i> Dashboard &amp; Analytics
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/bookings/">
+                            <i class="fa-solid fa-calendar-check me-2 text-success"></i> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/inbox/">
+                            <i class="fa-solid fa-inbox me-2 text-info"></i> Inbox
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="/professional/edit/">
+                            <i class="fa-solid fa-gear me-2 text-secondary"></i> Settings &amp; Profile
+                        </a>
+                    </li>
+                    {% if session.get('has_dual_account') %}
+                    <li>
+                        <a class="dropdown-item py-2 text-warning" href="/switch-role/">
+                            <i class="fa-solid fa-right-left me-2"></i> Switch to Client
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item py-2 text-danger" href="/logout/">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+
+        <!-- Welcome Banner -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #611f47 0%, #461433 100%);">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-1 mb-2 fw-semibold">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i> Verified Artisan Partner
+                    </span>
+                    <h3 class="fw-bold mb-1">Hello, {{ professional.first_name }}!</h3>
+                    <p class="mb-0 opacity-75 small">Here is your live business analytics, earnings performance, and client job pipeline.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="/find-jobs/" class="btn btn-light rounded-pill px-3 py-2 fw-semibold text-dark shadow-sm">
+                        <i class="fa-solid fa-briefcase me-1 text-primary"></i> Open Jobs Feed
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Key Analytics Cards -->
+        <div class="row g-3 mb-4 text-center">
+            <!-- Card 1: Wallet Balance -->
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-semibold">Wallet Balance</small>
+                        <span class="badge rounded-pill" style="background:#e8f5e9; color:#2e7d32;"><i class="fa-solid fa-wallet"></i></span>
+                    </div>
+                    <h4 class="fw-bold brand-text mb-1">₦{{ "{:,.2f}".format(wallet_balance) }}</h4>
+                    <small class="text-success small"><i class="fa-solid fa-circle-check me-1"></i>Available for payout</small>
+                </div>
+            </div>
+
+            <!-- Card 2: Today's Earnings -->
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-semibold">Today's Earnings</small>
+                        <span class="badge rounded-pill" style="background:#e3f2fd; color:#1565c0;"><i class="fa-solid fa-calendar-day"></i></span>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">₦{{ "{:,.2f}".format(todays_earnings) }}</h4>
+                    <small class="text-muted small">Total: ₦{{ "{:,.0f}".format(total_lifetime_earnings) }}</small>
+                </div>
+            </div>
+
+            <!-- Card 3: Rating -->
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-semibold">Artisan Rating</small>
+                        <span class="badge rounded-pill" style="background:#fff8e1; color:#f57f17;"><i class="fa-solid fa-star"></i></span>
+                    </div>
+                    <h4 class="fw-bold text-warning mb-1">
+                        <i class="fa-solid fa-star"></i> {{ "%.1f"|format(average_rating) }}
+                    </h4>
+                    <small class="text-muted small">{{ reviews_count }} client review(s)</small>
+                </div>
+            </div>
+
+            <!-- Card 4: Completed Jobs -->
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-semibold">Completed Jobs</small>
+                        <span class="badge rounded-pill" style="background:#f3e5f5; color:#7b1fa2;"><i class="fa-solid fa-circle-check"></i></span>
+                    </div>
+                    <h4 class="fw-bold text-success mb-1">{{ completed_jobs }}</h4>
+                    <small class="text-muted small">Successful deliveries</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column: Pipeline & Payout Info -->
+            <div class="col-lg-4">
+                <!-- Job Status Pipeline -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                    <h6 class="fw-bold mb-3 brand-text"><i class="fa-solid fa-bars-progress me-2"></i>Job Pipeline</h6>
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light mb-2">
+                        <span class="fw-semibold small"><i class="fa-solid fa-clock text-warning me-2"></i>Pending Requests</span>
+                        <span class="badge bg-warning text-dark rounded-pill">{{ pending_jobs }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light mb-2">
+                        <span class="fw-semibold small"><i class="fa-solid fa-play text-primary me-2"></i>In Progress</span>
+                        <span class="badge bg-primary rounded-pill">{{ in_progress_jobs }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light">
+                        <span class="fw-semibold small"><i class="fa-solid fa-check-circle text-success me-2"></i>Completed</span>
+                        <span class="badge bg-success rounded-pill">{{ completed_jobs }}</span>
+                    </div>
+                </div>
+
+                <!-- Bank Payout Destination Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 brand-text"><i class="fa-solid fa-building-columns me-2"></i>Payout Bank</h6>
+                        <a href="/professional/edit/#pane-bank" class="small text-decoration-none">Edit</a>
+                    </div>
+                    {% if professional.account_number %}
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="fw-bold text-dark">{{ professional.bank_name or 'Bank Account' }}</div>
+                            <div class="text-secondary small font-monospace">{{ professional.account_number }}</div>
+                            <small class="text-muted">{{ professional.account_name or '' }}</small>
+                        </div>
+                        <small class="text-success d-block mt-2"><i class="fa-solid fa-circle-check me-1"></i>Verified for automated escrow payouts</small>
+                    {% else %}
+                        <div class="alert alert-warning rounded-3 small mb-0">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i> No bank details linked yet. <a href="/professional/edit/#pane-bank" class="fw-bold text-dark">Add Bank Account</a> to receive payouts.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column: Recent Earnings & Booking History -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 brand-text"><i class="fa-solid fa-receipt me-2"></i>Recent Completed Earnings</h6>
+                        <a href="/professional/bookings/" class="small text-decoration-none fw-semibold">View All Bookings</a>
+                    </div>
+
+                    {% set completed_list = [] %}
+                    {% for b in bookings %}
+                        {% if b.job_status == 'completed' %}
+                            {% set _ = completed_list.append(b) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if completed_list %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th>Booking</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="small">
+                                    {% for b in completed_list[:8] %}
+                                    <tr>
+                                        <td class="fw-bold">#{{ b.booking_id }}</td>
+                                        <td>{{ b.user.first_name }} {{ b.user.last_name }}</td>
+                                        <td class="text-muted">{{ b.scheduled_date.strftime('%b %d, %Y') if b.scheduled_date else 'N/A' }}</td>
+                                        <td class="fw-bold text-success">₦{{ "{:,.2f}".format(b.booking_price) }}</td>
+                                        <td>
+                                            {% if b.payment_status == 'paid' %}
+                                                <span class="badge bg-success rounded-pill">Paid</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark rounded-pill">In Escrow</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-clipboard-check fa-3x mb-3 text-secondary opacity-50"></i>
+                            <p class="mb-1 fw-semibold">No completed jobs yet</p>
+                            <p class="small text-secondary mb-3">Accept bookings from your jobs feed and complete them to see your earnings here.</p>
+                            <a href="/find-jobs/" class="btn btn-sm text-white rounded-pill px-4" style="background:#611f47;">
+                                <i class="fa-solid fa-briefcase me-1"></i> Go to Jobs Feed
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Bar / Footer -->
+    <footer class="py-3 text-center text-white brand-bg mt-5">
+        <small>Copyright &copy; Kiraar 2026. All rights reserved.</small>
+    </footer>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

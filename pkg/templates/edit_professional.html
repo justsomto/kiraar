@@ -34,6 +34,11 @@
                         </a>
                     </li>
                     <li>
+                        <a class="dropdown-item py-2" href="/professional/dashboard/">
+                            <i class="fa-solid fa-chart-line me-2 text-info"></i> Dashboard &amp; Analytics
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item py-2" href="/professional/bookings/">
                             <i class="fa-solid fa-calendar-check me-2 text-success"></i> My Bookings
                         </a>
@@ -101,11 +106,6 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-photo" type="button" role="tab">
-                    <i class="fa-solid fa-camera me-1"></i> Photo
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-products" type="button" role="tab">
                     <i class="fa-solid fa-images me-1"></i> Portfolio
                 </button>
@@ -131,6 +131,27 @@
             <div class="tab-pane fade show active" id="pane-profile" role="tabpanel">
                 <div class="card p-4">
                     <h6 class="fw-bold mb-3 brand-text"><i class="fa-solid fa-id-card me-2"></i> Personal Information</h6>
+
+                    <!-- Profile Photo (Merged at Top of Profile) -->
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <div class="position-relative d-inline-block mb-2">
+                            <img id="photoPreview"
+                                 src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
+                                 alt="Profile Photo"
+                                 class="rounded-circle border shadow-sm"
+                                 style="width:110px; height:110px; object-fit:cover;">
+                        </div>
+                        <div>
+                            <label for="profile_picture" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm">
+                                <i class="fa-solid fa-camera me-1"></i> Change Photo
+                            </label>
+                            <input type="file" id="profile_picture" name="profile_picture"
+                                   accept="image/*" class="d-none"
+                                   onchange="previewPhoto(this)">
+                        </div>
+                        <small class="text-muted d-block mt-1">Tap "Change Photo" to upload a new profile picture. JPG, PNG or WEBP (Max 2MB).</small>
+                    </div>
+
                     <div class="row g-3">
 
                         <!-- First Name with visibility toggle -->
@@ -272,35 +293,7 @@
                 </div>
             </div>
 
-            <!-- ── TAB 3: Profile Photo ── -->
-            <div class="tab-pane fade" id="pane-photo" role="tabpanel">
-                <div class="card p-4 text-center">
-                    <h6 class="fw-bold mb-3 brand-text"><i class="fa-solid fa-camera me-2"></i> Profile Photo</h6>
-
-                    <!-- Current photo preview -->
-                    <img id="photoPreview"
-                         src="{{ professional.profile_picture or '/static/images/default_avatar.jpg' }}"
-                         alt="Profile Photo"
-                         class="rounded-circle mb-3 border"
-                         style="width:110px; height:110px; object-fit:cover;">
-
-                    <div class="mb-3">
-                        <label for="profile_picture" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                            <i class="fa-solid fa-upload me-1"></i> Choose Photo
-                        </label>
-                        <input type="file" id="profile_picture" name="profile_picture"
-                               accept="image/*" class="d-none"
-                               onchange="previewPhoto(this)">
-                    </div>
-                    <small class="text-muted d-block mb-4">JPG, PNG or GIF. Max 2MB.</small>
-
-                    <button type="submit" class="btn btn-sm rounded-pill px-4 text-white brand-bg">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Save Photo
-                    </button>
-                </div>
-            </div>
-
-            <!-- ── TAB 4: Portfolio / Products ── (outside main form — has its own form actions) -->
+            <!-- ── TAB 3: Portfolio / Products ── (outside main form — has its own form actions) -->
             <div class="tab-pane fade" id="pane-products" role="tabpanel">
                 <div class="card p-4">
                     <h6 class="fw-bold mb-1 brand-text"><i class="fa-solid fa-images me-2"></i> My Portfolio &amp; Past Jobs</h6>

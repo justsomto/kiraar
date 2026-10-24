@@ -86,7 +86,8 @@
                                             <span><i class="fa-solid fa-briefcase me-1 text-success"></i> {{ session.get('professional_name', 'Professional') }}</span>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
-                                            <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-chart-line me-2 text-muted"></i>Pro Dashboard</a></li>
+                                            <li><a class="dropdown-item py-2" href="/find-jobs/"><i class="fa-solid fa-briefcase me-2 text-primary"></i>Jobs Feed</a></li>
+                                            <li><a class="dropdown-item py-2" href="/professional/dashboard/"><i class="fa-solid fa-chart-line me-2 text-info"></i>Dashboard &amp; Analytics</a></li>
                                             <li><a class="dropdown-item py-2" href="/professional/bookings/"><i class="fa-solid fa-clipboard-list me-2 text-muted"></i>Client Bookings</a></li>
                                             <li><a class="dropdown-item py-2" href="/professional/edit/"><i class="fa-solid fa-id-card me-2 text-muted"></i>Edit Profile</a></li>
                                             {% if session.get('has_dual_account') %}
